@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import AppContext from "../store/app-context";
 
 class NavBar extends Component {
@@ -10,10 +11,10 @@ class NavBar extends Component {
                 <em>conValue: {this.context.conValue}</em>
                 <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
                     <ul className="navbar-nav">
-                        <li className="nav-item"><a className="nav-link small" href="/">Home</a></li>
-                        <li className="nav-item"><a className="nav-link small" href="/some">Some</a></li>
-                        <li className="nav-item"><a className="nav-link small" href="/mint">Mint</a></li>
-                        <li className="nav-item"><a className="nav-link small" href="/collection">Collection</a></li>
+                        <li className="nav-item"><Link className="nav-link small" to="/">Home</Link></li>
+                        <li className="nav-item"><Link className="nav-link small" to="/some">Some</Link></li>
+                        <li className="nav-item"><Link className="nav-link small" to="/mint">Mint</Link></li>
+                        <li className="nav-item"><Link className="nav-link small" to="/collection">Collection</Link></li>
                     </ul>
                 </nav>
             </React.Fragment>
