@@ -5,6 +5,9 @@ import Footer from "./layout/Footer";
 import NavBar from "./layout/NavBar";
 import logo from './img/logo2.png'
 
+import AppContext from "./store/app-context";
+import AppProvider from "./store/app-provider";
+
 import Home from "./pages/Home";
 import Some from "./pages/Some";
 import Error from "./pages/Error";
@@ -13,7 +16,7 @@ class App extends Component {
 
   render() {
     return (
-      <>
+      <AppProvider >
         <NavBar />
         <div className="container-fluid mt-2">
           <div className="row">
@@ -31,7 +34,7 @@ class App extends Component {
           <hr />
         </div>
         <Footer />
-      </>
+      </AppProvider >
     );
   }
 }

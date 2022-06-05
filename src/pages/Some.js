@@ -1,9 +1,15 @@
 import React, { Component } from "react";
 import SimpleContract from "../abis/SimpleContract.json";
 import getWeb3 from "../getWeb3";
+import AppContext from "../store/app-context";
 
 class Some extends Component {
-  state = { someString: '' };
+  static contextType = AppContext;
+
+  state = {
+    someString: '',
+    conValue: ''
+  };
 
   componentDidMount = async () => {
     try {
@@ -25,6 +31,11 @@ class Some extends Component {
       const someString = await this.SimpleContractInstance.methods.getSomeString().call({ from: this.accounts[0] });
       console.log('someString', someString);
       this.state.someString = someString;
+      this.setState(this.state);
+
+      // context
+      console.log('this.context', this.context);
+      this.state.conValue = this.context.conValue;
       this.setState(this.state);
 
     } catch (error) {
@@ -55,12 +66,30 @@ class Some extends Component {
   };
   // #endregion
 
+  // #region Handlers Context
+  handleSubmitConValue = async (event) => {
+    event.preventDefault();
+    //this.context.conValue = this.state.conValue;
+    this.context.setConValue(this.state.conValue);
+  };
+
+  onChangeConValue = async (event) => {
+    this.state.conValue = event.currentTarget.value;
+    this.setState(this.state);
+  };
+  // #endregion
+
   render() {
     return (
       <React.Fragment>
         <div>
           <form onSubmit={(e) => this.handleSubmit(e)}>
             <input type="text" value={this.state.someString} onChange={(e) => this.onChangeSomeString(e)} />
+            <button type="submit">Set</button>
+          </form>
+          <hr />
+          <form onSubmit={(e) => this.handleSubmitConValue(e)}>
+            <input type="text" value={this.state.conValue} onChange={(e) => this.onChangeConValue(e)} />
             <button type="submit">Set</button>
           </form>
         </div>
