@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./NFTCollection.sol";
 
-contract NFTMarketplace is Ownable {
+contract NFTMarketplace {
     using SafeMath for uint256;
 
     // Ownable: to handle fees and withdraw
@@ -19,7 +19,7 @@ contract NFTMarketplace is Ownable {
 
     // Fees
     // TODO : ask about fees decimal value
-    uint256 public constant FEE_COLLECTION_CREATE = 200;
+    uint256 public constant FEE_COLLECTION_CREATE = 200; // TODO : Ask for best practices
     uint256 public constant FEE_SELL = 100;
 
     // Enums
@@ -44,17 +44,17 @@ contract NFTMarketplace is Ownable {
         uint256 auctionId; // auction Id, is generated
         uint256 id; // token Id, is given
         uint256 buyItNowPrice; // buy now buyItNowPrice in case of type FixedPrice. Zero means - no buy now. Mandatory if Fixed price
-        uint256 reservedPrice; // buy out price below which the sell cannot happend
-        uint256 initialPrice; // starting auction price
-        uint256 minBidStep; // minimum allowed bid step. Zero means - no min
-        uint256 maxBidStep; // maximum allowed bid step. Zero means - no max
+        uint256 reservedPrice; // buy out price below which the sell cannot happend (not used for now)
+        uint256 initialPrice; // starting auction price (not used for now)
+        uint256 minBidStep; // minimum allowed bid step. Zero means - no min (not used for now)
+        uint256 maxBidStep; // maximum allowed bid step. Zero means - no max (not used for now)
         AuctionStatus auctionStatus;
         AuctionType auctionType;
     }
 
     struct CollectionItem {
         uint256 collectionId;
-        address tokenAddress; // ERC721 token of the collection
+        address collectionAddress; // ERC721 token of the collection
         address ownerAddress;
         bool isUserCollection; // Describes whenever the collection is created by user
     }
@@ -152,19 +152,47 @@ contract NFTMarketplace is Ownable {
 
         usercollections[_ownerAddress][_collectionId] = true;
 
-        emit onCollectionCreated(
-            _collectionId,
-            _collectionAddress,
-            _ownerAddress
-        );
+        if (_isUserCollection) {
+            emit onCollectionCreated(
+                _collectionId,
+                _collectionAddress,
+                _ownerAddress
+            );
+        }
     }
 
     // get all collections
-    // get my collections
-    // get others collections
-    // get top collections ???
+    function getAllCollections() public view returns (CollectionItem[] memory) {
+        return collectionStore;
+    }
 
-    // get items for collection (filters)
+    // get my collections
+    function getMyCollections() public view returns (CollectionItem[] memory) {
+        uint256 resultCount;
+
+        // TODO : Ask for best practices
+
+        for (uint256 i = 0; i < collectionStore.length; i++) {
+            if (collectionStore[i].ownerAddress == msg.sender) {
+                resultCount++;
+            }
+        }
+
+        CollectionItem[] memory result = new CollectionItem[](resultCount);
+        uint256 j;
+
+        for (uint256 i = 0; i < collectionStore.length; i++) {
+            if (collectionStore[i].ownerAddress == msg.sender) {
+                result[j] = collectionStore[i];
+                j++;
+            }
+        }
+
+        return result;
+    }
+
+    // get top collections ???
+    // get items for collection (filters) TODO: think of EF like generic logic
     // get top items from collection ???
     // #endregion
 
@@ -221,6 +249,32 @@ contract NFTMarketplace is Ownable {
         emit onAuctionCancelled(_auctionId, _auction.id);
     }
 
+    function getAuctionsForCollection(address _collectionAddress)
+        public
+        view
+        returns (AuctionItem[] memory)
+    {
+        uint256 resultCount;
+
+        for (uint256 i = 0; i < auctionStore.length; i++) {
+            if (auctionStore[i].collectionAddress == _collectionAddress) {
+                resultCount++;
+            }
+        }
+
+        AuctionItem[] memory result = new AuctionItem[](resultCount);
+        uint256 j;
+
+        for (uint256 i = 0; i < auctionStore.length; i++) {
+            if (auctionStore[i].collectionAddress == _collectionAddress) {
+                result[j] = auctionStore[i];
+                j++;
+            }
+        }
+
+        return result;
+    }
+
     // #endregion
 
     // #region Auction handling
@@ -232,6 +286,7 @@ contract NFTMarketplace is Ownable {
     function bid() public payable {
         // not supported
         revert();
+        // emit onAuctionBid()
     }
 
     // buy it now - handle user funds?
