@@ -6,7 +6,7 @@ module.exports = {
     ganache: {
       host: "127.0.0.1",
       port: 8545,
-      gas: 5000000,
+      gas: 9000000,
       gasPrice: 25000000000,
       network_id: "*" //match any network id
     },

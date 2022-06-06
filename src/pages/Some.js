@@ -47,10 +47,10 @@ class Some extends Component {
     }
   };
 
-  // #region Private Methods
-  // #endregion
+  // -- Private Methods
+  // --
 
-  // #region Handlers
+  // -- Handlers
   handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -64,9 +64,9 @@ class Some extends Component {
     this.state.someString = event.currentTarget.value;
     this.setState(this.state);
   };
-  // #endregion
+  // --
 
-  // #region Handlers Context
+  // -- Handlers Context
   handleSubmitConValue = async (event) => {
     event.preventDefault();
     //this.context.conValue = this.state.conValue;
@@ -77,7 +77,7 @@ class Some extends Component {
     this.state.conValue = event.currentTarget.value;
     this.setState(this.state);
   };
-  // #endregion
+  // --
 
   render() {
     return (

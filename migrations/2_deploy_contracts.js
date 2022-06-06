@@ -1,8 +1,8 @@
 // const SimpleContract = artifacts.require("SimpleContract");
-const NFTMarketplace = artifacts.require("NFTMarketplace");
+const Marketplace = artifacts.require("Marketplace");
 
 module.exports = async function (deployer) {
   // await deployer.deploy(SimpleContract, 'I am some string');
 
-  await deployer.deploy(NFTMarketplace);
+  await deployer.deploy(Marketplace);
 };

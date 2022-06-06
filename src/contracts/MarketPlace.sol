@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./NFTCollection.sol";
 
-contract NFTMarketplace {
+contract Marketplace {
     using SafeMath for uint256;
 
     // Ownable: to handle fees and withdraw
@@ -62,44 +62,46 @@ contract NFTMarketplace {
     // properties
     mapping(address => uint256) public userFunds; // contains funds per user generated from sales. Bids will stored in other way
 
-    // #region Events
-    // emited when an auction is craated
+    // -- Events
+    // emitted when an auction is craated
     event onAuctionCreated(uint256 indexed auctionId, uint256 indexed id);
 
-    // emited when is cancelled by the seller
+    // emitted when is cancelled by the seller
     event onAuctionCancelled(uint256 indexed auctionId, uint256 indexed id);
 
-    // emited when the acution is finsied with succesfull purchase
+    // emitted when the acution is finsied with succesfull purchase
     event onAuctionFinished(uint256 indexed auctionId, uint256 indexed id);
 
-    // emited when an auction is closed with no buyer
+    // emitted when an auction is closed with no buyer
     event onAuctionClosed(uint256 indexed auctionId, uint256 indexed id);
 
-    // emited when an user claims his funds
+    // emitted when an user claims his funds
     event onFundsClaimed(address indexed user, uint256 amount);
 
+    // emitted when a collection is created
     event onCollectionCreated(
         uint256 indexed collectionId,
         address indexed collectionAddress,
         address indexed ownerAddress
     );
-    // #endregion
+    // --
 
-    // #region Collection fields
+    // TODO : Optimize field positions
+    // -- Auction fields
+    AuctionItem[] auctionStore;
+    uint256 auctionCount = 0;
+    // --
+
+    // -- Collecction Fields
+    // map mgs.sender => (collectionId => isOwner)
+    mapping(address => mapping(uint256 => bool)) usercollections;
+
     // Array of collection Contracts
     CollectionItem[] collectionStore;
     uint256 collectionCount = 0;
+    // --
 
-    // map mgs.sender => (collectionId => isOwner)
-    mapping(address => mapping(uint256 => bool)) usercollections;
-    // #endregion
-
-    // #region Auction fields
-    AuctionItem[] auctionStore;
-    uint256 auctionCount = 0;
-    // #endregion
-
-    // #region Modifiers
+    // -- Modifiers
     modifier requireFee(uint256 fee) {
         require(msg.value >= fee, "Insufficient Funds");
         _;
@@ -113,7 +115,7 @@ contract NFTMarketplace {
         _;
     }
 
-    // #endregion
+    // --
 
     constructor() public {
         // deploy NFT Collection contract
@@ -121,7 +123,7 @@ contract NFTMarketplace {
         _createCollection("TTM Collection", "TTM", address(this), false);
     }
 
-    // #region Collection management
+    // -- Collection management
     function createCollection(string memory _name, string memory _symbol)
         public
         payable
@@ -135,7 +137,7 @@ contract NFTMarketplace {
         string memory _symbol,
         address _ownerAddress,
         bool _isUserCollection
-    ) private {
+    ) internal {
         NFTCollection collectionContract = new NFTCollection(_name, _symbol);
         address _collectionAddress = address(collectionContract);
 
@@ -152,13 +154,11 @@ contract NFTMarketplace {
 
         usercollections[_ownerAddress][_collectionId] = true;
 
-        if (_isUserCollection) {
-            emit onCollectionCreated(
-                _collectionId,
-                _collectionAddress,
-                _ownerAddress
-            );
-        }
+        emit onCollectionCreated(
+            _collectionId,
+            _collectionAddress,
+            _ownerAddress
+        );
     }
 
     // get all collections
@@ -194,9 +194,9 @@ contract NFTMarketplace {
     // get top collections ???
     // get items for collection (filters) TODO: think of EF like generic logic
     // get top items from collection ???
-    // #endregion
+    // --
 
-    // #reggion Auction Management
+    // -- Auction Management
     function createAuction(
         address _collectionAddress,
         uint256 _id,
@@ -275,13 +275,13 @@ contract NFTMarketplace {
         return result;
     }
 
-    // #endregion
+    // --
 
-    // #region Auction handling
+    // -- Auction handling
     // elapse ??? possible ReentrancyGuard
-    // #endregion
+    // --
 
-    // #region Auction actions
+    // -- Auction actions
     // bid - handle user funds?
     function bid() public payable {
         // not supported
@@ -327,7 +327,7 @@ contract NFTMarketplace {
         emit onAuctionFinished(_auctionId, _auction.id);
     }
 
-    // #endregion
+    // --
 
     function claimFunds() public {
         require(
