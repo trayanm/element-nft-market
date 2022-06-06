@@ -11,14 +11,14 @@ contract NFTMarketplace is Ownable {
     // Ownable: to handle fees and withdraw
 
     // Actions:
-    // Deploy Collection (pay)
-    // Submit offer (free)
-    // Cancel offer (free)
-    // Bid (free)
-    // Finish offer (pay)
+    // Deploy Collection (fee)
+    // Submit offer
+    // Cancel offer
+    // Bid
+    // Finish offer (fee)
 
     // Fees
-    // TODO : as about fees decimal value
+    // TODO : ask about fees decimal value
     uint256 public constant FEE_COLLECTION_CREATE = 200;
     uint256 public constant FEE_SELL = 100;
 
@@ -57,6 +57,9 @@ contract NFTMarketplace is Ownable {
         address owner;
         bool isUserCollection; // Describes whenever the collection is created by user
     }
+
+    // properties
+    mapping(address => uint256) public userFunds; // contains funds per user generated from sales. Bids will stored in other way
 
     // #region Events
     // emited when an auction is craated
@@ -130,9 +133,47 @@ contract NFTMarketplace is Ownable {
         );
         collectionCount = collectionCount.add(1);
 
-        emit onCollectionCreated(_collectionId, collectionAddress, ownerAddress);
+        emit onCollectionCreated(
+            _collectionId,
+            collectionAddress,
+            ownerAddress
+        );
     }
+
+    // get all collections
+    // get my collections
+    // get others collections
+    // get top collections ???
+
+    // get items for collection (filters)
+    // get top items from collection ???
     // #endregion
+
+    // #reggion Auction Management
+    // create auction (auction owner)
+    // cancel auction (auction owner) - handle user funds?
+    // #endregion
+
+    // #region Auction handling
+    // elapse ??? possible ReentrancyGuard
+    // #endregion
+
+    // #region Auction actions
+    // bid - handle user funds?
+    // buy it now - handle user funds?
+    // #endregion
+
+    function claimFunds() public {
+        require(
+            userFunds[msg.sender] > 0,
+            "This user has no funds to be claimed"
+        );
+
+        uint256 fundsToClaim = userFunds[msg.sender];
+        userFunds[msg.sender] = 0;
+        payable(msg.sender).transfer(fundsToClaim);
+        emit onFundsClaimed(msg.sender, fundsToClaim);
+    }
 
     // Fallback: reverts if Ether is sent to this smart-contract by mistake
     fallback() external {
