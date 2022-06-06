@@ -14,7 +14,7 @@ contract NFTMarketplace is Ownable {
     // Deploy Collection (fee)
     // Submit offer
     // Cancel offer
-    // Bid
+    // Bid - use time-machine
     // Finish offer (fee)
 
     // Fees
@@ -24,7 +24,7 @@ contract NFTMarketplace is Ownable {
 
     // Enums
     enum AuctionType {
-        FixedFPrice,
+        FixedPrice,
         Dutch,
         English
     }
@@ -39,9 +39,10 @@ contract NFTMarketplace is Ownable {
 
     // Definitions
     struct AuctionItem {
+        address ownerAddress;
+        address collectionAddress;
         uint256 auctionId; // auction Id, is generated
         uint256 id; // token Id, is given
-        address user;
         uint256 buyItNowPrice; // buy now buyItNowPrice in case of type FixedPrice. Zero means - no buy now. Mandatory if Fixed price
         uint256 reservedPrice; // buy out price below which the sell cannot happend
         uint256 initialPrice; // starting auction price
@@ -54,7 +55,7 @@ contract NFTMarketplace is Ownable {
     struct CollectionItem {
         uint256 collectionId;
         address tokenAddress; // ERC721 token of the collection
-        address owner;
+        address ownerAddress;
         bool isUserCollection; // Describes whenever the collection is created by user
     }
 
@@ -87,12 +88,28 @@ contract NFTMarketplace is Ownable {
     // #region Collection fields
     // Array of collection Contracts
     CollectionItem[] collectionStore;
-    uint256 public collectionCount = 0;
+    uint256 collectionCount = 0;
+
+    // map mgs.sender => (collectionId => isOwner)
+    mapping(address => mapping(uint256 => bool)) usercollections;
+    // #endregion
+
+    // #region Auction fields
+    AuctionItem[] auctionStore;
+    uint256 auctionCount = 0;
     // #endregion
 
     // #region Modifiers
     modifier requireFee(uint256 fee) {
         require(msg.value >= fee, "Insufficient Funds");
+        _;
+    }
+
+    modifier requireCollectionOwner(uint256 _collectionId) {
+        require(
+            usercollections[msg.sender][_collectionId],
+            "Not collection owner"
+        );
         _;
     }
 
@@ -116,27 +133,29 @@ contract NFTMarketplace is Ownable {
     function _createCollection(
         string memory _name,
         string memory _symbol,
-        address ownerAddress,
-        bool isUserCollection
+        address _ownerAddress,
+        bool _isUserCollection
     ) private {
         NFTCollection collectionContract = new NFTCollection(_name, _symbol);
-        address collectionAddress = address(collectionContract);
+        address _collectionAddress = address(collectionContract);
 
         uint256 _collectionId = collectionCount;
         collectionStore.push(
             CollectionItem(
                 _collectionId,
-                collectionAddress,
-                ownerAddress,
-                isUserCollection
+                _collectionAddress,
+                _ownerAddress,
+                _isUserCollection
             )
         );
         collectionCount = collectionCount.add(1);
 
+        usercollections[_ownerAddress][_collectionId] = true;
+
         emit onCollectionCreated(
             _collectionId,
-            collectionAddress,
-            ownerAddress
+            _collectionAddress,
+            _ownerAddress
         );
     }
 
@@ -150,8 +169,58 @@ contract NFTMarketplace is Ownable {
     // #endregion
 
     // #reggion Auction Management
-    // create auction (auction owner)
+    function createAuction(
+        address _collectionAddress,
+        uint256 _id,
+        uint256 _buyItNowPrice
+    ) public {
+        // transfer token to the market (this)
+        NFTCollection nftCollection = NFTCollection(_collectionAddress);
+        nftCollection.transferFrom(msg.sender, address(this), _id);
+
+        // the token owner is checked above
+
+        // create auction
+        uint256 _auctionId = auctionCount;
+        AuctionItem memory auction;
+        auction.ownerAddress = msg.sender;
+        auction.collectionAddress = _collectionAddress;
+        auction.auctionId = _auctionId;
+        auction.id = _id;
+        auction.buyItNowPrice = _buyItNowPrice;
+        auction.auctionStatus = AuctionStatus.Running;
+        auction.auctionType = AuctionType.FixedPrice;
+
+        auctionStore.push(auction);
+
+        auctionCount = auctionCount.add(1);
+
+        emit onAuctionCreated(_auctionId, _id);
+    }
+
     // cancel auction (auction owner) - handle user funds?
+    function cancelAuction(uint256 _auctionId) public {
+        AuctionItem storage _auction = auctionStore[_auctionId];
+
+        require(_auction.auctionId == _auctionId, "The auction must exist");
+        require(
+            _auction.ownerAddress == msg.sender,
+            "The auction can only be canceled by the owner"
+        );
+        require(
+            _auction.auctionStatus == AuctionStatus.Running,
+            "The auction should be running"
+        );
+
+        NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
+        nftCollection.transferFrom(address(this), msg.sender, _auction.id);
+        _auction.auctionStatus = AuctionStatus.Cancelled;
+
+        // TODO : Handle bids
+
+        emit onAuctionCancelled(_auctionId, _auction.id);
+    }
+
     // #endregion
 
     // #region Auction handling
@@ -160,7 +229,49 @@ contract NFTMarketplace is Ownable {
 
     // #region Auction actions
     // bid - handle user funds?
+    function bid() public payable {
+        // not supported
+        revert();
+    }
+
     // buy it now - handle user funds?
+    function buyNowAuction(uint256 _auctionId)
+        public
+        payable
+        requireFee(FEE_SELL)
+    {
+        AuctionItem storage _auction = auctionStore[_auctionId];
+
+        require(_auction.auctionId == _auctionId, "The auction must exist");
+        require(
+            _auction.ownerAddress != msg.sender,
+            "The owner of the auction cannot buy it"
+        );
+        require(
+            _auction.auctionStatus == AuctionStatus.Running,
+            "The auction should be running"
+        );
+        require(
+            _auction.auctionType == AuctionType.FixedPrice,
+            "The auction status should be running"
+        );
+        require(
+            _auction.auctionType == AuctionType.FixedPrice,
+            "Only fixed price auctions can be buy it now"
+        );
+        require(
+            msg.value == _auction.buyItNowPrice + FEE_SELL,
+            "The ETH amount should match with the NFT Price + fee"
+        );
+
+        NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
+        nftCollection.transferFrom(address(this), msg.sender, _auction.id);
+        _auction.auctionStatus = AuctionStatus.Finished;
+        userFunds[_auction.ownerAddress] += msg.value;
+
+        emit onAuctionFinished(_auctionId, _auction.id);
+    }
+
     // #endregion
 
     function claimFunds() public {
@@ -172,6 +283,7 @@ contract NFTMarketplace is Ownable {
         uint256 fundsToClaim = userFunds[msg.sender];
         userFunds[msg.sender] = 0;
         payable(msg.sender).transfer(fundsToClaim);
+
         emit onFundsClaimed(msg.sender, fundsToClaim);
     }
 
