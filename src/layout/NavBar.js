@@ -14,7 +14,7 @@ class NavBar extends Component {
                         <li className="nav-item"><Link className="nav-link small" to="/">Home</Link></li>
                         <li className="nav-item"><Link className="nav-link small" to="/some">Some</Link></li>
                         <li className="nav-item"><Link className="nav-link small" to="/mint">Mint</Link></li>
-                        <li className="nav-item"><Link className="nav-link small" to="/collection">Collection</Link></li>
+                        <li className="nav-item"><Link className="nav-link small" to="/collections">Collections</Link></li>
                     </ul>
                 </nav>
             </React.Fragment>

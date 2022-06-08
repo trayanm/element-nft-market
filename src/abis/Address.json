@@ -4028,7 +4028,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-06-06T22:05:48.824Z",
+  "updatedAt": "2022-06-08T16:45:07.983Z",
   "devdoc": {
     "details": "Collection of functions related to the address type",
     "kind": "dev",

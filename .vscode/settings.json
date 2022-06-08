@@ -1,0 +1,6 @@
+{
+    "diffEditor.wordWrap": "off",
+    "editor.wrappingColumn": 0,
+    "editor.wordWrap": "wordWrapColumn",
+    "yaml.format.printWidth": 160
+}
