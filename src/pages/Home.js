@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
 class Home extends Component {
@@ -17,4 +18,4 @@ class Home extends Component {
     }
 }
 
-export default Home;
+export default withRouter(Home);

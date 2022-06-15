@@ -35,7 +35,7 @@ contract NFTCollection is ERC721, ERC721Enumerable, AccessControl {
     }
 
     function safeMint(string memory _tokenURI) public {
-        require(hasRole(MINTER_ROLE, _msgSender()), "ERC721PresetMinterPauserAutoId: must have minter role to mint");
+        require(hasRole(MINTER_ROLE, _msgSender()), 'ERC721PresetMinterPauserAutoId: must have minter role to mint');
         require(!_tokenURIExists[_tokenURI], 'The token URI should be unique');
         tokenURIs.push(_tokenURI);
         uint256 _id = tokenURIs.length; // based on 1

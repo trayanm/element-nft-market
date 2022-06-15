@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Marketplace from "../abis/Marketplace.json";
-import getWeb3 from "../getWeb3";
+//import getWeb3 from "../getWeb3";
+import { withRouter } from "../hooksHandler";
+import web3 from '../connection/web3';
 
 class NewCollection extends Component {
     state = {
@@ -17,21 +19,24 @@ class NewCollection extends Component {
     componentDidMount = async () => {
         try {
             // Get network provider and web3 instance.
-            this.web3 = await getWeb3();
+            //this.web3 = await getWeb3();
 
             // Get the contract instance.
-            this.networkId = await this.web3.eth.net.getId();
+            this.networkId = await web3.eth.net.getId();
 
             // Use web3 to get the user's accounts.
-            this.accounts = await this.web3.eth.getAccounts();
+            this.accounts = await web3.eth.getAccounts();
 
             // Get the contract instance.
-            this.networkId = await this.web3.eth.net.getId();
+            this.networkId = await web3.eth.net.getId();
 
-            this.MarketplaceInstance = new this.web3.eth.Contract(
+            this.MarketplaceInstance = new web3.eth.Contract(
                 Marketplace.abi,
                 Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
             );
+
+            console.log(Marketplace.networks[this.networkId].address);
+            console.log(this.MarketplaceInstance);
 
         } catch (error) {
             // Catch any errors for any of the above operations.
@@ -48,6 +53,9 @@ class NewCollection extends Component {
 
         try {
             const collectionAddress = await this.MarketplaceInstance.methods.createCollection(this.state.name, this.state.symbol).send({ from: this.accounts[0] });
+
+            const accoutnBalance = await web3.eth.getBalance(this.accounts[0]);
+            this.context.setAccountBalance(accoutnBalance);
         } catch (error) {
             console.log(error);
         }
@@ -78,4 +86,4 @@ class NewCollection extends Component {
         );
     }
 }
-export default NewCollection;
+export default withRouter(NewCollection);

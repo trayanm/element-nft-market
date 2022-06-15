@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import SimpleContract from "../abis/SimpleContract.json";
-import getWeb3 from "../getWeb3";
+//import getWeb3 from "../getWeb3";
+import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
+import web3 from '../connection/web3';
 
 class Some extends Component {
   static contextType = AppContext;
@@ -14,15 +16,15 @@ class Some extends Component {
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
-      this.web3 = await getWeb3();
+      //this.web3 = await getWeb3();
 
       // Use web3 to get the user's accounts.
-      this.accounts = await this.web3.eth.getAccounts();
+      this.accounts = await web3.eth.getAccounts();
 
       // Get the contract instance.
-      this.networkId = await this.web3.eth.net.getId();
+      this.networkId = await web3.eth.net.getId();
 
-      this.SimpleContractInstance = new this.web3.eth.Contract(
+      this.SimpleContractInstance = new web3.eth.Contract(
         SimpleContract.abi,
         SimpleContract.networks[this.networkId] && SimpleContract.networks[this.networkId].address
       );
@@ -98,4 +100,4 @@ class Some extends Component {
   }
 }
 
-export default Some;
+export default withRouter(Some);

@@ -1,25 +1,34 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import Marketplace from "../abis/Marketplace.json";
-import getWeb3 from "../getWeb3";
+//import getWeb3 from "../getWeb3";
+import { withRouter } from "../hooksHandler";
+import web3 from '../connection/web3';
 
 class CollectionList extends Component {
     state = {
         collections: []
     };
 
-    componentDidMount = async () => {
+    async componentDidMount() {
         try {
+            console.log('componentDidMount: 1');
             // Get network provider and web3 instance.
-            this.web3 = await getWeb3();
+            //this.web3 = web3;
+
+            console.log('componentDidMount: 2');
 
             // Use web3 to get the user's accounts.
-            this.accounts = await this.web3.eth.getAccounts();
+            this.accounts = await web3.eth.getAccounts();
+
+            console.log('componentDidMount: 3');
 
             // Get the contract instance.
-            this.networkId = await this.web3.eth.net.getId();
+            this.networkId = await web3.eth.net.getId();
 
-            this.MarketplaceInstance = new this.web3.eth.Contract(
+            console.log('componentDidMount: 4');
+
+            this.MarketplaceInstance = new web3.eth.Contract(
                 Marketplace.abi,
                 Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
             );
@@ -47,6 +56,8 @@ class CollectionList extends Component {
 
         this.state.collections = collections;
         this.setState(this.state);
+
+        console.log('this.state.collections', this.state.collections);
     };
 
     render() {
@@ -67,4 +78,4 @@ class CollectionList extends Component {
     }
 }
 
-export default CollectionList;
+export default withRouter(CollectionList);

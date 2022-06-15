@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import Marketplace from "../abis/Marketplace.json";
 import NFTCollection from "../abis/NFTCollection.json";
-import getWeb3 from "../getWeb3";
+//import getWeb3 from "../getWeb3";
 import ipfsClient from 'ipfs-http-client';
+import web3 from '../connection/web3';
 import { withRouter } from "../hooksHandler";
 
 const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
@@ -24,23 +25,23 @@ class NewCollectionToken extends Component {
     componentDidMount = async () => {
         try {
             // Get network provider and web3 instance.
-            this.web3 = await getWeb3();
+            //this.web3 = await getWeb3();
 
             // Get the contract instance.
-            this.networkId = await this.web3.eth.net.getId();
+            this.networkId = await web3.eth.net.getId();
 
             // Use web3 to get the user's accounts.
-            this.accounts = await this.web3.eth.getAccounts();
+            this.accounts = await web3.eth.getAccounts();
 
             // Get the contract instance.
-            this.networkId = await this.web3.eth.net.getId();
+            this.networkId = await web3.eth.net.getId();
 
-            this.MarketplaceInstance = new this.web3.eth.Contract(
+            this.MarketplaceInstance = new web3.eth.Contract(
                 Marketplace.abi,
                 Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
             );
 
-            this.NFTCollectionInstance = new this.web3.eth.Contract(
+            this.NFTCollectionInstance = new web3.eth.Contract(
                 NFTCollection.abi,
                 this.state.collectionAddress
             );
@@ -97,13 +98,13 @@ class NewCollectionToken extends Component {
             }
 
             this.NFTCollectionInstance.methods.safeMint(metadataAdded.path).send({ from: this.accounts[0] })
-            .on('transactionHash', (hash) => {
-            //   collectionCtx.setNftIsLoading(true);
-            })
-            .on('error', (e) =>{
-              window.alert('Something went wrong when pushing to the blockchain');
-            //   collectionCtx.setNftIsLoading(false);  
-            })  
+                .on('transactionHash', (hash) => {
+                    //   collectionCtx.setNftIsLoading(true);
+                })
+                .on('error', (e) => {
+                    window.alert('Something went wrong when pushing to the blockchain');
+                    //   collectionCtx.setNftIsLoading(false);  
+                })
 
         } catch (error) {
             console.log(error);
@@ -136,37 +137,37 @@ class NewCollectionToken extends Component {
     render() {
         return (
             <React.Fragment>
-                <div>
-                    <form onSubmit={(e) => this.handleSubmit(e)}>
-                        <div className="row justify-content-center">
-                            <div className="col-md-2">
+                <div className="row">
+                    <div className="col">
+                        <form onSubmit={(e) => this.handleSubmit(e)}>
+                            <div className="mb-3">
                                 <input
-                                    type='text'
-                                    className='mb-1'
-                                    placeholder='Name...'
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Name..."
                                     value={this.state.name}
                                     onChange={(e) => this.onChangeName(e)}
                                 />
                             </div>
-                            <div className="col-md-6">
+                            <div className="mb-3">
                                 <input
-                                    type='text'
-                                    className='mb-1'
-                                    placeholder='Description...'
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Description..."
                                     value={this.state.description}
                                     onChange={(e) => this.onChangeDescription(e)}
                                 />
                             </div>
-                            <div className="col-md-2">
+                            <div className="mb-3">
                                 <input
-                                    type='file'
-                                    className='mb-1'
+                                    type="file"
+                                    className="form-control"
                                     onChange={(e) => this.onChangeFile(e)}
                                 />
                             </div>
-                        </div>
-                        <button type='submit' className='btn btn-lg btn-info text-white btn-block'>Mint</button>
-                    </form>
+                            <button type="submit" className="btn btn-primary">Mint</button>
+                        </form>
+                    </div>
                 </div>
             </React.Fragment>
         );

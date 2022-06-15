@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import NFTCollection from "../abis/NFTCollection.json";
-import getWeb3 from "../getWeb3";
+//import getWeb3 from "../getWeb3";
 import { withRouter } from "../hooksHandler";
+import web3 from '../connection/web3';
 
 class CollectionDetail extends Component {
     state = {
@@ -20,18 +21,18 @@ class CollectionDetail extends Component {
         try {
 
             // Get network provider and web3 instance.
-            this.web3 = await getWeb3();
+            //this.web3 = await getWeb3();
 
             // Get the contract instance.
-            this.networkId = await this.web3.eth.net.getId();
+            this.networkId = await web3.eth.net.getId();
 
             // Use web3 to get the user's accounts.
-            this.accounts = await this.web3.eth.getAccounts();
+            this.accounts = await web3.eth.getAccounts();
 
             // Get the contract instance.
-            this.networkId = await this.web3.eth.net.getId();
+            this.networkId = await web3.eth.net.getId();
 
-            this.NFTCollectionInstance = new this.web3.eth.Contract(
+            this.NFTCollectionInstance = new web3.eth.Contract(
                 NFTCollection.abi,
                 this.state.collectionAddress
             );

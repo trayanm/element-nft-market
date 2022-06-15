@@ -3,22 +3,15 @@ pragma solidity ^0.8.0;
 
 // import "@openzeppelin/contracts/access/Ownable.sol";
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
+//import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
+
 import './NFTCollection.sol';
 
 contract Marketplace {
-    bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
     using SafeMath for uint256;
-
-    // Ownable: to handle fees and withdraw
-
-    // Actions:
-    // Submit offer
-    // Cancel offer
-    // Bid - use time-machine
-    // Finish offer (fee)
+    bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
 
     // Fees
-    // TODO : ask about fees decimal value
     uint256 public constant FEE_SELL_PERCENTAGE = 3; // percentage of buy price
 
     // Enums
@@ -55,7 +48,6 @@ contract Marketplace {
         uint256 collectionId; // TODO : Check if needed
         address collectionAddress; // ERC721 token of the collection
         address ownerAddress;
-        bool isUserCollection; // Describes whenever the collection is created by user. // TODO : Check if needed
     }
 
     // properties
@@ -85,51 +77,41 @@ contract Marketplace {
     event onCollectionCreated(uint256 indexed collectionId, address indexed collectionAddress, address indexed ownerAddress);
     // --
 
-    // TODO : Optimize field positions
-    // -- Auction fields
     // auctionId => AuctionItem
     mapping(uint256 => AuctionItem) auctionStore;
-    uint256 public auctionCount = 0;
-    // --
-
-    // -- Collecction Fields
-    // ownerAddress => (collectionId => isOwner)
-    mapping(address => mapping(uint256 => bool)) usercollections;
-
-    // Array of collection Contracts
+    
     // collectionId => CollectionItem
     mapping(uint256 => CollectionItem) collectionStore;
+
+
+    uint256 public auctionCount = 0;
     uint256 public collectionCount = 0;
-    // --
+
+    // ownerAddress => (collectionId => isOwner)
+    mapping(address => mapping(uint256 => bool)) usercollections;
 
     // collectionAddress => uint256[auctionId]
     mapping(address => uint256[]) collectionToAcutions;
 
     // -- Modifiers
-    modifier requireCollectionOwner(uint256 _collectionId) {
-        require(usercollections[msg.sender][_collectionId], 'Not collection owner');
-        _;
-    }
-
+    // modifier requireCollectionOwner(uint256 _collectionId) {
+    //     require(usercollections[msg.sender][_collectionId], 'Not collection owner');
+    //     _;
+    // }
     // --
 
-    constructor() public {
-        // deploy NFT Collection contract
-        // add newly deployed contract to collection array
-        // _createCollection('TTM Collection', 'TTM', address(this), false);
-    }
+    // constructor() public {
+    //     // deploy NFT Collection contract
+    //     // add newly deployed contract to collection array
+    //     // _createCollection('TTM Collection', 'TTM', address(this), false);
+    // }
 
     // -- Collection management
-    function createCollection(string memory _name, string memory _symbol) public returns (address) {
-        return _createCollection(_name, _symbol, msg.sender, true);
-    }
+    // function createCollection(string memory _name, string memory _symbol) public returns (address) {
+    //     return _createCollection(_name, _symbol);
+    // }
 
-    function _createCollection(
-        string memory _name,
-        string memory _symbol,
-        address _ownerAddress,
-        bool _isUserCollection
-    ) internal returns (address) {
+    function createCollection(string memory _name, string memory _symbol) public returns (address) {
         NFTCollection collectionContract = new NFTCollection(_name, _symbol);
         // grant role
         collectionContract.grantRole(MINTER_ROLE, msg.sender);
@@ -139,12 +121,12 @@ contract Marketplace {
         address _collectionAddress = address(collectionContract);
 
         uint256 _collectionId = collectionCount;
-        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, _ownerAddress, _isUserCollection);
+        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender);
         collectionCount = collectionCount.add(1);
 
-        usercollections[_ownerAddress][_collectionId] = true;
+        usercollections[msg.sender][_collectionId] = true;
 
-        emit onCollectionCreated(_collectionId, _collectionAddress, _ownerAddress);
+        emit onCollectionCreated(_collectionId, _collectionAddress, msg.sender);
 
         return _collectionAddress;
     }
@@ -152,9 +134,6 @@ contract Marketplace {
     function getCollection(uint256 _collectionId) public view returns (CollectionItem memory) {
         return collectionStore[_collectionId];
     }
-
-    // get items for collection (filters) TODO: think of EF like logic
-    // get top items from collection ???
     // --
 
     // -- Auction Management

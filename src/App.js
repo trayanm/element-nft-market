@@ -5,7 +5,8 @@ import Footer from "./layout/Footer";
 import NavBar from "./layout/NavBar";
 import logo from './img/logo2.png'
 
-import getWeb3 from "./getWeb3";
+//import getWeb3 from "./getWeb3";
+import web3 from './connection/web3'
 import Marketplace from "./abis/Marketplace.json";
 
 import AppContext from "./store/app-context";
@@ -21,16 +22,25 @@ import NewCollection from "./pages/NewCollection";
 import NewCollectionToken from "./pages/NewCollectionToken";
 
 class App extends Component {
+  static contextType = AppContext;
 
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
-      this.web3 = await getWeb3();
+      //this.web3 = await getWeb3();
 
       // Get the contract instance.
-      this.networkId = await this.web3.eth.net.getId();
+      this.networkId = await web3.eth.net.getId();
+      this.context.setNetworkId(this.networkId);
 
-      this.MarketplaceInstance = new this.web3.eth.Contract(
+      // Use web3 to get the user's accounts.
+      this.accounts = await web3.eth.getAccounts();
+      this.context.setAccount(this.accounts[0]);
+
+      this.accoutnBalance = await web3.eth.getBalance(this.accounts[0]);
+      this.context.setAccountBalance(this.accoutnBalance);
+
+      this.MarketplaceInstance = new web3.eth.Contract(
         Marketplace.abi,
         Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
       );
@@ -40,6 +50,7 @@ class App extends Component {
         console.log('accountsChanged', accounts);
         // web3Ctx.loadAccount(web3);
         // accounts[0] && marketplaceCtx.loadUserFunds(mktContract, accounts[0]);
+        this.context.setAccount(accounts[0]);
       });
 
       // Metamask Event Subscription - Network changed
@@ -68,11 +79,11 @@ class App extends Component {
 
   render() {
     return (
-      <AppProvider >
+      <div>
         <NavBar />
         <div className="container-fluid mt-2">
           <div className="row">
-            <main role="main" className="col-lg-12 justify-content-center text-center">
+            <main role="main" className="col-lg-12">
               <div className="content mr-auto ml-auto">
                 <img src={logo} alt="logo" width="500" height="140" className="mb-2" />
                 <Routes >
@@ -91,7 +102,7 @@ class App extends Component {
           <hr />
         </div>
         <Footer />
-      </AppProvider >
+      </div>
     );
   }
 }
