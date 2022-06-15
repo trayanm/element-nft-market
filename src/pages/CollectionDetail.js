@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import NFTCollection from "../abis/NFTCollection.json";
 import getWeb3 from "../getWeb3";
 import { withRouter } from "../hooksHandler";
@@ -61,6 +62,7 @@ class CollectionDetail extends Component {
         let tokens = [];
 
         for (let i = 0; i < totalSupply; i++) {
+            const _id = i + 1;
             const hash = await this.NFTCollectionInstance.methods.tokenURIs(i).call();
             try {
                 const response = await fetch(`https://ipfs.infura.io/ipfs/${hash}?clear`);
@@ -71,10 +73,11 @@ class CollectionDetail extends Component {
                 const metadata = await response.json();
 
                 console.log('metadata', metadata);
-                const owner = await this.NFTCollectionInstance.methods.ownerOf(i + 1).call();
+                const owner = await this.NFTCollectionInstance.methods.ownerOf(_id).call();
+                // const approvedAddress = await this.NFTCollectionInstance.methods.getApproved(_id).call();
 
                 tokens = [{
-                    id: i + 1,
+                    id: _id,
                     title: metadata.properties.name.description,
                     img: metadata.properties.image.description,
                     owner: owner
@@ -84,18 +87,30 @@ class CollectionDetail extends Component {
             }
         }
 
-        console.log(this.state);
         this.state.tokens = tokens;
         this.setState(this.state);
-        console.log(this.state);
+    };
+
+    handleGiveApprive = async (event, id) => {
+        event.preventDefault();
+
+        await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.accounts[0] });
+    };
+
+    handleRevokeApprive = async (event, id) => {
+        event.preventDefault();
+
+        await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.accounts[0] });
     };
 
     render() {
-        console.log('render',this.state);
         return (
             <React.Fragment>
                 <div>
                     <h1>CollectionDetail: {this.state.collectionAddress}</h1>
+                </div>
+                <div>
+                    <Link to={'/collections/' + this.state.collectionAddress + '/new'} >Mint</Link>
                 </div>
                 <div className="row text-center">
                     {this.state.tokens.map((ele, inx) => (
@@ -104,6 +119,16 @@ class CollectionDetail extends Component {
                                 <h5 className="card-title">{ele.title} (ID:{ele.id})</h5>
                             </div>
                             <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} className="card-img-bottom" alt={`NFT ${inx}`} />
+                            <em>{ele.owner}</em>
+                            {ele.owner === this.accounts[0] &&
+                                <div>owner</div>
+                            }
+
+                            <div className="row">
+                                <div className="col">
+                                    {/* actions */}
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>

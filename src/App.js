@@ -14,7 +14,7 @@ import AppProvider from "./store/app-provider";
 import Home from "./pages/Home";
 import Some from "./pages/Some";
 import Error from "./pages/Error";
-import Collections from "./pages/Collections";
+import CollectionList from "./pages/CollectionList";
 import CollectionDetail from "./pages/CollectionDetail";
 import CollectionTokenDetail from "./pages/CollectionTokenDetail";
 import NewCollection from "./pages/NewCollection";
@@ -34,6 +34,18 @@ class App extends Component {
         Marketplace.abi,
         Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
       );
+
+      // Metamask Event Subscription - Account changed
+      window.ethereum.on('accountsChanged', (accounts) => {
+        console.log('accountsChanged', accounts);
+        // web3Ctx.loadAccount(web3);
+        // accounts[0] && marketplaceCtx.loadUserFunds(mktContract, accounts[0]);
+      });
+
+      // Metamask Event Subscription - Network changed
+      window.ethereum.on('chainChanged', (chainId) => {
+        window.location.reload();
+      });
 
       // Event subscription
       this.MarketplaceInstance.events.onCollectionCreated()
@@ -70,7 +82,7 @@ class App extends Component {
                   <Route path="/collections/:collectionAddress/new" element={<NewCollectionToken />} />
                   <Route path="/collections/:collectionAddress/:tokenId" element={<CollectionTokenDetail />} />
                   <Route path="/collections/new" element={<NewCollection />} />
-                  <Route path="/collections" element={<Collections />} />
+                  <Route path="/collections" element={<CollectionList />} />
                   <Route path="*" element={<Error />} />
                 </Routes>
               </div>

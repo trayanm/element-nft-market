@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Marketplace from "../abis/Marketplace.json";
 import getWeb3 from "../getWeb3";
 
-class Collections extends Component {
+class CollectionList extends Component {
     state = {
         collections: []
     };
@@ -67,4 +67,4 @@ class Collections extends Component {
     }
 }
 
-export default Collections;
+export default CollectionList;

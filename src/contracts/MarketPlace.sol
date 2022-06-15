@@ -6,6 +6,7 @@ import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import './NFTCollection.sol';
 
 contract Marketplace {
+    bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
     using SafeMath for uint256;
 
     // Ownable: to handle fees and withdraw
@@ -115,7 +116,7 @@ contract Marketplace {
     constructor() public {
         // deploy NFT Collection contract
         // add newly deployed contract to collection array
-        _createCollection('TTM Collection', 'TTM', address(this), false);
+        // _createCollection('TTM Collection', 'TTM', address(this), false);
     }
 
     // -- Collection management
@@ -130,6 +131,11 @@ contract Marketplace {
         bool _isUserCollection
     ) internal returns (address) {
         NFTCollection collectionContract = new NFTCollection(_name, _symbol);
+        // grant role
+        collectionContract.grantRole(MINTER_ROLE, msg.sender);
+        // approve the creator by default
+        collectionContract.setApprovalForAll(msg.sender, true);
+
         address _collectionAddress = address(collectionContract);
 
         uint256 _collectionId = collectionCount;
@@ -168,16 +174,19 @@ contract Marketplace {
 
         // create auction
         uint256 _auctionId = auctionCount;
-        AuctionItem memory auction;
-        auction.ownerAddress = msg.sender;
-        auction.collectionAddress = _collectionAddress;
-        auction.auctionId = _auctionId;
-        auction.id = _id;
-        auction.buyItNowPrice = _buyItNowPrice;
-        auction.auctionStatus = AuctionStatus.Running;
-        auction.auctionType = AuctionType.FixedPrice;
-
-        auctionStore[_auctionId] = auction;
+        auctionStore[_auctionId] = AuctionItem({
+            ownerAddress: msg.sender,
+            collectionAddress: _collectionAddress,
+            auctionId: _auctionId,
+            id: _id,
+            buyItNowPrice: _buyItNowPrice,
+            reservedPrice: 0,
+            initialPrice: 0,
+            minBidStep: 0,
+            maxBidStep: 0,
+            auctionStatus: AuctionStatus.Running,
+            auctionType: AuctionType.FixedPrice
+        });
 
         auctionCount = auctionCount.add(1);
 
@@ -197,7 +206,7 @@ contract Marketplace {
         require(_auction.auctionId == _auctionId, 'Auction does not exists');
         require(_auction.ownerAddress != msg.sender, 'Auction owner cannot buy it');
         require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
-        require(_auction.auctionType == AuctionType.FixedPrice || _auction.buyItNowPrice > 0, 'Buy now is not allowed');
+        require(_auction.buyItNowPrice > 0, 'Buy now is not allowed');
 
         require(msg.value == _auction.buyItNowPrice, 'Insufficient funds');
 

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import { withRouter } from "../hooksHandler";
 
 class CollectionTokenDetail extends Component {
@@ -26,6 +26,7 @@ class CollectionTokenDetail extends Component {
                 <div>
                     <h1>CollectionDetail: {this.state.collectionAddress}</h1>
                     <h1>tokenId: {this.state.tokenId}</h1>
+                    
                 </div>
             </React.Fragment>
         );

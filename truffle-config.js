@@ -7,7 +7,7 @@ module.exports = {
     ganache: {
       host: "127.0.0.1",
       port: 8545,
-      gas: 9000000,
+      gas     : 50000000,
       gasPrice: 25000000000,
       network_id: "*" //match any network id
     },
@@ -37,6 +37,7 @@ module.exports = {
   contracts_directory: './src/contracts',
   contracts_build_directory: './src/abis',
 
+  plugins: ["truffle-contract-size"],
   // Configure your compilers
   compilers: {
     solc: {
