@@ -4,8 +4,11 @@ import NFTCollection from "../abis/NFTCollection.json";
 //import getWeb3 from "../getWeb3";
 import { withRouter } from "../hooksHandler";
 import web3 from '../connection/web3';
+import AppContext from "../store/app-context";
 
 class CollectionDetail extends Component {
+    static contextType = AppContext;
+
     state = {
         collectionAddress: null,
         etherscanUrl: '',
@@ -37,16 +40,6 @@ class CollectionDetail extends Component {
                 this.state.collectionAddress
             );
 
-            if (this.networkId === 3) {
-                this.state.etherscanUrl = 'https://ropsten.etherscan.io'
-            } else if (this.networkId === 4) {
-                this.state.etherscanUrl = 'https://rinkeby.etherscan.io'
-            } else if (this.networkId === 5) {
-                this.state.etherscanUrl = 'https://goerli.etherscan.io'
-            } else {
-                this.state.etherscanUrl = 'https://etherscan.io'
-            }
-
             await this.loadTokens();
         } catch (error) {
             // Catch any errors for any of the above operations.
@@ -59,6 +52,9 @@ class CollectionDetail extends Component {
 
     loadTokens = async () => {
         const totalSupply = await this.NFTCollectionInstance.methods.totalSupply().call();
+
+        this.state.name = await this.NFTCollectionInstance.methods.name().call();
+        this.state.symbol = await this.NFTCollectionInstance.methods.symbol().call();
 
         let tokens = [];
 
@@ -81,6 +77,7 @@ class CollectionDetail extends Component {
                     id: _id,
                     title: metadata.properties.name.description,
                     img: metadata.properties.image.description,
+                    description: metadata.properties.description.description,
                     owner: owner
                 }, ...tokens];
             } catch {
@@ -92,13 +89,13 @@ class CollectionDetail extends Component {
         this.setState(this.state);
     };
 
-    handleGiveApprive = async (event, id) => {
+    handleGiveApprove = async (event, id) => {
         event.preventDefault();
 
         await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.accounts[0] });
     };
 
-    handleRevokeApprive = async (event, id) => {
+    handleRevokeApprove = async (event, id) => {
         event.preventDefault();
 
         await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.accounts[0] });
@@ -107,31 +104,65 @@ class CollectionDetail extends Component {
     render() {
         return (
             <React.Fragment>
-                <div>
-                    <h1>CollectionDetail: {this.state.collectionAddress}</h1>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="section-title">
+                            <h2 className="wow fadeInUp" data-wow-delay=".4s">{this.state.name} ({this.state.symbol})</h2>
+                            <p className="wow fadeInUp" data-wow-delay=".6s">Browse user collections.</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <Link to={'/collections/' + this.state.collectionAddress + '/new'} >Mint</Link>
-                </div>
-                <div className="row text-center">
-                    {this.state.tokens.map((ele, inx) => (
-                        <div key={inx} className="col-md-2 m-3 pb-3 card border-info">
-                            <div className={"card-body"}>
-                                <h5 className="card-title">{ele.title} (ID:{ele.id})</h5>
-                            </div>
-                            <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} className="card-img-bottom" alt={`NFT ${inx}`} />
-                            <em>{ele.owner}</em>
-                            {ele.owner === this.accounts[0] &&
-                                <div>owner</div>
-                            }
 
+                <div className="row">
+                    <div className="col-12">
+                        <div className="category-grid-list">
                             <div className="row">
-                                <div className="col">
-                                    {/* actions */}
+                                <div className="col-12">
+                                    <div className="tab-content" id="nav-tabContent">
+                                        <div className="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+                                            <div className="row">
+
+                                                {this.state.tokens.map((ele, inx) => (
+                                                    <div key={inx} className="col-lg-4 col-md-6 col-12">
+                                                        <div class="single-item-grid">
+                                                            <div class="image">
+                                                                <a href="item-details.html">
+                                                                    <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
+                                                                </a>
+                                                                <i class="cross-badge lni lni-bolt"></i>
+                                                                <span class="flat-badge sale">Sale</span>
+                                                            </div>
+                                                            <div class="content">
+                                                                <a href="javascript:void(0)" class="tag">{ele.description}</a>
+                                                                <h3 class="title">
+                                                                    <a href="item-details.html">{ele.title}</a>
+                                                                </h3>
+                                                                <ul class="info">
+                                                                    <li class="price">$890.00</li>
+                                                                    <li class="like">
+                                                                        <a href="javascript:void(0)"><i class="lni lni-heart"></i></a>
+                                                                    </li>
+                                                                    {ele.owner === this.accounts[0] &&
+                                                                        <li class="like">
+                                                                            <a href="javascript:void(0)" title="You own this token">
+                                                                                <i class="lni lni-user"></i>
+                                                                            </a>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                ))}
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    </div>
                 </div>
             </React.Fragment>
         );

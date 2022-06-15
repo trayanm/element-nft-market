@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { formatPrice } from "../helpers/utils";
+import { formatAddress, formatPrice } from "../helpers/utils";
 import AppContext from "../store/app-context";
-
+import web3 from '../connection/web3'
 
 class NavBar extends Component {
     static contextType = AppContext;
@@ -26,46 +26,77 @@ class NavBar extends Component {
     render() {
         return (
             <React.Fragment>
-                <em>conValue: {this.context.conValue}</em>
-                <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item"><Link className="nav-link small" to="/">Home</Link></li>
-                        <li className="nav-item"><Link className="nav-link small" to="/some">Some</Link></li>
-                        <li className="nav-item"><Link className="nav-link small" to="/collections">Collections</Link></li>
-                        <li className="nav-item"><Link className="nav-link small" to="/collections/new">New Collection</Link></li>
-                        <li className="nav-item"><Link className="nav-link small" to="/Profile">Profile</Link></li>
-                    </ul>
-                    <div className="d-flex me-2">
-                        {this.context.account &&
-                            <a
-                                className="nav-link small"
-                                href={`${this.context.etherscanUrl}/address/${this.context.account}`}
-                                target="blank"
-                                rel="noopener noreferrer"
-                            >
-                                {this.context.account.substr(0,7)}...${this.context.account.substr(this.context.account.length - 7)} ({formatPrice(this.context.accountBalance)})
-                            </a>}
-
-                        {!this.context.account &&
-                            <button
-                                type="button"
-                                className="btn btn-info text-white"
-                                onClick={this.connectWalletHandler}
-                            >
-                                Connect
-                            </button>
-                        }
-                        {this.context.userFunds > 0 &&
-                        <button
-                            type="button"
-                            className="btn btn-info btn-block navbar-btn text-white"
-                            onClick={this.claimFundsHandler}
-                        >
-                            {`Claim ${formatPrice(this.context.userFunds)} ETH`}
-                        </button>
-                        }
+                {/* Start Header Area */}
+                <header className="header navbar-area">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-lg-12">
+                                <div className="nav-inner">
+                                    <nav className="navbar navbar-expand-lg">
+                                        <a className="navbar-brand" href="index.html">
+                                            <img src="/assets/images/logo/logo.svg" alt="Logo" />
+                                        </a>
+                                        <button className="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                            aria-expanded="false" aria-label="Toggle navigation">
+                                            <span className="toggler-icon"></span>
+                                            <span className="toggler-icon"></span>
+                                            <span className="toggler-icon"></span>
+                                        </button>
+                                        <div className="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+                                            <ul id="nav" className="navbar-nav ms-auto">
+                                                <li className="nav-item"><Link to="/">Home</Link></li>
+                                                <li className="nav-item"><Link to="/some">Some</Link></li>
+                                                <li className="nav-item"><Link to="/collections">Collections</Link></li>
+                                                <li className="nav-item"><Link to="/collections/new">New Collection</Link></li>
+                                                <li className="nav-item"><Link to="/Profile">Profile</Link></li>
+                                            </ul>
+                                        </div>
+                                        {/* navbar collapse */}
+                                        <div className="login-button">
+                                            <ul>
+                                                <li>
+                                                    {this.context.account &&
+                                                        <a
+                                                            href={`${this.context.etherscanUrl}/address/${this.context.account}`}
+                                                            target="blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            {formatAddress(this.context.account)} ({ formatPrice(this.context.accountBalance)})
+                                                        </a>}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div className="button header-button">
+                                            {!this.context.account &&
+                                                <button
+                                                    type="button"
+                                                    className="btn"
+                                                    onClick={this.connectWalletHandler}
+                                                >
+                                                    Connect
+                                                </button>
+                                            }
+                                            {this.context.userFunds > 0 &&
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-info btn-block navbar-btn text-white"
+                                                    onClick={this.claimFundsHandler}
+                                                >
+                                                    {`Claim ${formatPrice(this.context.userFunds)} ETH`}
+                                                </button>
+                                            }
+                                        </div>
+                                    </nav>
+                                    {/* navbar */}
+                                </div>
+                            </div>
+                        </div>
+                        {/* row */}
                     </div>
-                </nav>
+                    {/* container */}
+                </header>
+                {/* End Header Area */}
             </React.Fragment>
         );
     }

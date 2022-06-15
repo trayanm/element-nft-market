@@ -4,8 +4,12 @@ import Marketplace from "../abis/Marketplace.json";
 //import getWeb3 from "../getWeb3";
 import { withRouter } from "../hooksHandler";
 import web3 from '../connection/web3';
+import AppContext from "../store/app-context";
+import { formatAddress } from "../helpers/utils";
 
 class CollectionList extends Component {
+    static contextType = AppContext;
+
     state = {
         collections: []
     };
@@ -64,13 +68,41 @@ class CollectionList extends Component {
         return (
             <React.Fragment>
                 <div className="row">
-                    <div className="col">
-                        {this.state.collections.map((ele, inx) => (
-                            <div key={inx} className="item-book">
-                                <h3>{ele.name}</h3>
-                                <Link to={'/collections/' + ele.collectionAddress} >{ele.collectionAddress}</Link>
+                    <div className="col-12">
+                        <div className="section-title">
+                            <h2 className="wow fadeInUp" data-wow-delay=".4s">Collections</h2>
+                            <p className="wow fadeInUp" data-wow-delay=".6s">Browse user collections.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-12">
+                        <div className="category-grid-list">
+                            <div className="row">
+                                <div className="col-12">
+                                    <div className="tab-content" id="nav-tabContent">
+                                        <div className="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+                                            <div className="row">
+
+                                                {this.state.collections.map((ele, inx) => (
+                                                    <div key={inx} className="col-lg-4 col-md-6 col-12">
+                                                        <div className="single-item-grid" >
+                                                            <div className="content">
+                                                                <h3 className="title">
+                                                                    <Link to={'/collections/' + ele.collectionAddress}>{formatAddress(ele.collectionAddress)}</Link>
+                                                                </h3>                                                          
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        ))}
+                        </div>
                     </div>
                 </div>
             </React.Fragment >

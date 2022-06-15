@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom'
 
 import Footer from "./layout/Footer";
 import NavBar from "./layout/NavBar";
-import logo from './img/logo2.png'
 
 //import getWeb3 from "./getWeb3";
 import web3 from './connection/web3'
@@ -81,27 +80,28 @@ class App extends Component {
     return (
       <div>
         <NavBar />
-        <div className="container-fluid mt-2">
-          <div className="row">
-            <main role="main" className="col-lg-12">
-              <div className="content mr-auto ml-auto">
-                <img src={logo} alt="logo" width="500" height="140" className="mb-2" />
-                <Routes >
-                  <Route exact path="/" element={<Home />} />
-                  <Route path="/some" element={<Some />} />
-                  <Route path="/collections/:collectionAddress" element={<CollectionDetail />} />
-                  <Route path="/collections/:collectionAddress/new" element={<NewCollectionToken />} />
-                  <Route path="/collections/:collectionAddress/:tokenId" element={<CollectionTokenDetail />} />
-                  <Route path="/collections/new" element={<NewCollection />} />
-                  <Route path="/collections" element={<CollectionList />} />
-                  <Route path="*" element={<Error />} />
-                </Routes>
-              </div>
-            </main>
+        {/* Start Pricing Table Area */}
+        <section className="pricing-table section">
+          <div className="container">
+            <Routes >
+              <Route exact path="/" element={<Home />} />
+              <Route path="/some" element={<Some />} />
+              <Route path="/collections/:collectionAddress" element={<CollectionDetail />} />
+              <Route path="/collections/:collectionAddress/new" element={<NewCollectionToken />} />
+              <Route path="/collections/:collectionAddress/:tokenId" element={<CollectionTokenDetail />} />
+              <Route path="/collections/new" element={<NewCollection />} />
+              <Route path="/collections" element={<CollectionList />} />
+              <Route path="*" element={<Error />} />
+            </Routes>
+
           </div>
-          <hr />
-        </div>
+        </section>
+        {/*/ End Pricing Table Area */}
         <Footer />
+        {/* scroll-top  */}
+        <a href="#" className="scroll-top btn-hover">
+          <i className="lni lni-chevron-up"></i>
+        </a>
       </div>
     );
   }

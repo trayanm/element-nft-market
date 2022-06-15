@@ -9,10 +9,15 @@ class Home extends Component {
 
         return (
             <React.Fragment>
-                <div>
-                    <h1>Home</h1>
-                    <em>conValue: {this.context.conValue}</em>
+            <div className="row">
+              <div className="col-12">
+                <div className="section-title">
+                  <h2 className="wow fadeInUp" data-wow-delay=".4s">Home</h2>
+                  <p className="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
+                    Ipsum available, but the majority have suffered alteration in some form.</p>
                 </div>
+              </div>
+            </div>
             </React.Fragment>
         );
     }
