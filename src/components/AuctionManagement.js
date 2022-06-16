@@ -23,6 +23,8 @@ class AuctionManagement extends Component {
                 return (
                     <React.Fragment>
                         <em>owner</em> | <em>auction</em>
+                        <span>Price</span>
+                        <button>Cancel</button>
                     </React.Fragment>
                 );
             }
@@ -30,6 +32,7 @@ class AuctionManagement extends Component {
                 return (
                     <React.Fragment>
                         <em>owner</em> | <em>no auction</em>
+                        <button>Sell</button>
                     </React.Fragment>
                 );
             }
@@ -39,13 +42,17 @@ class AuctionManagement extends Component {
                 return (
                     <React.Fragment>
                         <em>not owner</em> | <em>auction</em>
+                        <span>Price</span>
+                        <button>Buy</button>
                     </React.Fragment>
                 );
             }
             else {
                 return (
                     <React.Fragment>
-                        <em>not owner</em> | <em>no auction</em>
+                        <span>
+                            {/* nothing */}
+                        </span>
                     </React.Fragment>
                 );
             }

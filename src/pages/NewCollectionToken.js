@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom';
-import Marketplace from "../abis/Marketplace.json";
 import NFTCollection from "../abis/NFTCollection.json";
-//import getWeb3 from "../getWeb3";
 import ipfsClient from 'ipfs-http-client';
 import web3 from '../connection/web3';
 import { withRouter } from "../hooksHandler";
+import AppContext from "../store/app-context";
 
 const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 class NewCollectionToken extends Component {
+    static contextType = AppContext;
 
     state = {
         collectionAddress: null,
@@ -25,22 +24,24 @@ class NewCollectionToken extends Component {
 
     componentDidMount = async () => {
         try {
-            // Get network provider and web3 instance.
-            //this.web3 = await getWeb3();
+            // // Get network provider and web3 instance.
+            // //this.web3 = await getWeb3();
 
-            // Get the contract instance.
-            this.networkId = await web3.eth.net.getId();
+            // // Get the contract instance.
+            // this.networkId = await web3.eth.net.getId();
 
-            // Use web3 to get the user's accounts.
-            this.accounts = await web3.eth.getAccounts();
+            // // Use web3 to get the user's accounts.
+            // this.accounts = await web3.eth.getAccounts();
 
-            // Get the contract instance.
-            this.networkId = await web3.eth.net.getId();
+            // // Get the contract instance.
+            // this.networkId = await web3.eth.net.getId();
 
-            this.MarketplaceInstance = new web3.eth.Contract(
-                Marketplace.abi,
-                Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
-            );
+            // this.MarketplaceInstance = new web3.eth.Contract(
+            //     Marketplace.abi,
+            //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            // );
+
+            await this.context.checkStateAsync();
 
             this.NFTCollectionInstance = new web3.eth.Contract(
                 NFTCollection.abi,
@@ -113,13 +114,17 @@ class NewCollectionToken extends Component {
     };
 
     onChangeName = (event) => {
-        this.state.name = event.currentTarget.value;
-        this.setState(this.state);
+        const _state = this.state;
+
+        _state.name = event.currentTarget.value;
+        this.setState(_state);
     };
 
     onChangeDescription = (event) => {
-        this.state.description = event.currentTarget.value;
-        this.setState(this.state);
+        const _state = this.state;
+        
+        _state.description = event.currentTarget.value;
+        this.setState(_state);
     };
 
     onChangeFile = async (event) => {

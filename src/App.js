@@ -4,12 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 import Footer from "./layout/Footer";
 import NavBar from "./layout/NavBar";
 
-//import getWeb3 from "./getWeb3";
-import web3 from './connection/web3'
-import Marketplace from "./abis/Marketplace.json";
-
 import AppContext from "./store/app-context";
-import AppProvider from "./store/app-provider";
 
 import Home from "./pages/Home";
 import Some from "./pages/Some";
@@ -24,29 +19,30 @@ class App extends Component {
   static contextType = AppContext;
 
   componentDidMount = async () => {
-    console.log('componentDidMount: App');
     try {
-      // Get network provider and web3 instance.
-      //this.web3 = await getWeb3();
+      // // Get network provider and web3 instance.
+      // //this.web3 = await getWeb3();
 
-      // Get the contract instance.
-      this.networkId = await web3.eth.net.getId();
-      this.context.setNetworkId(this.networkId);
+      // // Get the contract instance.
+      // this.networkId = await web3.eth.net.getId();
+      // this.context.setNetworkId(this.networkId);
 
-      // Use web3 to get the user's accounts.
-      this.accounts = await web3.eth.getAccounts();
-      this.context.setAccount(this.accounts[0]);
+      // // Use web3 to get the user's accounts.
+      // this.accounts = await web3.eth.getAccounts();
+      // this.context.setAccount(this.accounts[0]);
 
-      this.accoutnBalance = await web3.eth.getBalance(this.accounts[0]);
-      this.context.setAccountBalance(this.accoutnBalance);
+      // this.accoutnBalance = await web3.eth.getBalance(this.accounts[0]);
+      // this.context.setAccountBalance(this.accoutnBalance);
 
-      this.MarketplaceInstance = new web3.eth.Contract(
-        Marketplace.abi,
-        Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
-      );
+      // this.MarketplaceInstance = new web3.eth.Contract(
+      //   Marketplace.abi,
+      //   Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+      // );
 
-      this.context.setMarketplaceInstance(this.MarketplaceInstance);
-      this.context.setMktIsLoading(false);
+      // this.context.setMarketplaceInstance(this.MarketplaceInstance);
+      // this.context.setMktIsLoading(false);
+
+      await this.context.checkStateAsync();
 
       // Metamask Event Subscription - Account changed
       window.ethereum.on('accountsChanged', (accounts) => {
@@ -62,7 +58,7 @@ class App extends Component {
       });
 
       // Event subscription
-      this.MarketplaceInstance.events.onCollectionCreated()
+      this.context.marketplaceInstance.events.onCollectionCreated()
         .on('data', (event) => {
           // collectionCtx.updateCollection(nftContract, event.returnValues.tokenId, event.returnValues.to);
           // collectionCtx.setNftIsLoading(false);
@@ -103,7 +99,7 @@ class App extends Component {
         {/*/ End Pricing Table Area */}
         <Footer />
         {/* scroll-top  */}
-        <a href="#" className="scroll-top btn-hover">
+        <a href="#!" className="scroll-top btn-hover">
           <i className="lni lni-chevron-up"></i>
         </a>
       </div>

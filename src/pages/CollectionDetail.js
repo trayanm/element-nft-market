@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import Marketplace from "../abis/Marketplace.json";
 import NFTCollection from "../abis/NFTCollection.json";
-//import getWeb3 from "../getWeb3";
 import { withRouter } from "../hooksHandler";
 import web3 from '../connection/web3';
 import AppContext from "../store/app-context";
@@ -42,6 +40,8 @@ class CollectionDetail extends Component {
             //     Marketplace.abi,
             //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
             // );
+
+            await this.context.checkStateAsync();
 
             this.NFTCollectionInstance = new web3.eth.Contract(
                 NFTCollection.abi,
@@ -165,7 +165,6 @@ class CollectionDetail extends Component {
                                                     const auction = this.state.auctions ? this.state.auctions.find(auction => auction.id === ele.id) : -1;
                                                     //const buyItNowPrice = auctionIndex !== -1 ? formatPrice(marketplaceCtx.auctions[auctionIndex].buyItNowPrice).toFixed(2) : null;
 
-                                                    console.log('auction', auction);
                                                     return (
                                                         <div key={inx} className="col-lg-4 col-md-6 col-12">
                                                             <div className="single-item-grid">
@@ -179,7 +178,7 @@ class CollectionDetail extends Component {
                                                                     <span className="flat-badge sale">Sale</span>
                                                                 </div>
                                                                 <div className="content">
-                                                                    <a href="#" className="tag">{ele.description}</a>
+                                                                    <a href="#!" className="tag">{ele.description}</a>
                                                                     <h3 className="title">
                                                                         <a href="item-details.html">{ele.title}</a>
                                                                     </h3>
@@ -196,7 +195,7 @@ class CollectionDetail extends Component {
                                                                     <ul className="info">
                                                                         <li className="price">$890.00</li>
                                                                         <li className="like">
-                                                                            <a href="#"><i className="lni lni-heart"></i></a>
+                                                                            <a href="#!"><i className="lni lni-heart"></i></a>
                                                                         </li>
                                                                     </ul>
 

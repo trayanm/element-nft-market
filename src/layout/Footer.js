@@ -14,20 +14,20 @@ class Footer extends Component {
                                     <div className="col-12">
                                         <div className="content">
                                             <ul className="footer-bottom-links">
-                                                <li><a href="#">Terms of use</a></li>
-                                                <li><a href="#"> Privacy Policy</a></li>
-                                                <li><a href="#">Advanced Search</a></li>
-                                                <li><a href="#">Site Map</a></li>
-                                                <li><a href="#">Information</a></li>
+                                                <li><a href="#!">Terms of use</a></li>
+                                                <li><a href="#!">Privacy Policy</a></li>
+                                                <li><a href="#!">Advanced Search</a></li>
+                                                <li><a href="#!">Site Map</a></li>
+                                                <li><a href="#!">Information</a></li>
                                             </ul>
                                             <p className="copyright-text">
                                                 © {new Date().getFullYear()} Copyright
                                             </p>
                                             <ul className="footer-social">
-                                                <li><a href="#"><i className="lni lni-facebook-filled"></i></a></li>
-                                                <li><a href="#"><i className="lni lni-twitter-original"></i></a></li>
-                                                <li><a href="#"><i className="lni lni-youtube"></i></a></li>
-                                                <li><a href="#"><i className="lni lni-linkedin-original"></i></a></li>
+                                                <li><a href="#!"><i className="lni lni-facebook-filled"></i></a></li>
+                                                <li><a href="#!"><i className="lni lni-twitter-original"></i></a></li>
+                                                <li><a href="#!"><i className="lni lni-youtube"></i></a></li>
+                                                <li><a href="#!"><i className="lni lni-linkedin-original"></i></a></li>
                                             </ul>
                                         </div>
                                     </div>

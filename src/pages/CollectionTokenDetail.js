@@ -1,8 +1,11 @@
 import React, { Component } from "react";
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { withRouter } from "../hooksHandler";
+import AppContext from "../store/app-context";
 
 class CollectionTokenDetail extends Component {
+    static contextType = AppContext;
+
     state = {
         collectionAddress: null,
         tokenId: null
@@ -16,7 +19,7 @@ class CollectionTokenDetail extends Component {
     }
 
     componentDidMount = async () => {
-
+        await this.context.checkStateAsync();
     };
 
     render() {

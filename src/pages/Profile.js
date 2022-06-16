@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import { withRouter } from "../hooksHandler";
+import AppContext from "../store/app-context";
 
 class Profile extends Component {
+    static contextType = AppContext;
+
+    componentDidMount = async () => {
+        await this.context.checkStateAsync();
+    };
+
     render() {
         return (
             <React.Fragment>

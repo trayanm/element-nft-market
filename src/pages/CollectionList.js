@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import Marketplace from "../abis/Marketplace.json";
-//import getWeb3 from "../getWeb3";
 import { withRouter } from "../hooksHandler";
-import web3 from '../connection/web3';
 import AppContext from "../store/app-context";
 import { formatAddress } from "../helpers/utils";
 
@@ -32,7 +29,7 @@ class CollectionList extends Component {
 
             //this.MarketplaceInstance = this.context.marketplaceInstance;
 
-            //this.context.checkState();
+            await this.context.checkStateAsync();
 
             await this.loadCollections();
         } catch (error) {
@@ -57,8 +54,6 @@ class CollectionList extends Component {
 
         this.state.collections = collections;
         this.setState(this.state);
-
-        console.log('this.state.collections', this.state.collections);
     };
 
     render() {
@@ -88,7 +83,7 @@ class CollectionList extends Component {
                                                             <div className="content">
                                                                 <h3 className="title">
                                                                     <Link to={'/collections/' + ele.collectionAddress}>{formatAddress(ele.collectionAddress)}</Link>
-                                                                </h3>                                                          
+                                                                </h3>
                                                             </div>
                                                         </div>
                                                     </div>

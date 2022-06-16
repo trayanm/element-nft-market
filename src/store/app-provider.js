@@ -1,8 +1,12 @@
 import React from "react";
+import web3 from "../connection/web3";
 import AppContext from "./app-context";
+import Marketplace from "../abis/Marketplace.json";
 
 class AppProvider extends React.Component {
     state = {
+        checkState: null,
+
         account: null,
         setAccount: null,
 
@@ -16,72 +20,85 @@ class AppProvider extends React.Component {
         marketplaceInstance: null,
         setMarketplaceInstance: null,
 
-        mktIsLoading: true,
-
-        // test
-        conValue: null,
+        mktIsLoading: true
     };
 
     setMktIsLoading = (mktIsLoading) => {
-        this.state.mktIsLoading = mktIsLoading;
-        this.setState(this.state);
+        const _state = this.state;
+        _state.mktIsLoading = mktIsLoading;
+        this.setState(_state);
     };
 
     setAccount = (account) => {
-        this.state.account = account;
-        this.setState(this.state);
+        const _state = this.state;
+        _state.account = account;
+        this.setState(_state);
     };
 
     setAccountBalance = (accountBalance) => {
-        this.state.accountBalance = accountBalance;
-        this.setState(this.state);
+        const _state = this.state;
+        _state.accountBalance = accountBalance;
+        this.setState(_state);
     };
 
     setMarketplaceInstance = (marketplaceInstance) => {
-        this.state.marketplaceInstance = marketplaceInstance;
-        this.setState(this.state);
+        const _state = this.state;
+        _state.marketplaceInstance = marketplaceInstance;
+        this.setState(_state);
     };
 
     setNetworkId = (networkId) => {
-        console.log('setNetworkId', networkId);
+        const _state = this.state;
 
         switch (networkId) {
-            case 3: this.state.etherscanUrl = 'https://ropsten.etherscan.io';
+            case 3: _state.etherscanUrl = 'https://ropsten.etherscan.io';
                 break;
-            case 4: this.state.etherscanUrl = 'https://rinkeby.etherscan.io';
+            case 4: _state.etherscanUrl = 'https://rinkeby.etherscan.io';
                 break;
-            case 5: this.state.etherscanUrl = 'https://goerli.etherscan.io';
+            case 5: _state.etherscanUrl = 'https://goerli.etherscan.io';
                 break;
             default:
-                this.state.etherscanUrl = 'https://etherscan.io';
+                _state.etherscanUrl = 'https://etherscan.io';
                 break;
         }
 
-        this.state.networkId = networkId;
-        this.setState(this.state);
-
-        console.log(this.state);
-    };
-
-    setConValue = (conValue) => {
-        this.state.conValue = conValue;
-        this.setState((prevState) => this.state);
+        _state.networkId = networkId;
+        this.setState(_state);
     };
 
     componentDidMount = () => {
-        console.log('componentDidMount: AppProvider');
+    };
 
-        this.state.conValue = 'set from provider';
-        this.setState(this.state);
+    checkStateAsync = async () => {
+        if (this.state.mktIsLoading === true) {
+            const _state = this.state;
+
+            _state.networkId = await web3.eth.net.getId();
+            _state.accounts = await web3.eth.getAccounts();
+            _state.account = _state.accounts[0];
+            _state.accoutnBalance = await web3.eth.getBalance(_state.account);
+
+            _state.marketplaceInstance = new web3.eth.Contract(
+                Marketplace.abi,
+                Marketplace.networks[_state.networkId] && Marketplace.networks[_state.networkId].address
+            );
+
+            _state.mktIsLoading = false;
+            this.setState(_state);
+        }
+        else {
+            console.log('state is ok');
+        }
     };
 
     render() {
         const { children } = this.props;
-        const { conValue } = this.state;
 
         return (
             <AppContext.Provider
                 value={{
+                    checkStateAsync: this.checkStateAsync,
+
                     account: this.state.account,
                     setAccount: this.setAccount,
 
@@ -99,10 +116,7 @@ class AppProvider extends React.Component {
                     setMarketplaceInstance: this.setMarketplaceInstance,
 
                     mktIsLoading: this.state.mktIsLoading,
-                    setMktIsLoading: this.setMktIsLoading,
-
-                    conValue: this.state.conValue,
-                    setConValue: this.setConValue,
+                    setMktIsLoading: this.setMktIsLoading
                 }}>
                 {children}
             </AppContext.Provider>

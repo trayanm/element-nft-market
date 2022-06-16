@@ -1,6 +1,8 @@
 import React from 'react';
 
 const AppContext = React.createContext({
+    checkStateAsync: null,
+
     account: null,
     setAccount: null,
 
@@ -14,10 +16,8 @@ const AppContext = React.createContext({
     marketplaceInstance: null,
     setMarketplaceInstance: null,
 
-    mktIsLoading: false,
-    setMktIsLoading : null,
-
-    conValue: ''
+    mktIsLoading: true,
+    setMktIsLoading : null
 });
 
 export default AppContext;
