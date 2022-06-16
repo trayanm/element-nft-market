@@ -24,6 +24,7 @@ class App extends Component {
   static contextType = AppContext;
 
   componentDidMount = async () => {
+    console.log('componentDidMount: App');
     try {
       // Get network provider and web3 instance.
       //this.web3 = await getWeb3();
@@ -43,6 +44,9 @@ class App extends Component {
         Marketplace.abi,
         Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
       );
+
+      this.context.setMarketplaceInstance(this.MarketplaceInstance);
+      this.context.setMktIsLoading(false);
 
       // Metamask Event Subscription - Account changed
       window.ethereum.on('accountsChanged', (accounts) => {

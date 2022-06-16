@@ -30,25 +30,25 @@ class CollectionDetail extends Component {
             //this.web3 = await getWeb3();
 
             // Get the contract instance.
-            this.networkId = await web3.eth.net.getId();
+            //this.networkId = await web3.eth.net.getId();
 
             // Use web3 to get the user's accounts.
-            this.accounts = await web3.eth.getAccounts();
+            //this.accounts = await web3.eth.getAccounts();
 
             // Get the contract instance.
-            this.networkId = await web3.eth.net.getId();
+            // this.networkId = await web3.eth.net.getId();
 
-            this.MarketplaceInstance = new web3.eth.Contract(
-                Marketplace.abi,
-                Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
-            );
+            // this.MarketplaceInstance = new web3.eth.Contract(
+            //     Marketplace.abi,
+            //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            // );
 
             this.NFTCollectionInstance = new web3.eth.Contract(
                 NFTCollection.abi,
                 this.state.collectionAddress
             );
 
-            const canMint = await this.NFTCollectionInstance.methods.canMint(this.accounts[0]).call();
+            const canMint = await this.NFTCollectionInstance.methods.canMint(this.context.account).call();
             this.state.canMint = canMint;
 
             await this.loadTokens();
@@ -103,7 +103,7 @@ class CollectionDetail extends Component {
     };
 
     loadCollectionOffers = async () => {
-        const auctionIds = await this.MarketplaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+        const auctionIds = await this.context.marketplaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
 
         const auctions = [];
 
@@ -111,7 +111,7 @@ class CollectionDetail extends Component {
             for (let i = 0; i < auctionIds.length; i++) {
                 const _auctionId = auctionIds[i];
 
-                const auction = await this.MarketplaceInstance.methods.getAuction(_auctionId).call();
+                const auction = await this.context.marketplaceInstance.methods.getAuction(_auctionId).call();
 
                 if (auction) {
                     auctions.push(auction);
@@ -126,13 +126,13 @@ class CollectionDetail extends Component {
     handleGiveApprove = async (event, id) => {
         event.preventDefault();
 
-        await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.accounts[0] });
+        await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.context.account });
     };
 
     handleRevokeApprove = async (event, id) => {
         event.preventDefault();
 
-        await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.accounts[0] });
+        await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.context.account });
     };
 
     render() {
@@ -173,7 +173,7 @@ class CollectionDetail extends Component {
                                                                     <a href="item-details.html">
                                                                         <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
                                                                     </a>
-                                                                    {ele.owner === this.accounts[0] &&
+                                                                    {ele.owner === this.context.account &&
                                                                         <i className="cross-badge lni lni-user"></i>
                                                                     }
                                                                     <span className="flat-badge sale">Sale</span>
@@ -185,11 +185,11 @@ class CollectionDetail extends Component {
                                                                     </h3>
 
                                                                     <AuctionManagement token={ele} auction={auction} />
-                                                                    {/* {auction && ele.owner === this.accounts[0] &&
+                                                                    {/* {auction && ele.owner === this.context.account &&
 <button>Cancel</button>
 }
 
-{auction && ele.owner !== this.accounts[0] &&
+{auction && ele.owner !== this.context.account &&
 <button>Buy</button>
 } */}
 

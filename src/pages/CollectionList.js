@@ -16,20 +16,23 @@ class CollectionList extends Component {
 
     async componentDidMount() {
         try {
-            console.log('componentDidMount: CollectionList');
             // Get network provider and web3 instance.
             //this.web3 = web3;
 
             // Use web3 to get the user's accounts.
-            this.accounts = await web3.eth.getAccounts();
+            //this.accounts = await web3.eth.getAccounts();
 
             // Get the contract instance.
-            this.networkId = await web3.eth.net.getId();
+            //this.networkId = await web3.eth.net.getId();
 
-            this.MarketplaceInstance = new web3.eth.Contract(
-                Marketplace.abi,
-                Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
-            );
+            // this.MarketplaceInstance = new web3.eth.Contract(
+            //     Marketplace.abi,
+            //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            // );
+
+            //this.MarketplaceInstance = this.context.marketplaceInstance;
+
+            //this.context.checkState();
 
             await this.loadCollections();
         } catch (error) {
@@ -42,12 +45,12 @@ class CollectionList extends Component {
     };
 
     loadCollections = async () => {
-        const collectionCount = await this.MarketplaceInstance.methods.collectionCount().call();
+        const collectionCount = await this.context.marketplaceInstance.methods.collectionCount().call();
 
         const collections = [];
 
         for (let index = 0; index < collectionCount; index++) {
-            const collection = await this.MarketplaceInstance.methods.getCollection(index).call();
+            const collection = await this.context.marketplaceInstance.methods.getCollection(index).call();
 
             collections.push(collection);
         }

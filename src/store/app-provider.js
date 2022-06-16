@@ -13,21 +13,38 @@ class AppProvider extends React.Component {
 
         etherscanUrl: null,
 
+        marketplaceInstance: null,
+        setMarketplaceInstance: null,
+
+        mktIsLoading: true,
+
         // test
         conValue: null,
     };
 
-    setAccount = async (account) => {
+    setMktIsLoading = (mktIsLoading) => {
+        this.state.mktIsLoading = mktIsLoading;
+        this.setState(this.state);
+    };
+
+    setAccount = (account) => {
         this.state.account = account;
         this.setState(this.state);
     };
 
-    setAccountBalance = async (accountBalance) => {
+    setAccountBalance = (accountBalance) => {
         this.state.accountBalance = accountBalance;
         this.setState(this.state);
     };
 
-    setNetworkId = async (networkId) => {
+    setMarketplaceInstance = (marketplaceInstance) => {
+        this.state.marketplaceInstance = marketplaceInstance;
+        this.setState(this.state);
+    };
+
+    setNetworkId = (networkId) => {
+        console.log('setNetworkId', networkId);
+
         switch (networkId) {
             case 3: this.state.etherscanUrl = 'https://ropsten.etherscan.io';
                 break;
@@ -46,12 +63,14 @@ class AppProvider extends React.Component {
         console.log(this.state);
     };
 
-    setConValue = async (conValue) => {
+    setConValue = (conValue) => {
         this.state.conValue = conValue;
         this.setState((prevState) => this.state);
     };
 
-    componentDidMount = async () => {
+    componentDidMount = () => {
+        console.log('componentDidMount: AppProvider');
+
         this.state.conValue = 'set from provider';
         this.setState(this.state);
     };
@@ -75,6 +94,12 @@ class AppProvider extends React.Component {
                     setAccountBalance: this.setAccountBalance,
 
                     etherscanUrl: this.state.etherscanUrl,
+
+                    marketplaceInstance: this.state.marketplaceInstance,
+                    setMarketplaceInstance: this.setMarketplaceInstance,
+
+                    mktIsLoading: this.state.mktIsLoading,
+                    setMktIsLoading: this.setMktIsLoading,
 
                     conValue: this.state.conValue,
                     setConValue: this.setConValue,

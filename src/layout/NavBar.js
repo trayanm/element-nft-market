@@ -33,7 +33,7 @@ class NavBar extends Component {
                             <div className="col-lg-12">
                                 <div className="nav-inner">
                                     <nav className="navbar navbar-expand-lg">
-                                        <a className="navbar-brand" href="index.html">
+                                        <a className="navbar-brand" href="/">
                                             <img src="/assets/images/logo/logo.svg" alt="Logo" />
                                         </a>
                                         <button className="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse"
@@ -46,7 +46,7 @@ class NavBar extends Component {
                                         <div className="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                                             <ul id="nav" className="navbar-nav ms-auto">
                                                 <li className="nav-item"><Link to="/">Home</Link></li>
-                                                <li className="nav-item"><Link to="/some">Some</Link></li>
+                                                {/* <li className="nav-item"><Link to="/some">Some</Link></li> */}
                                                 <li className="nav-item"><Link to="/collections">Collections</Link></li>
                                                 <li className="nav-item"><Link to="/collections/new">New Collection</Link></li>
                                                 <li className="nav-item"><Link to="/Profile">Profile</Link></li>

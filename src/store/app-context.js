@@ -11,6 +11,12 @@ const AppContext = React.createContext({
     
     etherscanUrl: null,
 
+    marketplaceInstance: null,
+    setMarketplaceInstance: null,
+
+    mktIsLoading: false,
+    setMktIsLoading : null,
+
     conValue: ''
 });
 
