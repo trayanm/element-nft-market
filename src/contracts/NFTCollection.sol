@@ -12,6 +12,10 @@ contract NFTCollection is ERC721, ERC721Enumerable, AccessControl {
     mapping(string => bool) _tokenURIExists;
     mapping(uint256 => string) _tokenIdToTokenURI;
 
+    function canMint(address _address) public view returns (bool) {
+        return hasRole(MINTER_ROLE, _address);
+    }
+
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(MINTER_ROLE, _msgSender());

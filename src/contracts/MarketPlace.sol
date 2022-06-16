@@ -36,10 +36,10 @@ contract Marketplace {
         uint256 auctionId; // auction Id, is generated
         uint256 id; // token Id, is given
         uint256 buyItNowPrice; // buy now buyItNowPrice in case of type FixedPrice. Zero means - no buy now. Mandatory if Fixed price
-        uint256 reservedPrice; // buy out price below which the sell cannot happend (not used for now)
+        //uint256 reservedPrice; // buy out price below which the sell cannot happend (not used for now)
         uint256 initialPrice; // starting auction price (not used for now)
-        uint256 minBidStep; // minimum allowed bid step. Zero means - no min (not used for now)
-        uint256 maxBidStep; // maximum allowed bid step. Zero means - no max (not used for now)
+        //uint256 minBidStep; // minimum allowed bid step. Zero means - no min (not used for now)
+        //uint256 maxBidStep; // maximum allowed bid step. Zero means - no max (not used for now)
         AuctionStatus auctionStatus;
         AuctionType auctionType;
     }
@@ -79,10 +79,12 @@ contract Marketplace {
 
     // auctionId => AuctionItem
     mapping(uint256 => AuctionItem) auctionStore;
-    
+
+    // auctionId => (collectionId => AuctionItem)
+    // mapping(uint256 => mapping(uint256 => AuctionItem)) auctionStoreExt;
+
     // collectionId => CollectionItem
     mapping(uint256 => CollectionItem) collectionStore;
-
 
     uint256 public auctionCount = 0;
     uint256 public collectionCount = 0;
@@ -134,6 +136,7 @@ contract Marketplace {
     function getCollection(uint256 _collectionId) public view returns (CollectionItem memory) {
         return collectionStore[_collectionId];
     }
+
     // --
 
     // -- Auction Management
@@ -159,10 +162,10 @@ contract Marketplace {
             auctionId: _auctionId,
             id: _id,
             buyItNowPrice: _buyItNowPrice,
-            reservedPrice: 0,
+            //reservedPrice: 0,
             initialPrice: 0,
-            minBidStep: 0,
-            maxBidStep: 0,
+            //minBidStep: 0,
+            //maxBidStep: 0,
             auctionStatus: AuctionStatus.Running,
             auctionType: AuctionType.FixedPrice
         });
@@ -172,6 +175,10 @@ contract Marketplace {
         collectionToAcutions[_collectionAddress].push(_auctionId);
 
         emit onAuctionCreated(_auctionId, _id);
+    }
+
+    function getCollectionAuctions(address collectionAddress) public view returns (uint256[] memory) {
+        return collectionToAcutions[collectionAddress];
     }
 
     function getAuction(uint256 _auctionId) public view returns (AuctionItem memory) {

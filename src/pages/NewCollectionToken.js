@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import Marketplace from "../abis/Marketplace.json";
 import NFTCollection from "../abis/NFTCollection.json";
 //import getWeb3 from "../getWeb3";
@@ -137,6 +138,15 @@ class NewCollectionToken extends Component {
     render() {
         return (
             <React.Fragment>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="section-title">
+                            <h2 className="wow fadeInUp" data-wow-delay=".4s">New Token</h2>
+                            <p className="wow fadeInUp" data-wow-delay=".6s">Create new NFT token.</p>                            
+                        </div>
+                    </div>
+                </div>
+
                 <div className="row">
                     <div className="col">
                         <form onSubmit={(e) => this.handleSubmit(e)}>

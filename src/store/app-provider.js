@@ -3,11 +3,14 @@ import AppContext from "./app-context";
 
 class AppProvider extends React.Component {
     state = {
-        // connected account address
-        networkId: null,
         account: null,
-        accountBalance: null,
+        setAccount: null,
+
         userFunds: null,
+
+        networkId: null,
+        setNetworkId: null,
+
         etherscanUrl: null,
 
         // test
@@ -25,8 +28,6 @@ class AppProvider extends React.Component {
     };
 
     setNetworkId = async (networkId) => {
-        console.log('setNetworkId', networkId);
-
         switch (networkId) {
             case 3: this.state.etherscanUrl = 'https://ropsten.etherscan.io';
                 break;
@@ -70,10 +71,10 @@ class AppProvider extends React.Component {
                     networkId: this.state.networkId,
                     setNetworkId: this.setNetworkId,
 
-                    accountBalance : this.state.accountBalance,
-                    setAccountBalance : this.setAccountBalance,
+                    accountBalance: this.state.accountBalance,
+                    setAccountBalance: this.setAccountBalance,
 
-                    etherscanUrl:this.state.etherscanUrl,
+                    etherscanUrl: this.state.etherscanUrl,
 
                     conValue: this.state.conValue,
                     setConValue: this.setConValue,

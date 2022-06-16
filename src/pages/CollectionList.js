@@ -16,21 +16,15 @@ class CollectionList extends Component {
 
     async componentDidMount() {
         try {
-            console.log('componentDidMount: 1');
+            console.log('componentDidMount: CollectionList');
             // Get network provider and web3 instance.
             //this.web3 = web3;
-
-            console.log('componentDidMount: 2');
 
             // Use web3 to get the user's accounts.
             this.accounts = await web3.eth.getAccounts();
 
-            console.log('componentDidMount: 3');
-
             // Get the contract instance.
             this.networkId = await web3.eth.net.getId();
-
-            console.log('componentDidMount: 4');
 
             this.MarketplaceInstance = new web3.eth.Contract(
                 Marketplace.abi,

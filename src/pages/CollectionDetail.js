@@ -1,28 +1,31 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
+import Marketplace from "../abis/Marketplace.json";
 import NFTCollection from "../abis/NFTCollection.json";
 //import getWeb3 from "../getWeb3";
 import { withRouter } from "../hooksHandler";
 import web3 from '../connection/web3';
 import AppContext from "../store/app-context";
+import AuctionManagement from "../components/AuctionManagement";
 
 class CollectionDetail extends Component {
     static contextType = AppContext;
 
     state = {
         collectionAddress: null,
-        etherscanUrl: '',
-        tokens: []
+        auctions: [],
+        tokens: [],
+        canMint: false
     };
 
     constructor(props) {
         super(props);
+
         this.state.collectionAddress = props.params.collectionAddress;
     }
 
     componentDidMount = async () => {
         try {
-
             // Get network provider and web3 instance.
             //this.web3 = await getWeb3();
 
@@ -35,10 +38,18 @@ class CollectionDetail extends Component {
             // Get the contract instance.
             this.networkId = await web3.eth.net.getId();
 
+            this.MarketplaceInstance = new web3.eth.Contract(
+                Marketplace.abi,
+                Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            );
+
             this.NFTCollectionInstance = new web3.eth.Contract(
                 NFTCollection.abi,
                 this.state.collectionAddress
             );
+
+            const canMint = await this.NFTCollectionInstance.methods.canMint(this.accounts[0]).call();
+            this.state.canMint = canMint;
 
             await this.loadTokens();
         } catch (error) {
@@ -71,6 +82,7 @@ class CollectionDetail extends Component {
 
                 console.log('metadata', metadata);
                 const owner = await this.NFTCollectionInstance.methods.ownerOf(_id).call();
+
                 // const approvedAddress = await this.NFTCollectionInstance.methods.getApproved(_id).call();
 
                 tokens = [{
@@ -80,12 +92,34 @@ class CollectionDetail extends Component {
                     description: metadata.properties.description.description,
                     owner: owner
                 }, ...tokens];
+
             } catch {
                 console.error('Something went wrong');
             }
         }
 
         this.state.tokens = tokens;
+        this.setState(this.state);
+    };
+
+    loadCollectionOffers = async () => {
+        const auctionIds = await this.MarketplaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+
+        const auctions = [];
+
+        if (auctionIds.length > 0) {
+            for (let i = 0; i < auctionIds.length; i++) {
+                const _auctionId = auctionIds[i];
+
+                const auction = await this.MarketplaceInstance.methods.getAuction(_auctionId).call();
+
+                if (auction) {
+                    auctions.push(auction);
+                }
+            }
+        }
+
+        this.state.auctions = auctions;
         this.setState(this.state);
     };
 
@@ -109,6 +143,11 @@ class CollectionDetail extends Component {
                         <div className="section-title">
                             <h2 className="wow fadeInUp" data-wow-delay=".4s">{this.state.name} ({this.state.symbol})</h2>
                             <p className="wow fadeInUp" data-wow-delay=".6s">Browse user collections.</p>
+                            {this.state.canMint &&
+                                <p>
+                                    <Link to={'/collections/' + this.state.collectionAddress + '/new'}  >New token</Link>
+                                </p>
+                            }
                         </div>
                     </div>
                 </div>
@@ -122,39 +161,52 @@ class CollectionDetail extends Component {
                                         <div className="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
                                             <div className="row">
 
-                                                {this.state.tokens.map((ele, inx) => (
-                                                    <div key={inx} className="col-lg-4 col-md-6 col-12">
-                                                        <div class="single-item-grid">
-                                                            <div class="image">
-                                                                <a href="item-details.html">
-                                                                    <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
-                                                                </a>
-                                                                <i class="cross-badge lni lni-bolt"></i>
-                                                                <span class="flat-badge sale">Sale</span>
-                                                            </div>
-                                                            <div class="content">
-                                                                <a href="javascript:void(0)" class="tag">{ele.description}</a>
-                                                                <h3 class="title">
-                                                                    <a href="item-details.html">{ele.title}</a>
-                                                                </h3>
-                                                                <ul class="info">
-                                                                    <li class="price">$890.00</li>
-                                                                    <li class="like">
-                                                                        <a href="javascript:void(0)"><i class="lni lni-heart"></i></a>
-                                                                    </li>
-                                                                    {ele.owner === this.accounts[0] &&
-                                                                        <li class="like">
-                                                                            <a href="javascript:void(0)" title="You own this token">
-                                                                                <i class="lni lni-user"></i>
-                                                                            </a>
-                                                                        </li>
-                                                                    }
-                                                                </ul>
-                                                            </div>
-                                                        </div>
+                                                {this.state.tokens.map((ele, inx) => {
+                                                    const auction = this.state.auctions ? this.state.auctions.find(auction => auction.id === ele.id) : -1;
+                                                    //const buyItNowPrice = auctionIndex !== -1 ? formatPrice(marketplaceCtx.auctions[auctionIndex].buyItNowPrice).toFixed(2) : null;
 
-                                                    </div>
-                                                ))}
+                                                    console.log('auction', auction);
+                                                    return (
+                                                        <div key={inx} className="col-lg-4 col-md-6 col-12">
+                                                            <div className="single-item-grid">
+                                                                <div className="image">
+                                                                    <a href="item-details.html">
+                                                                        <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
+                                                                    </a>
+                                                                    {ele.owner === this.accounts[0] &&
+                                                                        <i className="cross-badge lni lni-user"></i>
+                                                                    }
+                                                                    <span className="flat-badge sale">Sale</span>
+                                                                </div>
+                                                                <div className="content">
+                                                                    <a href="#" className="tag">{ele.description}</a>
+                                                                    <h3 className="title">
+                                                                        <a href="item-details.html">{ele.title}</a>
+                                                                    </h3>
+
+                                                                    <AuctionManagement token={ele} auction={auction} />
+                                                                    {/* {auction && ele.owner === this.accounts[0] &&
+<button>Cancel</button>
+}
+
+{auction && ele.owner !== this.accounts[0] &&
+<button>Buy</button>
+} */}
+
+                                                                    <ul className="info">
+                                                                        <li className="price">$890.00</li>
+                                                                        <li className="like">
+                                                                            <a href="#"><i className="lni lni-heart"></i></a>
+                                                                        </li>
+                                                                    </ul>
+
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    );
+                                                })}
 
                                             </div>
                                         </div>

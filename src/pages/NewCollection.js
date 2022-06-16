@@ -75,12 +75,39 @@ class NewCollection extends Component {
     render() {
         return (
             <React.Fragment>
-                <div>
-                    <form onSubmit={(e) => this.handleSubmit(e)}>
-                        <input type="text" value={this.state.name} onChange={(e) => this.onChangeName(e)} />
-                        <input type="text" value={this.state.symbol} onChange={(e) => this.onChangeSymbol(e)} />
-                        <button type="submit">Save</button>
-                    </form>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="section-title">
+                            <h2 className="wow fadeInUp" data-wow-delay=".4s">New Collection</h2>
+                            <p className="wow fadeInUp" data-wow-delay=".6s">Create new collection.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col">
+                        <form onSubmit={(e) => this.handleSubmit(e)}>
+                            <div className="mb-3">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Name..."
+                                    value={this.state.name}
+                                    onChange={(e) => this.onChangeName(e)}
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Symbol..."
+                                    value={this.state.symbol}
+                                    onChange={(e) => this.onChangeSymbol(e)}
+                                />
+                            </div>
+                            <button type="submit" className="btn btn-primary">Save</button>
+                        </form>
+                    </div>
                 </div>
             </React.Fragment>
         );
