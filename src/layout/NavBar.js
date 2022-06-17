@@ -34,7 +34,7 @@ class NavBar extends Component {
                                 <div className="nav-inner">
                                     <nav className="navbar navbar-expand-lg">
                                         <a className="navbar-brand" href="/">
-                                            <img src="/assets/images/logo/logo.svg" alt="Logo" />
+                                            <img src="/assets/images/logo2.png" alt="Logo" />
                                         </a>
                                         <button className="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse"
                                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"

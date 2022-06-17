@@ -2,6 +2,7 @@ import React from "react";
 import web3 from "../connection/web3";
 import AppContext from "./app-context";
 import Marketplace from "../abis/Marketplace.json";
+import NFTCollection from "../abis/NFTCollection.json";
 
 class AppProvider extends React.Component {
     state = {
@@ -20,7 +21,29 @@ class AppProvider extends React.Component {
         marketplaceInstance: null,
         setMarketplaceInstance: null,
 
+        nftCollectionDictionary: {},
+
         mktIsLoading: true
+    };
+
+    getNftCollectionInstance = (collectionAddress) => {
+        const _state = this.state;
+
+        let result = null;
+        if (_state.nftCollectionDictionary[collectionAddress]) {
+            result = _state.nftCollectionDictionary[collectionAddress];
+        }
+        else {
+            result = new web3.eth.Contract(
+                NFTCollection.abi,
+                collectionAddress
+            );
+
+            _state.nftCollectionDictionary[collectionAddress] = result;
+            this.setState(_state);
+        }
+
+        return result;
     };
 
     setMktIsLoading = (mktIsLoading) => {
@@ -114,6 +137,8 @@ class AppProvider extends React.Component {
 
                     marketplaceInstance: this.state.marketplaceInstance,
                     setMarketplaceInstance: this.setMarketplaceInstance,
+
+                    getNftCollectionInstance: this.getNftCollectionInstance,
 
                     mktIsLoading: this.state.mktIsLoading,
                     setMktIsLoading: this.setMktIsLoading

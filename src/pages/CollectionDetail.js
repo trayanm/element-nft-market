@@ -5,6 +5,7 @@ import { withRouter } from "../hooksHandler";
 import web3 from '../connection/web3';
 import AppContext from "../store/app-context";
 import AuctionManagement from "../components/AuctionManagement";
+import AuctionPrice from "../components/AuctionPrice";
 
 class CollectionDetail extends Component {
     static contextType = AppContext;
@@ -43,10 +44,12 @@ class CollectionDetail extends Component {
 
             await this.context.checkStateAsync();
 
-            this.NFTCollectionInstance = new web3.eth.Contract(
-                NFTCollection.abi,
-                this.state.collectionAddress
-            );
+            this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress);
+
+            // this.NFTCollectionInstance = new web3.eth.Contract(
+            //     NFTCollection.abi,
+            //     this.state.collectionAddress
+            // );
 
             const canMint = await this.NFTCollectionInstance.methods.canMint(this.context.account).call();
             this.state.canMint = canMint;
@@ -169,9 +172,9 @@ class CollectionDetail extends Component {
                                                         <div key={inx} className="col-lg-4 col-md-6 col-12">
                                                             <div className="single-item-grid">
                                                                 <div className="image">
-                                                                    <a href="item-details.html">
+                                                                    <Link to={'/collections/' + this.state.collectionAddress + '/' + ele.id}>
                                                                         <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
-                                                                    </a>
+                                                                    </Link>
                                                                     {ele.owner === this.context.account &&
                                                                         <i className="cross-badge lni lni-user"></i>
                                                                     }
@@ -183,7 +186,9 @@ class CollectionDetail extends Component {
                                                                         <a href="item-details.html">{ele.title}</a>
                                                                     </h3>
 
-                                                                    <AuctionManagement token={ele} auction={auction} />
+                                                                    <AuctionPrice nft={ele} auction={auction} />
+
+                                                                    {/* <AuctionManagement nft={ele} auction={auction} collectionAddress={this.state.collectionAddress} /> */}
                                                                     {/* {auction && ele.owner === this.context.account &&
 <button>Cancel</button>
 }
@@ -192,13 +197,12 @@ class CollectionDetail extends Component {
 <button>Buy</button>
 } */}
 
-                                                                    <ul className="info">
-                                                                        <li className="price">$890.00</li>
-                                                                        <li className="like">
-                                                                            <a href="#!"><i className="lni lni-heart"></i></a>
-                                                                        </li>
-                                                                    </ul>
 
+                                                                    {/* <ul className="info">
+                                                                        <li className="price"><span>Initial</span><br />$890.00</li>
+                                                                        <li className="price"><span>High</span><br />$890.00</li>
+                                                                        <li className="price"><span>Buy now</span><br />$890.00</li>
+                                                                    </ul> */}
 
                                                                 </div>
                                                             </div>

@@ -16,6 +16,8 @@ const AppContext = React.createContext({
     marketplaceInstance: null,
     setMarketplaceInstance: null,
 
+    getNftCollectionInstance: null,
+
     mktIsLoading: true,
     setMktIsLoading : null
 });

@@ -43,10 +43,12 @@ class NewCollectionToken extends Component {
 
             await this.context.checkStateAsync();
 
-            this.NFTCollectionInstance = new web3.eth.Contract(
-                NFTCollection.abi,
-                this.state.collectionAddress
-            );
+            this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress);
+
+            // this.NFTCollectionInstance = new web3.eth.Contract(
+            //     NFTCollection.abi,
+            //     this.state.collectionAddress
+            // );
 
         } catch (error) {
             // Catch any errors for any of the above operations.

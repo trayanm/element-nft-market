@@ -143,6 +143,7 @@ contract Marketplace {
     function createAuction(
         address _collectionAddress,
         uint256 _id,
+        uint256 _initialPrice,
         uint256 _buyItNowPrice
     ) public {
         // transfer token to the market (this)
@@ -163,7 +164,7 @@ contract Marketplace {
             id: _id,
             buyItNowPrice: _buyItNowPrice,
             //reservedPrice: 0,
-            initialPrice: 0,
+            initialPrice: _initialPrice,
             //minBidStep: 0,
             //maxBidStep: 0,
             auctionStatus: AuctionStatus.Running,
