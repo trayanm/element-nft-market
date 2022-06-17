@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Navigate } from 'react-router-dom'
+import AuctionManagement from "../components/AuctionManagement";
+import AuctionPrice from "../components/AuctionPrice";
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
@@ -9,7 +11,8 @@ class CollectionTokenDetail extends Component {
     state = {
         collectionAddress: null,
         tokenId: null,
-        nft: null
+        nft: null,
+        auction: null,
     };
 
     constructor(props) {
@@ -26,6 +29,10 @@ class CollectionTokenDetail extends Component {
             await this.context.checkStateAsync();
 
             await this.loadNft();
+
+            if (this.state.nft) {
+                await this.loadAuction();
+            }
 
         } catch (error) {
             // Catch any errors for any of the above operations.
@@ -59,11 +66,29 @@ class CollectionTokenDetail extends Component {
             owner: owner
         };
 
-
         const _state = this.state;
 
         _state.nft = nft;
         this.setState(_state);
+    };
+
+    loadAuction = async () => {
+        //  TODO : Use context
+        const collectionAuctions = await this.context.marketplaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+
+        for (let i = 0; i < collectionAuctions.length; i++) {
+            const _auctionId = collectionAuctions[i];
+
+            const auction = await this.context.marketplaceInstance.methods.getAuction(_auctionId).call();
+
+            if (auction && auction.id == this.state.nft.id) {
+                const _state = this.state;
+
+                _state.auction = auction;
+                this.setState(_state);
+                break;
+            }
+        }
     };
 
     render() {
@@ -86,18 +111,17 @@ class CollectionTokenDetail extends Component {
                                     </div>
                                     <div className="col-lg-6 col-md-12 col-12">
                                         <div className="product-info">
-                                            <h2 className="title">MacBook Pro 13-inch</h2>
-                                            <p className="location"><i className="lni lni-map-marker"></i><a href="#!">New York, USA</a></p>
+                                            <h2 className="title">{this.state.nft.title}</h2>
                                             <h3 className="price">$999</h3>
                                             <div className="list-info">
-                                                <h4>Informations</h4>
-                                                <ul>
-                                                    <li><span>Condition:</span> New</li>
-                                                    <li><span>Brand:</span> Apple</li>
-                                                    <li><span>Model:</span> Mackbook Pro</li>
-                                                </ul>
+                                                <div>
+                                                    {this.state.nft.description}
+                                                </div>
                                             </div>
-                                            <div className="contact-info">
+                                            <div className="auction-options">
+                                                <AuctionManagement nft={this.state.nft} auction={this.state.auction} collectionAddress={this.state.collectionAddress} />
+                                            </div>
+                                            {/* <div className="contact-info">
                                                 <ul>
                                                     <li>
                                                         <a href="tel:+002562352589" className="call">
@@ -112,7 +136,7 @@ class CollectionTokenDetail extends Component {
                                                         </a>
                                                     </li>
                                                 </ul>
-                                            </div>
+                                            </div> */}
                                             <div className="social-share">
                                                 <h4>Share</h4>
                                                 <ul>

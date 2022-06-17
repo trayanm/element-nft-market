@@ -92,8 +92,11 @@ contract Marketplace {
     // ownerAddress => (collectionId => isOwner)
     mapping(address => mapping(uint256 => bool)) usercollections;
 
-    // collectionAddress => uint256[auctionId]
+    // collectionAddress => auctionId[]
     mapping(address => uint256[]) collectionToAcutions;
+
+    // collectionAddress => (tokenId => (auctionId => isOwner))
+    //mapping(address => mapping(uint256 => mapping(uint256 => bool))) tokenAuctions; // TODO : Confirm usage
 
     // -- Modifiers
     // modifier requireCollectionOwner(uint256 _collectionId) {
@@ -174,6 +177,9 @@ contract Marketplace {
         auctionCount = auctionCount.add(1);
 
         collectionToAcutions[_collectionAddress].push(_auctionId);
+
+        // collectionAddress => (tokenId => (auctionId => isOwner))
+        // tokenAuctions[_collectionAddress][_id][_auctionId] = true;
 
         emit onAuctionCreated(_auctionId, _id);
     }
