@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Navigate } from 'react-router-dom'
 import AuctionManagement from "../components/AuctionManagement";
-import AuctionPrice from "../components/AuctionPrice";
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
@@ -59,7 +58,7 @@ class CollectionTokenDetail extends Component {
         const owner = await this.NFTCollectionInstance.methods.ownerOf(this.state.tokenId).call();
 
         const nft = {
-            id: this.state.tokenId,
+            tokenId: this.state.tokenId,
             title: metadata.properties.name.description,
             img: metadata.properties.image.description,
             description: metadata.properties.description.description,
@@ -74,14 +73,14 @@ class CollectionTokenDetail extends Component {
 
     loadAuction = async () => {
         //  TODO : Use context
-        const collectionAuctions = await this.context.marketplaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+        const collectionAuctions = await this.context.MarketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
 
         for (let i = 0; i < collectionAuctions.length; i++) {
             const _auctionId = collectionAuctions[i];
 
-            const auction = await this.context.marketplaceInstance.methods.getAuction(_auctionId).call();
+            const auction = await this.context.MarketPlaceInstance.methods.getAuction(_auctionId).call();
 
-            if (auction && auction.id == this.state.nft.id) {
+            if (auction && auction.tokenId === this.state.nft.id) {
                 const _state = this.state;
 
                 _state.auction = auction;

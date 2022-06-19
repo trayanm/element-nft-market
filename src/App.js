@@ -34,21 +34,22 @@ class App extends Component {
       // this.accoutnBalance = await web3.eth.getBalance(this.accounts[0]);
       // this.context.setAccountBalance(this.accoutnBalance);
 
-      // this.MarketplaceInstance = new web3.eth.Contract(
-      //   Marketplace.abi,
-      //   Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+      // this.MarketPlaceInstance = new web3.eth.Contract(
+      //   MarketPlace.abi,
+      //   MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
       // );
 
-      // this.context.setMarketplaceInstance(this.MarketplaceInstance);
+      // this.context.setMarketPlaceInstance(this.MarketPlaceInstance);
       // this.context.setMktIsLoading(false);
 
       await this.context.checkStateAsync();
+      await this.context.refreshBlance();
 
       // Metamask Event Subscription - Account changed
       window.ethereum.on('accountsChanged', (accounts) => {
         console.log('accountsChanged', accounts);
         // web3Ctx.loadAccount(web3);
-        // accounts[0] && marketplaceCtx.loadUserFunds(mktContract, accounts[0]);
+        // accounts[0] && MarketPlaceCtx.loadUserFunds(mktContract, accounts[0]);
         this.context.setAccount(accounts[0]);
       });
 
@@ -58,7 +59,7 @@ class App extends Component {
       });
 
       // Event subscription
-      this.context.marketplaceInstance.events.onCollectionCreated()
+      this.context.MarketPlaceInstance.events.onCollectionCreated()
         .on('data', (event) => {
           // collectionCtx.updateCollection(nftContract, event.returnValues.tokenId, event.returnValues.to);
           // collectionCtx.setNftIsLoading(false);

@@ -3,6 +3,8 @@ import React from 'react';
 const AppContext = React.createContext({
     checkStateAsync: null,
 
+    refreshBlance: null,
+
     account: null,
     setAccount: null,
 
@@ -10,16 +12,16 @@ const AppContext = React.createContext({
 
     networkId: null,
     setNetworkId: null,
-    
+
     etherscanUrl: null,
 
-    marketplaceInstance: null,
-    setMarketplaceInstance: null,
+    MarketPlaceInstance: null,
+    setMarketPlaceInstance: null,
 
     getNftCollectionInstance: null,
 
     mktIsLoading: true,
-    setMktIsLoading : null
+    setMktIsLoading: null
 });
 
 export default AppContext;

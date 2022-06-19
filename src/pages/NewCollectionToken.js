@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import NFTCollection from "../abis/NFTCollection.json";
 import ipfsClient from 'ipfs-http-client';
-import web3 from '../connection/web3';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
@@ -36,9 +34,9 @@ class NewCollectionToken extends Component {
             // // Get the contract instance.
             // this.networkId = await web3.eth.net.getId();
 
-            // this.MarketplaceInstance = new web3.eth.Contract(
-            //     Marketplace.abi,
-            //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            // this.MarketPlaceInstance = new web3.eth.Contract(
+            //     MarketPlace.abi,
+            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
             // );
 
             await this.context.checkStateAsync();
@@ -101,14 +99,18 @@ class NewCollectionToken extends Component {
                 return;
             }
 
-            this.NFTCollectionInstance.methods.safeMint(metadataAdded.path).send({ from: this.accounts[0] })
-                .on('transactionHash', (hash) => {
-                    //   collectionCtx.setNftIsLoading(true);
-                })
-                .on('error', (e) => {
-                    window.alert('Something went wrong when pushing to the blockchain');
-                    //   collectionCtx.setNftIsLoading(false);  
-                })
+            // this.NFTCollectionInstance.methods.safeMint(metadataAdded.path).send({ from: this.context.account })
+            //     .on('transactionHash', (hash) => {
+            //         //   collectionCtx.setNftIsLoading(true);
+            //         this.context.refreshBlance();
+            //     })
+            //     .on('error', (e) => {
+            //         window.alert('Something went wrong when pushing to the blockchain');
+            //         //   collectionCtx.setNftIsLoading(false);  
+            //     });
+
+            await this.NFTCollectionInstance.methods.safeMint(metadataAdded.path).send({ from: this.context.account });
+            await this.context.refreshBlance();
 
         } catch (error) {
             console.log(error);
@@ -124,7 +126,7 @@ class NewCollectionToken extends Component {
 
     onChangeDescription = (event) => {
         const _state = this.state;
-        
+
         _state.description = event.currentTarget.value;
         this.setState(_state);
     };
@@ -149,7 +151,7 @@ class NewCollectionToken extends Component {
                     <div className="col-12">
                         <div className="section-title">
                             <h2 className="wow fadeInUp" data-wow-delay=".4s">New Token</h2>
-                            <p className="wow fadeInUp" data-wow-delay=".6s">Create new NFT token.</p>                            
+                            <p className="wow fadeInUp" data-wow-delay=".6s">Create new NFT token.</p>
                         </div>
                     </div>
                 </div>

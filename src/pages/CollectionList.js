@@ -22,12 +22,12 @@ class CollectionList extends Component {
             // Get the contract instance.
             //this.networkId = await web3.eth.net.getId();
 
-            // this.MarketplaceInstance = new web3.eth.Contract(
-            //     Marketplace.abi,
-            //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            // this.MarketPlaceInstance = new web3.eth.Contract(
+            //     MarketPlace.abi,
+            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
             // );
 
-            //this.MarketplaceInstance = this.context.marketplaceInstance;
+            //this.MarketPlaceInstance = this.context.MarketPlaceInstance;
 
             await this.context.checkStateAsync();
 
@@ -42,12 +42,12 @@ class CollectionList extends Component {
     };
 
     loadCollections = async () => {
-        const collectionCount = await this.context.marketplaceInstance.methods.collectionCount().call();
+        const collectionCount = await this.context.MarketPlaceInstance.methods.collectionCount().call();
 
         const collections = [];
 
         for (let index = 0; index < collectionCount; index++) {
-            const collection = await this.context.marketplaceInstance.methods.getCollection(index).call();
+            const collection = await this.context.MarketPlaceInstance.methods.getCollection(index).call();
 
             collections.push(collection);
         }

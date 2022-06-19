@@ -11,8 +11,8 @@ class NavBar extends Component {
         try {
             // Request account access
             //await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const accounts = await web3.eth.getAccounts();
-            this.context.setAccount(accounts[0]);
+            // const accounts = await web3.eth.getAccounts();
+            // this.context.setAccount(accounts[0]);
 
         } catch (error) {
             console.error(error);

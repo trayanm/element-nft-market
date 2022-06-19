@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import NFTCollection from "../abis/NFTCollection.json";
 import { withRouter } from "../hooksHandler";
-import web3 from '../connection/web3';
 import AppContext from "../store/app-context";
-import AuctionManagement from "../components/AuctionManagement";
 import AuctionPrice from "../components/AuctionPrice";
 
 class CollectionDetail extends Component {
@@ -37,9 +34,9 @@ class CollectionDetail extends Component {
             // Get the contract instance.
             // this.networkId = await web3.eth.net.getId();
 
-            // this.MarketplaceInstance = new web3.eth.Contract(
-            //     Marketplace.abi,
-            //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            // this.MarketPlaceInstance = new web3.eth.Contract(
+            //     MarketPlace.abi,
+            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
             // );
 
             await this.context.checkStateAsync();
@@ -106,7 +103,7 @@ class CollectionDetail extends Component {
     };
 
     loadCollectionOffers = async () => {
-        const auctionIds = await this.context.marketplaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+        const auctionIds = await this.context.MarketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
 
         const auctions = [];
 
@@ -114,7 +111,7 @@ class CollectionDetail extends Component {
             for (let i = 0; i < auctionIds.length; i++) {
                 const _auctionId = auctionIds[i];
 
-                const auction = await this.context.marketplaceInstance.methods.getAuction(_auctionId).call();
+                const auction = await this.context.MarketPlaceInstance.methods.getAuction(_auctionId).call();
 
                 if (auction) {
                     auctions.push(auction);
@@ -165,8 +162,8 @@ class CollectionDetail extends Component {
                                             <div className="row">
 
                                                 {this.state.tokens.map((ele, inx) => {
-                                                    const auction = this.state.auctions ? this.state.auctions.find(auction => auction.id === ele.id) : -1;
-                                                    //const buyItNowPrice = auctionIndex !== -1 ? formatPrice(marketplaceCtx.auctions[auctionIndex].buyItNowPrice).toFixed(2) : null;
+                                                    const auction = this.state.auctions ? this.state.auctions.find(auction => auction.tokenId === ele.id) : -1;
+                                                    //const buyItNowPrice = auctionIndex !== -1 ? formatPrice(MarketPlaceCtx.auctions[auctionIndex].buyItNowPrice).toFixed(2) : null;
 
                                                     return (
                                                         <div key={inx} className="col-lg-4 col-md-6 col-12">

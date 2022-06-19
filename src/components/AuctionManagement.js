@@ -70,7 +70,7 @@ class AuctionManagement extends Component {
             const initialPrice = this.context.web3.utils.toWei(this.state.initialPrice, 'ether');
             const buyItNowPrice = this.context.web3.utils.toWei(this.state.buyItNowPrice, 'ether');
 
-            await this.context.marketplaceInstance.methods.createAuction(
+            await this.context.MarketPlaceInstance.methods.createAuction(
                 this.state.collectionAddress,
                 this.state.nft.id,
                 initialPrice,

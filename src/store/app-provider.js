@@ -1,7 +1,7 @@
 import React from "react";
 import web3 from "../connection/web3";
 import AppContext from "./app-context";
-import Marketplace from "../abis/Marketplace.json";
+import MarketPlace from "../abis/MarketPlace.json";
 import NFTCollection from "../abis/NFTCollection.json";
 
 class AppProvider extends React.Component {
@@ -18,8 +18,8 @@ class AppProvider extends React.Component {
 
         etherscanUrl: null,
 
-        marketplaceInstance: null,
-        setMarketplaceInstance: null,
+        MarketPlaceInstance: null,
+        setMarketPlaceInstance: null,
 
         nftCollectionDictionary: {},
 
@@ -64,9 +64,9 @@ class AppProvider extends React.Component {
         this.setState(_state);
     };
 
-    setMarketplaceInstance = (marketplaceInstance) => {
+    setMarketPlaceInstance = (MarketPlaceInstance) => {
         const _state = this.state;
-        _state.marketplaceInstance = marketplaceInstance;
+        _state.MarketPlaceInstance = MarketPlaceInstance;
         this.setState(_state);
     };
 
@@ -101,9 +101,9 @@ class AppProvider extends React.Component {
             _state.account = _state.accounts[0];
             _state.accoutnBalance = await web3.eth.getBalance(_state.account);
 
-            _state.marketplaceInstance = new web3.eth.Contract(
-                Marketplace.abi,
-                Marketplace.networks[_state.networkId] && Marketplace.networks[_state.networkId].address
+            _state.MarketPlaceInstance = new web3.eth.Contract(
+                MarketPlace.abi,
+                MarketPlace.networks[_state.networkId] && MarketPlace.networks[_state.networkId].address
             );
 
             _state.mktIsLoading = false;
@@ -114,6 +114,11 @@ class AppProvider extends React.Component {
         }
     };
 
+    refreshBlance = async () => {
+        const accoutnBalance = await web3.eth.getBalance(this.state.account);
+        this.setAccountBalance(accoutnBalance);
+    };
+
     render() {
         const { children } = this.props;
 
@@ -121,6 +126,7 @@ class AppProvider extends React.Component {
             <AppContext.Provider
                 value={{
                     checkStateAsync: this.checkStateAsync,
+                    refreshBlance: this.refreshBlance,
 
                     account: this.state.account,
                     setAccount: this.setAccount,
@@ -135,8 +141,8 @@ class AppProvider extends React.Component {
 
                     etherscanUrl: this.state.etherscanUrl,
 
-                    marketplaceInstance: this.state.marketplaceInstance,
-                    setMarketplaceInstance: this.setMarketplaceInstance,
+                    MarketPlaceInstance: this.state.MarketPlaceInstance,
+                    setMarketPlaceInstance: this.setMarketPlaceInstance,
 
                     getNftCollectionInstance: this.getNftCollectionInstance,
 

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { withRouter } from "../hooksHandler";
-import web3 from '../connection/web3';
 import AppContext from "../store/app-context";
 
 class NewCollection extends Component {
@@ -25,13 +24,13 @@ class NewCollection extends Component {
             // // Get the contract instance.
             // this.networkId = await web3.eth.net.getId();
 
-            // this.MarketplaceInstance = new web3.eth.Contract(
-            //     Marketplace.abi,
-            //     Marketplace.networks[this.networkId] && Marketplace.networks[this.networkId].address
+            // this.MarketPlaceInstance = new web3.eth.Contract(
+            //     MarketPlace.abi,
+            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
             // );
 
-            // console.log(Marketplace.networks[this.networkId].address);
-            // console.log(this.MarketplaceInstance);
+            // console.log(MarketPlace.networks[this.networkId].address);
+            // console.log(this.MarketPlaceInstance);
 
             await this.context.checkStateAsync();
 
@@ -49,12 +48,13 @@ class NewCollection extends Component {
         event.preventDefault();
 
         try {
-            const collectionAddress = await this.context.marketplaceInstance.methods.createCollection(this.state.name, this.state.symbol).send({ from: this.accounts[0] });
-
+            const collectionAddress = await this.context.MarketPlaceInstance.methods.createCollection(this.state.name, this.state.symbol).send({ from: this.context.account});
             console.log(collectionAddress);
+            
+            await this.context.refreshBlance();
 
-            const accoutnBalance = await web3.eth.getBalance(this.accounts[0]);
-            this.context.setAccountBalance(accoutnBalance);
+            // const accoutnBalance = await web3.eth.getBalance(this.context.account);
+            // this.context.setAccountBalance(accoutnBalance);
         } catch (error) {
             console.log(error);
         }
