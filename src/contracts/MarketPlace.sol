@@ -108,8 +108,9 @@ contract MarketPlace {
     // collectionAddress => auctionId[]
     mapping(address => uint256[]) collectionToAcutions;
 
-    // collectionAddress => (tokenId => (auctionId => isOwner))
-    //mapping(address => mapping(uint256 => mapping(uint256 => bool))) tokenAuctions; // TODO : Confirm usage
+    // _collectionAddress => _tokenId => _auctionId
+    mapping(address=> mapping(uint256 => uint256)) tokenAuctions;
+    // 
 
     // -- Modifiers
     // modifier requireCollectionOwner(uint256 _collectionId) {
@@ -187,17 +188,17 @@ contract MarketPlace {
         NFTCollection nftCollection = NFTCollection(_collectionAddress);
         // nftCollection.transferFrom(msg.sender, address(this), _tokenId); // TODO : use approve !!!
 
+        // _initialPrice or _buyItNowPrice should be above zero
+        require(_initialPrice + _buyItNowPrice > 0, 'Token Price cannot be zero');
+
         // check token owner
         require(msg.sender == nftCollection.ownerOf(_tokenId), 'Not token owner');
 
         // check if MarketPlace is approved
         require(address(this) == nftCollection.getApproved(_tokenId), 'MarketPlace is not approved');
 
-        // approve MarketPlace to operate with the token
-        // nftCollection.approve(address(this), _tokenId);
-        // (bool success,) =  _collectionAddress.call(abi.encodeWithSelector(nftCollection.approve.selector, address(this), _tokenId));
-
-        // require(success, 'approve MarketPlace');
+        // create auction twice
+        require(tokenAuctions[_collectionAddress][_tokenId] == 0, 'Auction for this token exists');
 
         // create auction
         _auctionIds.increment();
@@ -218,8 +219,7 @@ contract MarketPlace {
 
         collectionToAcutions[_collectionAddress].push(_auctionId);
 
-        // collectionAddress => (tokenId => (auctionId => isOwner))
-        // tokenAuctions[_collectionAddress][_tokenId][_auctionId] = true;
+        tokenAuctions[_collectionAddress][_tokenId] = _auctionId;
 
         emit onAuctionCreated(_auctionId, _tokenId);
     }
@@ -228,8 +228,17 @@ contract MarketPlace {
         return collectionToAcutions[collectionAddress];
     }
 
-    function getAuction(uint256 _auctionId) external view returns (AuctionItem memory) {
-        return auctionStore[_auctionId];
+    function getAuction(uint256 _auctionId) public view returns (AuctionItem memory) {
+        AuctionItem memory _auction = auctionStore[_auctionId];
+
+        require(_auction.auctionId == _auctionId, 'Auction does not exists');
+        return _auction;
+    }
+
+    function getAuctionBy(address _collectionAddress, uint256 _tokenId) external view returns (AuctionItem memory) {
+        uint256 _auctionId = tokenAuctions[_collectionAddress][_tokenId];
+
+        return getAuction(_auctionId);
     }
 
     // buy it now - handle user funds?
@@ -254,6 +263,8 @@ contract MarketPlace {
         uint256 userFund = msg.value.sub(fee);
         userFunds[_auction.ownerAddress] = userFunds[_auction.ownerAddress].add(userFund);
 
+        delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
+
         // TODO : Handle bids
         // TODO : Handle buy request
 
@@ -271,6 +282,8 @@ contract MarketPlace {
         NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
         //nftCollection.transferFrom(address(this), msg.sender, _auction.tokenId);
         _auction.auctionStatus = AuctionStatus.Cancelled;
+
+        delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
 
         // TODO : Handle bids
         // TODO : Handle buy request

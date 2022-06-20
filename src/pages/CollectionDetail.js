@@ -97,11 +97,13 @@ class CollectionDetail extends Component {
 
                 const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
 
-                if (auction) {
+                if (auction && auction.auctionStatus == AuctionStatusEnum.Running) {
                     auctions.push(auction);
                 }
             }
         }
+
+        console.log('auctions', auctions);
 
         return auctions;
     };

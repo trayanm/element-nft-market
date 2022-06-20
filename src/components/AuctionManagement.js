@@ -74,8 +74,8 @@ class AuctionManagement extends Component {
         event.preventDefault();
 
         try {
-            const initialPrice = web3.utils.toWei(web3.utils.toBN(this.state.initialPrice), 'ether');
-            const buyItNowPrice = web3.utils.toWei(web3.utils.toBN(this.state.buyItNowPrice), 'ether');
+            const initialPrice = this.state.initialPrice != null ? web3.utils.toWei(web3.utils.toBN(this.state.initialPrice), 'ether') : 0;
+            const buyItNowPrice = this.state.buyItNowPrice != null ? web3.utils.toWei(web3.utils.toBN(this.state.buyItNowPrice), 'ether') : 0;
 
             await this.context.marketPlaceInstance.methods.createAuction(
                 this.state.collectionAddress,
@@ -146,6 +146,8 @@ class AuctionManagement extends Component {
 
     render() {
         if (this.state.nft.owner === this.context.account) {
+            console.log('this.state.nft.owner', this.state.nft.owner);
+            console.log('this.state.auction', this.state.auction);
             if (this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running) {
                 return (
                     <React.Fragment>

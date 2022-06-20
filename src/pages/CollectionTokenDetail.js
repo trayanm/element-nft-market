@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Navigate } from 'react-router-dom'
 import AuctionManagement from "../components/AuctionManagement";
+import { AuctionStatusEnum } from "../helpers/enums";
+import { formatPrice } from "../helpers/utils";
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
@@ -84,8 +86,8 @@ class CollectionTokenDetail extends Component {
 
             console.log('auction', auction);
 
-            if (auction && auction.tokenId === tokenId) {
-               return auction;
+            if (auction && auction.auctionStatus == AuctionStatusEnum.Running&& auction.tokenId === tokenId) {
+                return auction;
             }
         }
 
@@ -113,7 +115,14 @@ class CollectionTokenDetail extends Component {
                                     <div className="col-lg-6 col-md-12 col-12">
                                         <div className="product-info">
                                             <h2 className="title">{this.state.nft.title}</h2>
-                                            <h3 className="price">$999</h3>
+                                            <h3 className="price">
+                                                {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.initialPrice > 0 &&
+                                                    <span><span>Initial</span>{formatPrice(this.state.auction.initialPrice)} ETH</span>
+                                                }
+                                                {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.buyItNowPrice > 0 &&
+                                                    <span><span>Buy now</span>{formatPrice(this.state.auction.buyItNowPrice)} ETH</span>
+                                                }
+                                            </h3>
                                             <div className="list-info">
                                                 <div>
                                                     {this.state.nft.description}

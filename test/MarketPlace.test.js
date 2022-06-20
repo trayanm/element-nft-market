@@ -83,6 +83,7 @@ contract('MarketPlace', function (accounts) {
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
         await collectionContract_1.safeMint('_tokenURI_1', { from: account_1 });
         await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
+        await collectionContract_1.safeMint('_tokenURI_3', { from: account_1 });
 
         let errorMessage = 'MarketPlace is not approved';
         try {
@@ -116,6 +117,18 @@ contract('MarketPlace', function (accounts) {
             assert.notEqual(error, undefined, 'Error must be thrown');
             assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
         }
+
+        // create auction twice
+        errorMessage = 'Auction for this token exists';
+        try {
+            await collectionContract_1.approve(theMarketPlace.address, 3, { from: account_1 });
+            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 3, 0, 2, { from: account_1 });
+            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 3, 2, 4, { from: account_1 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
     });
 
     it('Test: Buy now violations', async function () {
@@ -131,7 +144,25 @@ contract('MarketPlace', function (accounts) {
         await collectionContract_1.approve(theMarketPlace.address, 2, { from: account_1 });
         await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 2, 1, 0, { from: account_1 });
 
-        let errorMessage = 'Auction owner cannot buy it';
+        let errorMessage = 'Token Price cannot be zero';
+        try {
+            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 0, { from: account_1 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
+
+        errorMessage = 'ERC721: owner query for nonexistent token';
+        try {
+            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 999, 0, 1, { from: account_1 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
+
+        errorMessage = 'Auction owner cannot buy it';
         try {
             await theMarketPlace.buyNowAuction(1, { from: account_1 });
         }
@@ -179,7 +210,40 @@ contract('MarketPlace', function (accounts) {
         assert.equal(auction_1_after.auctionStatus, 2, 'auctionStatus should be Finished');
 
         const newOwner_1 = await collectionContract_1.ownerOf(1);
-        assert.equal(newOwner_1, account_2, 'New owner is account_2')
+        assert.equal(newOwner_1, account_2, 'New owner is account_2');
+    });
+
+    it('Test: Buy now and sell again', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        await collectionContract_1.safeMint('_tokenURI_1', { from: account_1 });
+
+        await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
+        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+
+        // buy now other's nft
+        await theMarketPlace.buyNowAuction(1, { from: account_2, value: 2 });
+
+        const auction_1_after = await theMarketPlace.getAuction(1);
+        assert.equal(auction_1_after.auctionStatus, 2, 'auctionStatus should be Finished');
+
+        const newOwner_1 = await collectionContract_1.ownerOf(1);
+        assert.equal(newOwner_1, account_2, 'New owner is account_2');
+
+        // account_2 create new auction
+        await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_2 });
+        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 2, 4, { from: account_2 });
+
+        const auctionCount = await theMarketPlace.getAuctionCount();
+        assert.equal(auctionCount, 2, "auctionCount should be 2");
+
+        // const auction_2 = await theMarketPlace.getAuctionBy(collectionitem_1.collectionAddress, 1);
+        const auction_2 = await theMarketPlace.getAuction(2);
+        assert.equal(auction_2.auctionId, 2, 'token id is 2');
+        assert.equal(auction_2.initialPrice, 2, 'initialPrice id is 2');
+        assert.equal(auction_2.buyItNowPrice, 4, 'buyItNowPrice id is 4');
+        assert.equal(auction_2.auctionStatus, 0, 'auctionStatus should be Running');
     });
 
     it('Test: cancelAuction', async function () {
@@ -208,7 +272,7 @@ contract('MarketPlace', function (accounts) {
 
         // try to buy canceled auction
         errorMessage = 'Auction is not running';
-        try{
+        try {
             await theMarketPlace.buyNowAuction(1, { from: account_2, value: 2 });
         }
         catch (error) {
