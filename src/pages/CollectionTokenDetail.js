@@ -12,6 +12,7 @@ class CollectionTokenDetail extends Component {
         tokenId: null,
         nft: null,
         auction: null,
+        approvedAddress: null
     };
 
     constructor(props) {
@@ -27,11 +28,41 @@ class CollectionTokenDetail extends Component {
 
             await this.context.checkStateAsync();
 
-            await this.loadNft();
+            // load nft
+            this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress);
 
-            if (this.state.nft) {
-                await this.loadAuction();
+            const hash = await this.NFTCollectionInstance.methods.tokenURIs(this.state.tokenId - 1).call();
+
+            const response = await fetch(`https://ipfs.infura.io/ipfs/${hash}?clear`);
+            if (!response.ok) {
+                throw new Error('Something went wrong');
             }
+
+            const metadata = await response.json();
+
+            console.log('metadata', metadata);
+            const owner = await this.NFTCollectionInstance.methods.ownerOf(this.state.tokenId).call();
+
+            const nft = {
+                tokenId: this.state.tokenId,
+                title: metadata.properties.name.description,
+                img: metadata.properties.image.description,
+                description: metadata.properties.description.description,
+                owner: owner
+            };
+
+            // check if MarketPlace is approved
+            const approvedAddress = await this.NFTCollectionInstance.methods.getApproved(nft.tokenId).call();
+            console.log('approvedAddress', approvedAddress);
+
+            const auction = await this.loadAuction(nft.tokenId);
+
+            const _state = this.state;
+
+            _state.auction = auction;
+            _state.nft = nft;
+            _state.approvedAddress = approvedAddress;
+            this.setState(_state);
 
         } catch (error) {
             // Catch any errors for any of the above operations.
@@ -42,52 +73,23 @@ class CollectionTokenDetail extends Component {
         }
     };
 
-    loadNft = async () => {
-        this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress);
-
-        const hash = await this.NFTCollectionInstance.methods.tokenURIs(this.state.tokenId - 1).call();
-
-        const response = await fetch(`https://ipfs.infura.io/ipfs/${hash}?clear`);
-        if (!response.ok) {
-            throw new Error('Something went wrong');
-        }
-
-        const metadata = await response.json();
-
-        console.log('metadata', metadata);
-        const owner = await this.NFTCollectionInstance.methods.ownerOf(this.state.tokenId).call();
-
-        const nft = {
-            tokenId: this.state.tokenId,
-            title: metadata.properties.name.description,
-            img: metadata.properties.image.description,
-            description: metadata.properties.description.description,
-            owner: owner
-        };
-
-        const _state = this.state;
-
-        _state.nft = nft;
-        this.setState(_state);
-    };
-
-    loadAuction = async () => {
+    loadAuction = async (tokenId) => {
         //  TODO : Use context
-        const collectionAuctions = await this.context.MarketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+        const collectionAuctions = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
 
         for (let i = 0; i < collectionAuctions.length; i++) {
             const _auctionId = collectionAuctions[i];
 
-            const auction = await this.context.MarketPlaceInstance.methods.getAuction(_auctionId).call();
+            const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
 
-            if (auction && auction.tokenId === this.state.nft.id) {
-                const _state = this.state;
+            console.log('auction', auction);
 
-                _state.auction = auction;
-                this.setState(_state);
-                break;
+            if (auction && auction.tokenId === tokenId) {
+               return auction;
             }
         }
+
+        return null;
     };
 
     render() {
@@ -118,7 +120,12 @@ class CollectionTokenDetail extends Component {
                                                 </div>
                                             </div>
                                             <div className="auction-options">
-                                                <AuctionManagement nft={this.state.nft} auction={this.state.auction} collectionAddress={this.state.collectionAddress} />
+                                                <AuctionManagement
+                                                    nft={this.state.nft}
+                                                    auction={this.state.auction}
+                                                    collectionAddress={this.state.collectionAddress}
+                                                    approvedAddress={this.state.approvedAddress}
+                                                />
                                             </div>
                                             {/* <div className="contact-info">
                                                 <ul>

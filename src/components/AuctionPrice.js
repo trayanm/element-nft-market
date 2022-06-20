@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import AppContext from "../store/app-context";
+import web3 from "../connection/web3";
+import { formatPrice } from "../helpers/utils";
 
 class AuctionPrice extends Component {
     static contextType = AppContext;
@@ -22,13 +24,13 @@ class AuctionPrice extends Component {
             <React.Fragment>
                 <ul className="info">
                     {this.state.auction && this.state.auction.initialPrice > 0 &&
-                        <li className="price"><span>Initial</span><br />{this.state.auction.initialPrice}</li>
+                        <li className="price"><span>Initial</span><br />{formatPrice(this.state.auction.initialPrice)} ETH</li>
                     }
                     {this.state.auction && this.state.auction.highestBid > 0 &&
-                        <li className="price"><span>High</span><br />{this.state.auction.highestBid}</li>
+                        <li className="price"><span>High</span><br />{formatPrice(this.state.auction.highestBid)} ETH</li>
                     }
                     {this.state.auction && this.state.auction.buyItNowPrice > 0 &&
-                        <li className="price"><span>Buy now</span><br />{this.state.auction.buyItNowPrice}</li>
+                        <li className="price"><span>Buy now</span><br />{formatPrice(this.state.auction.buyItNowPrice)} ETH</li>
                     }
                 </ul>
             </React.Fragment>

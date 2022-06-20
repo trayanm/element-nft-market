@@ -27,7 +27,7 @@ class CollectionList extends Component {
             //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
             // );
 
-            //this.MarketPlaceInstance = this.context.MarketPlaceInstance;
+            //this.MarketPlaceInstance = this.context.marketPlaceInstance;
 
             await this.context.checkStateAsync();
 
@@ -42,12 +42,12 @@ class CollectionList extends Component {
     };
 
     loadCollections = async () => {
-        const collectionCount = await this.context.MarketPlaceInstance.methods.collectionCount().call();
+        const collectionCount = await this.context.marketPlaceInstance.methods.getCollectionCount().call();
 
         const collections = [];
 
         for (let index = 0; index < collectionCount; index++) {
-            const collection = await this.context.MarketPlaceInstance.methods.getCollection(index).call();
+            const collection = await this.context.marketPlaceInstance.methods.getCollection(index + 1).call();
 
             collections.push(collection);
         }

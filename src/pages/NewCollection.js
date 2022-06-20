@@ -48,10 +48,10 @@ class NewCollection extends Component {
         event.preventDefault();
 
         try {
-            const collectionAddress = await this.context.MarketPlaceInstance.methods.createCollection(this.state.name, this.state.symbol).send({ from: this.context.account});
-            console.log(collectionAddress);
-            
+            const collectionAddress = await this.context.marketPlaceInstance.methods.createCollection(this.state.name, this.state.symbol).send({ from: this.context.account});
             await this.context.refreshBlance();
+            
+            console.log(collectionAddress);
 
             // const accoutnBalance = await web3.eth.getBalance(this.context.account);
             // this.context.setAccountBalance(accoutnBalance);

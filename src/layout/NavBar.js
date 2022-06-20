@@ -20,7 +20,13 @@ class NavBar extends Component {
     };
 
     claimFundsHandler = async () => {
-
+        try {
+            await this.context.marketPlaceInstance.methods.claimFunds().send({ from: this.context.account });
+            await this.context.refreshBlance();
+            await this.context.refreshUserFunds();
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     render() {
@@ -62,7 +68,7 @@ class NavBar extends Component {
                                                             target="blank"
                                                             rel="noopener noreferrer"
                                                         >
-                                                            {formatAddress(this.context.account)} ({ formatPrice(this.context.accountBalance)})
+                                                            {formatAddress(this.context.account)} ({formatPrice(this.context.accountBalance)})
                                                         </a>}
                                                 </li>
                                             </ul>

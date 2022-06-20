@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 import AuctionPrice from "../components/AuctionPrice";
+import { AuctionStatusEnum } from "../helpers/enums";
 
 class CollectionDetail extends Component {
     static contextType = AppContext;
@@ -22,36 +23,20 @@ class CollectionDetail extends Component {
 
     componentDidMount = async () => {
         try {
-            // Get network provider and web3 instance.
-            //this.web3 = await getWeb3();
 
-            // Get the contract instance.
-            //this.networkId = await web3.eth.net.getId();
-
-            // Use web3 to get the user's accounts.
-            //this.accounts = await web3.eth.getAccounts();
-
-            // Get the contract instance.
-            // this.networkId = await web3.eth.net.getId();
-
-            // this.MarketPlaceInstance = new web3.eth.Contract(
-            //     MarketPlace.abi,
-            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
-            // );
+            const _state = this.state;
 
             await this.context.checkStateAsync();
 
             this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress);
 
-            // this.NFTCollectionInstance = new web3.eth.Contract(
-            //     NFTCollection.abi,
-            //     this.state.collectionAddress
-            // );
-
             const canMint = await this.NFTCollectionInstance.methods.canMint(this.context.account).call();
-            this.state.canMint = canMint;
+            _state.canMint = canMint;
 
-            await this.loadTokens();
+            _state.tokens = await this.loadTokens();
+            _state.auctions = await this.loadCollectionAuctions();
+
+            this.setState(_state);
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
@@ -98,12 +83,11 @@ class CollectionDetail extends Component {
             }
         }
 
-        this.state.tokens = tokens;
-        this.setState(this.state);
+        return tokens;
     };
 
-    loadCollectionOffers = async () => {
-        const auctionIds = await this.context.MarketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+    loadCollectionAuctions = async () => {
+        const auctionIds = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
 
         const auctions = [];
 
@@ -111,7 +95,7 @@ class CollectionDetail extends Component {
             for (let i = 0; i < auctionIds.length; i++) {
                 const _auctionId = auctionIds[i];
 
-                const auction = await this.context.MarketPlaceInstance.methods.getAuction(_auctionId).call();
+                const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
 
                 if (auction) {
                     auctions.push(auction);
@@ -119,20 +103,21 @@ class CollectionDetail extends Component {
             }
         }
 
-        this.state.auctions = auctions;
-        this.setState(this.state);
+        return auctions;
     };
 
     handleGiveApprove = async (event, id) => {
         event.preventDefault();
 
         await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.context.account });
+        await this.context.refreshBlance();
     };
 
     handleRevokeApprove = async (event, id) => {
         event.preventDefault();
 
         await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.context.account });
+        await this.context.refreshBlance();
     };
 
     render() {
@@ -162,9 +147,7 @@ class CollectionDetail extends Component {
                                             <div className="row">
 
                                                 {this.state.tokens.map((ele, inx) => {
-                                                    const auction = this.state.auctions ? this.state.auctions.find(auction => auction.tokenId === ele.id) : -1;
-                                                    //const buyItNowPrice = auctionIndex !== -1 ? formatPrice(MarketPlaceCtx.auctions[auctionIndex].buyItNowPrice).toFixed(2) : null;
-
+                                                    const auction = this.state.auctions ? this.state.auctions.find(auction => auction.tokenId == ele.id) : null;
                                                     return (
                                                         <div key={inx} className="col-lg-4 col-md-6 col-12">
                                                             <div className="single-item-grid">
@@ -175,35 +158,20 @@ class CollectionDetail extends Component {
                                                                     {ele.owner === this.context.account &&
                                                                         <i className="cross-badge lni lni-user"></i>
                                                                     }
-                                                                    <span className="flat-badge sale">Sale</span>
+                                                                    {auction && auction.auctionStatus == AuctionStatusEnum.Running &&
+                                                                        <span className="flat-badge sale">Sale</span>
+                                                                    }
                                                                 </div>
                                                                 <div className="content">
                                                                     <a href="#!" className="tag">{ele.description}</a>
                                                                     <h3 className="title">
-                                                                        <a href="item-details.html">{ele.title}</a>
+                                                                        <Link to={'/collections/' + this.state.collectionAddress + '/' + ele.id}>
+                                                                            {ele.title} ({ele.id})
+                                                                        </Link>
                                                                     </h3>
-
                                                                     <AuctionPrice nft={ele} auction={auction} />
-
-                                                                    {/* <AuctionManagement nft={ele} auction={auction} collectionAddress={this.state.collectionAddress} /> */}
-                                                                    {/* {auction && ele.owner === this.context.account &&
-<button>Cancel</button>
-}
-
-{auction && ele.owner !== this.context.account &&
-<button>Buy</button>
-} */}
-
-
-                                                                    {/* <ul className="info">
-                                                                        <li className="price"><span>Initial</span><br />$890.00</li>
-                                                                        <li className="price"><span>High</span><br />$890.00</li>
-                                                                        <li className="price"><span>Buy now</span><br />$890.00</li>
-                                                                    </ul> */}
-
                                                                 </div>
                                                             </div>
-
                                                         </div>
                                                     );
                                                 })}

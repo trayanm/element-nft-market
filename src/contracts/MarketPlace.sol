@@ -149,6 +149,20 @@ contract MarketPlace {
         return _collectionAddress;
     }
 
+    function importCollection(address _collectionAddress)external returns (address) {
+        // This method is not implemented
+        revert();
+        _collectionIds.increment();
+        uint256 _collectionId = _collectionIds.current();
+        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender);        
+
+        usercollections[msg.sender][_collectionId] = true;
+
+        emit onCollectionCreated(_collectionId, _collectionAddress, msg.sender);
+
+        return _collectionAddress;
+    }
+
     function getCollection(uint256 _collectionId) external view returns (CollectionItem memory) {
         return collectionStore[_collectionId];
     }
@@ -251,11 +265,11 @@ contract MarketPlace {
         AuctionItem storage _auction = auctionStore[_auctionId];
 
         require(_auction.auctionId == _auctionId, 'Auction does not exists');
-        require(_auction.ownerAddress == msg.sender, 'Auction owner cannot cancel it');
+        require(_auction.ownerAddress == msg.sender, 'Only auction owner can cancel');
         require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
 
         NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
-        nftCollection.transferFrom(address(this), msg.sender, _auction.tokenId);
+        //nftCollection.transferFrom(address(this), msg.sender, _auction.tokenId);
         _auction.auctionStatus = AuctionStatus.Cancelled;
 
         // TODO : Handle bids

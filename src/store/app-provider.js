@@ -18,7 +18,8 @@ class AppProvider extends React.Component {
 
         etherscanUrl: null,
 
-        MarketPlaceInstance: null,
+
+        marketPlaceInstance: null,
         setMarketPlaceInstance: null,
 
         nftCollectionDictionary: {},
@@ -64,9 +65,9 @@ class AppProvider extends React.Component {
         this.setState(_state);
     };
 
-    setMarketPlaceInstance = (MarketPlaceInstance) => {
+    setMarketPlaceInstance = (marketPlaceInstance) => {
         const _state = this.state;
-        _state.MarketPlaceInstance = MarketPlaceInstance;
+        _state.marketPlaceInstance = marketPlaceInstance;
         this.setState(_state);
     };
 
@@ -101,10 +102,14 @@ class AppProvider extends React.Component {
             _state.account = _state.accounts[0];
             _state.accoutnBalance = await web3.eth.getBalance(_state.account);
 
-            _state.MarketPlaceInstance = new web3.eth.Contract(
+            _state.marketPlaceInstance = new web3.eth.Contract(
                 MarketPlace.abi,
                 MarketPlace.networks[_state.networkId] && MarketPlace.networks[_state.networkId].address
             );
+
+            const userFunds = await this.state.marketPlaceInstance.methods.userFunds(this.state.account).call();
+
+            _state.userFunds = userFunds;
 
             _state.mktIsLoading = false;
             this.setState(_state);
@@ -113,6 +118,15 @@ class AppProvider extends React.Component {
             console.log('state is ok');
         }
     };
+
+    refreshUserFunds = async () => {
+        const _state = this.state;
+
+        const userFunds = await this.state.marketPlaceInstance.methods.userFunds(this.state.account).call();
+
+        _state.userFunds = userFunds;
+        this.setState(_state);
+    }
 
     refreshBlance = async () => {
         const accoutnBalance = await web3.eth.getBalance(this.state.account);
@@ -132,6 +146,7 @@ class AppProvider extends React.Component {
                     setAccount: this.setAccount,
 
                     userFunds: this.state.userFunds,
+                    refreshUserFunds: this.refreshUserFunds,
 
                     networkId: this.state.networkId,
                     setNetworkId: this.setNetworkId,
@@ -141,7 +156,7 @@ class AppProvider extends React.Component {
 
                     etherscanUrl: this.state.etherscanUrl,
 
-                    MarketPlaceInstance: this.state.MarketPlaceInstance,
+                    marketPlaceInstance: this.state.marketPlaceInstance,
                     setMarketPlaceInstance: this.setMarketPlaceInstance,
 
                     getNftCollectionInstance: this.getNftCollectionInstance,

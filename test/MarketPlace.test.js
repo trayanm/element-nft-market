@@ -176,10 +176,45 @@ contract('MarketPlace', function (accounts) {
         await theMarketPlace.buyNowAuction(1, { from: account_2, value: 2 });
 
         const auction_1_after = await theMarketPlace.getAuction(1);
-        assert.equal(auction_1_after.auctionStatus, 2, 'auctionStatus is Finished');
+        assert.equal(auction_1_after.auctionStatus, 2, 'auctionStatus should be Finished');
 
         const newOwner_1 = await collectionContract_1.ownerOf(1);
         assert.equal(newOwner_1, account_2, 'New owner is account_2')
+    });
+
+    it('Test: cancelAuction', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        await collectionContract_1.safeMint('_tokenURI_1', { from: account_1 });
+        await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
+
+        await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
+        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+
+        let errorMessage = 'Only auction owner can cancel';
+        try {
+            await theMarketPlace.cancelAuction(1, { from: account_2 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
+
+        await theMarketPlace.cancelAuction(1, { from: account_1 });
+
+        const auction_1_after = await theMarketPlace.getAuction(1);
+        assert.equal(auction_1_after.auctionStatus, 3, 'auctionStatus is Cancelled');
+
+        // try to buy canceled auction
+        errorMessage = 'Auction is not running';
+        try{
+            await theMarketPlace.buyNowAuction(1, { from: account_2, value: 2 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
     });
 
     it('Test: Tempalte', async function () {

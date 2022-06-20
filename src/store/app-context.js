@@ -9,13 +9,14 @@ const AppContext = React.createContext({
     setAccount: null,
 
     userFunds: null,
+    refreshUserFunds: null,
 
     networkId: null,
     setNetworkId: null,
 
     etherscanUrl: null,
 
-    MarketPlaceInstance: null,
+    marketPlaceInstance: null,
     setMarketPlaceInstance: null,
 
     getNftCollectionInstance: null,

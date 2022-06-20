@@ -59,7 +59,7 @@ class App extends Component {
       });
 
       // Event subscription
-      this.context.MarketPlaceInstance.events.onCollectionCreated()
+      this.context.marketPlaceInstance.events.onCollectionCreated()
         .on('data', (event) => {
           // collectionCtx.updateCollection(nftContract, event.returnValues.tokenId, event.returnValues.to);
           // collectionCtx.setNftIsLoading(false);
