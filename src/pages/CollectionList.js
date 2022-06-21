@@ -49,7 +49,26 @@ class CollectionList extends Component {
         for (let index = 0; index < collectionCount; index++) {
             const collection = await this.context.marketPlaceInstance.methods.getCollection(index + 1).call();
 
-            collections.push(collection);
+            const response = await fetch(`https://ipfs.infura.io/ipfs/${collection.metaURI}?clear`);
+            if (!response.ok) {
+                throw new Error('Something went wrong');
+            }
+
+            const metadata = await response.json();
+            console.log(metadata);
+
+            const collectionItеm = {
+                collectionId: collection.collectionId,
+                collectionAddress: collection.collectionAddress,
+                ownerAddress: collection.ownerAddress,
+                metaURI: collection.metaURI,
+                img: metadata.properties.image.description,
+                name: metadata.properties.name.description,
+                symbol: metadata.properties.symbol.description,
+                description: metadata.properties.description.description
+            };
+
+            collections.push(collectionItеm);
         }
 
         this.state.collections = collections;
@@ -80,9 +99,16 @@ class CollectionList extends Component {
                                                 {this.state.collections.map((ele, inx) => (
                                                     <div key={inx} className="col-lg-4 col-md-6 col-12">
                                                         <div className="single-item-grid" >
+                                                            <div className="image">
+                                                                <Link to={'/collections/' + ele.collectionAddress}>
+                                                                    <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
+                                                                </Link>
+                                                            </div>
                                                             <div className="content">
                                                                 <h3 className="title">
-                                                                    <Link to={'/collections/' + ele.collectionAddress}>{formatAddress(ele.collectionAddress)}</Link>
+                                                                    <Link to={'/collections/' + ele.collectionAddress}>
+                                                                        {ele.name}
+                                                                    </Link>
                                                                 </h3>
                                                             </div>
                                                         </div>

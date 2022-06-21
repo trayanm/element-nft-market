@@ -22,32 +22,10 @@ class NewCollectionToken extends Component {
 
     componentDidMount = async () => {
         try {
-            // // Get network provider and web3 instance.
-            // //this.web3 = await getWeb3();
-
-            // // Get the contract instance.
-            // this.networkId = await web3.eth.net.getId();
-
-            // // Use web3 to get the user's accounts.
-            // this.accounts = await web3.eth.getAccounts();
-
-            // // Get the contract instance.
-            // this.networkId = await web3.eth.net.getId();
-
-            // this.MarketPlaceInstance = new web3.eth.Contract(
-            //     MarketPlace.abi,
-            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
-            // );
 
             await this.context.checkStateAsync();
 
             this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress);
-
-            // this.NFTCollectionInstance = new web3.eth.Contract(
-            //     NFTCollection.abi,
-            //     this.state.collectionAddress
-            // );
-
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
@@ -138,8 +116,10 @@ class NewCollectionToken extends Component {
         const reader = new window.FileReader();
         reader.readAsArrayBuffer(file);
         reader.onloadend = () => {
-            this.state.capturedFileBuffer = Buffer(reader.result);
-            this.setState(this.state);
+            const _state = this.state;
+
+            _state.capturedFileBuffer = Buffer(reader.result);
+            this.setState(_state);
         };
     };
     // #endregion
@@ -159,30 +139,41 @@ class NewCollectionToken extends Component {
                 <div className="row">
                     <div className="col">
                         <form onSubmit={(e) => this.handleSubmit(e)}>
-                            <div className="mb-3">
+                            <div className="row mb-3">
+                                <label className="col-sm-4 col-form-label">Title</label>
+                                <div className="col-sm-8">
                                 <input
                                     type="text"
                                     className="form-control"
                                     placeholder="Name..."
                                     value={this.state.name}
+                                    maxLength="50"
                                     onChange={(e) => this.onChangeName(e)}
                                 />
+                                </div>
                             </div>
-                            <div className="mb-3">
+                            <div className="row mb-3">
+                                <label className="col-sm-4 col-form-label">Description</label>
+                                <div className="col-sm-8">
                                 <input
                                     type="text"
                                     className="form-control"
                                     placeholder="Description..."
                                     value={this.state.description}
+                                    maxLength="150"
                                     onChange={(e) => this.onChangeDescription(e)}
                                 />
+                                </div>
                             </div>
-                            <div className="mb-3">
+                            <div className="row mb-3">
+                                <label className="col-sm-4 col-form-label">File</label>
+                                <div className="col-sm-8">
                                 <input
                                     type="file"
                                     className="form-control"
                                     onChange={(e) => this.onChangeFile(e)}
                                 />
+                                </div>
                             </div>
                             <button type="submit" className="btn btn-primary">Mint</button>
                         </form>

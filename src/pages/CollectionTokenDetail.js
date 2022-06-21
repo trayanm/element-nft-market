@@ -116,11 +116,11 @@ class CollectionTokenDetail extends Component {
                                         <div className="product-info">
                                             <h2 className="title">{this.state.nft.title}</h2>
                                             <h3 className="price">
-                                                {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.initialPrice > 0 &&
-                                                    <span><span>Initial</span>{formatPrice(this.state.auction.initialPrice)} ETH</span>
-                                                }
+                                                {/* {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.initialPrice > 0 &&
+                                                    <span className="price-line"><span className="price-tag">Initial</span>{formatPrice(this.state.auction.initialPrice)} ETH</span>
+                                                } */}
                                                 {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.buyItNowPrice > 0 &&
-                                                    <span><span>Buy now</span>{formatPrice(this.state.auction.buyItNowPrice)} ETH</span>
+                                                    <span>{formatPrice(this.state.auction.buyItNowPrice)} ETH</span>
                                                 }
                                             </h3>
                                             <div className="list-info">

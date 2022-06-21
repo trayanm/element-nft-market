@@ -54,6 +54,7 @@ contract MarketPlace {
         uint256 collectionId; // TODO : Check if needed
         address collectionAddress; // ERC721 token of the collection
         address ownerAddress;
+        string metaURI; // like in ERC721 token URI
     }
 
     struct DirectOffer{
@@ -130,7 +131,7 @@ contract MarketPlace {
     //     return _createCollection(_name, _symbol);
     // }
 
-    function createCollection(string memory _name, string memory _symbol) external returns (address) {
+    function createCollection(string memory _name, string memory _symbol, string memory _tokenURI) external returns (address) {
         NFTCollection collectionContract = new NFTCollection(_name, _symbol);
         // grant role
         collectionContract.grantRole(MINTER_ROLE, msg.sender);
@@ -141,7 +142,7 @@ contract MarketPlace {
 
         _collectionIds.increment();
         uint256 _collectionId = _collectionIds.current();
-        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender);        
+        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _tokenURI);        
 
         usercollections[msg.sender][_collectionId] = true;
 
@@ -150,12 +151,12 @@ contract MarketPlace {
         return _collectionAddress;
     }
 
-    function importCollection(address _collectionAddress)external returns (address) {
+    function importCollection(address _collectionAddress, string memory _tokenURI)external returns (address) {
         // This method is not implemented
         revert();
         _collectionIds.increment();
         uint256 _collectionId = _collectionIds.current();
-        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender);        
+        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _tokenURI);        
 
         usercollections[msg.sender][_collectionId] = true;
 

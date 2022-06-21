@@ -1,37 +1,22 @@
 import React, { Component } from "react";
+import ipfsClient from 'ipfs-http-client';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
+
+const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 class NewCollection extends Component {
     static contextType = AppContext;
 
     state = {
         name: '',
-        symbol: ''
+        symbol: '',
+        description: '',
+        capturedFileBuffer: null
     };
 
     componentDidMount = async () => {
         try {
-            // // Get network provider and web3 instance.
-            // //this.web3 = await getWeb3();
-
-            // // Get the contract instance.
-            // this.networkId = await web3.eth.net.getId();
-
-            // // Use web3 to get the user's accounts.
-            // this.accounts = await web3.eth.getAccounts();
-
-            // // Get the contract instance.
-            // this.networkId = await web3.eth.net.getId();
-
-            // this.MarketPlaceInstance = new web3.eth.Contract(
-            //     MarketPlace.abi,
-            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
-            // );
-
-            // console.log(MarketPlace.networks[this.networkId].address);
-            // console.log(this.MarketPlaceInstance);
-
             await this.context.checkStateAsync();
 
         } catch (error) {
@@ -48,9 +33,49 @@ class NewCollection extends Component {
         event.preventDefault();
 
         try {
-            const collectionAddress = await this.context.marketPlaceInstance.methods.createCollection(this.state.name, this.state.symbol).send({ from: this.context.account});
+            const fileAdded = await ipfs.add(this.state.capturedFileBuffer);
+
+            if (!fileAdded) {
+                console.error('Something went wrong when updloading the file');
+                return;
+            }
+
+            const metadata = {
+                title: "Asset Metadata",
+                type: "object",
+                haho: "peeeeeeee",
+                properties: {
+                    name: {
+                        type: "string",
+                        description: this.state.name
+                    },
+                    symbol: {
+                        type: "string",
+                        description: this.state.symbol
+                    },
+                    description: {
+                        type: "string",
+                        description: this.state.description
+                    },
+                    image: {
+                        type: "string",
+                        description: fileAdded.path
+                    },
+                    sumo: {
+                        type: "string",
+                        description: "I am sumo"
+                    }
+                }
+            };
+
+            const metadataAdded = await ipfs.add(JSON.stringify(metadata));
+            if (!metadataAdded) {
+                console.error('Something went wrong when updloading the file');
+                return;
+            }
+            const collectionAddress = await this.context.marketPlaceInstance.methods.createCollection(this.state.name, this.state.symbol, metadataAdded.path).send({ from: this.context.account });
             await this.context.refreshBlance();
-            
+
             console.log(collectionAddress);
 
             // const accoutnBalance = await web3.eth.getBalance(this.context.account);
@@ -71,6 +96,25 @@ class NewCollection extends Component {
         _state.symbol = event.currentTarget.value;
         this.setState(_state);
     };
+    onChangeDescription = (event) => {
+        const _state = this.state;
+        _state.description = event.currentTarget.value;
+        this.setState(_state);
+    };
+
+    onChangeFile = async (event) => {
+        event.preventDefault();
+        const file = event.target.files[0];
+
+        const reader = new window.FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onloadend = () => {
+            const _state = this.state;
+
+            _state.capturedFileBuffer = Buffer(reader.result);
+            this.setState(_state);
+        };
+    };
     // --
 
     render() {
@@ -88,23 +132,56 @@ class NewCollection extends Component {
                 <div className="row">
                     <div className="col">
                         <form onSubmit={(e) => this.handleSubmit(e)}>
-                            <div className="mb-3">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Name..."
-                                    value={this.state.name}
-                                    onChange={(e) => this.onChangeName(e)}
-                                />
+                            <div className="row mb-3">
+                                <label className="col-sm-4 col-form-label">Title</label>
+                                <div className="col-sm-8">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Name..."
+                                        value={this.state.name}
+                                        maxLength="50"
+                                        onChange={(e) => this.onChangeName(e)}
+                                    />
+                                </div>
                             </div>
-                            <div className="mb-3">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Symbol..."
-                                    value={this.state.symbol}
-                                    onChange={(e) => this.onChangeSymbol(e)}
-                                />
+
+                            <div className="row mb-3">
+                                <label className="col-sm-4 col-form-label">Title</label>
+                                <div className="col-sm-8">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Symbol..."
+                                        value={this.state.symbol}
+                                        maxLength="5"
+                                        onChange={(e) => this.onChangeSymbol(e)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="row mb-3">
+                                <label className="col-sm-4 col-form-label">Description</label>
+                                <div className="col-sm-8">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Description..."
+                                        value={this.state.description}
+                                        maxLength="150"
+                                        onChange={(e) => this.onChangeDescription(e)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="row mb-3">
+                                <label className="col-sm-4 col-form-label">File</label>
+                                <div className="col-sm-8">
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        onChange={(e) => this.onChangeFile(e)}
+                                    />
+                                </div>
                             </div>
                             <button type="submit" className="btn btn-primary">Save</button>
                         </form>

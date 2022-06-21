@@ -169,23 +169,29 @@ class AuctionManagement extends Component {
 
                             {this.state.approvedAddress === this.context.marketPlaceInstance._address &&
                                 <form onSubmit={(e) => this.handleSubmitSell(e)}>
-                                    <div className="mb-3">
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            placeholder="Initial Price ETH"
-                                            className="form-control"
-                                            onChange={(e) => this.onChangeInitialPrice(e)}
-                                        />
+                                    <div className="row mb-3">
+                                        <label className="col-sm-4 col-form-label">Initial price</label>
+                                        <div className="col-sm-8">
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                placeholder="ETH"
+                                                className="form-control"
+                                                onChange={(e) => this.onChangeInitialPrice(e)}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="mb-3">
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            placeholder="Buy Now Price ETH"
-                                            className="form-control"
-                                            onChange={(e) => this.onChangeBuyItNowPrice(e)}
-                                        />
+                                    <div className="row mb-3">
+                                        <label className="col-sm-4 col-form-label">Buy now price</label>
+                                        <div className="col-sm-8">
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                placeholder="ETH"
+                                                className="form-control"
+                                                onChange={(e) => this.onChangeBuyItNowPrice(e)}
+                                            />
+                                        </div>
                                     </div>
                                     <button type="submit" className="btn btn-primary">Sell</button>
                                 </form>
@@ -209,20 +215,27 @@ class AuctionManagement extends Component {
                             {/* <em>not owner</em> | <em>auction</em> */}
                             <AuctionPrice nft={this.state.nft} auction={this.state.auction} />
                             <form onSubmit={(e) => this.handleSubmitBid(e)}>
-                                <div className="mb-3">
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        placeholder="Bid ETH"
-                                        className="form-control"
-                                        onChange={(e) => this.onChangeBid(e)}
-                                    />
+                                <div className="row mb-3">
+                                    <label className="col-sm-4 col-form-label">Bid</label>
+                                    <div className="col-sm-8">
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="ETH"
+                                            className="form-control"
+                                            onChange={(e) => this.onChangeBid(e)}
+                                        />
+                                    </div>
                                 </div>
                                 <button type="submit" className="btn btn-primary">Bid</button>
                             </form>
 
                             <form onSubmit={(e) => this.handleSubmitBuyNow(e)}>
-                                <button type="submit" className="btn btn-success" >Buy now</button>
+                                <div className="row mt-3">
+                                    <div className="col">
+                                        <button type="submit" className="btn btn-success" >Buy now</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </React.Fragment>
