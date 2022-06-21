@@ -16,8 +16,6 @@ class Footer extends Component {
                                             <ul className="footer-bottom-links">
                                                 <li><a href="#!">Terms of use</a></li>
                                                 <li><a href="#!">Privacy Policy</a></li>
-                                                <li><a href="#!">Advanced Search</a></li>
-                                                <li><a href="#!">Site Map</a></li>
                                                 <li><a href="#!">Information</a></li>
                                             </ul>
                                             <p className="copyright-text">

@@ -34,7 +34,7 @@ class CollectionDetail extends Component {
             _state.canMint = canMint;
 
             _state.tokens = await this.loadTokens();
-            _state.auctions = await this.loadCollectionAuctions();
+            _state.auctions = await this.loadCollectionAuctions(_state.tokens);
 
             this.setState(_state);
         } catch (error) {
@@ -64,20 +64,16 @@ class CollectionDetail extends Component {
                 }
 
                 const metadata = await response.json();
-
-                console.log('metadata', metadata);
                 const owner = await this.NFTCollectionInstance.methods.ownerOf(_id).call();
 
-                // const approvedAddress = await this.NFTCollectionInstance.methods.getApproved(_id).call();
-
-                tokens = [{
-                    id: _id,
+                const token = {
+                    tokenId: _id,
                     title: metadata.properties.name.description,
                     img: metadata.properties.image.description,
                     description: metadata.properties.description.description,
                     owner: owner
-                }, ...tokens];
-
+                };
+                tokens.push(token);
             } catch {
                 console.error('Something went wrong');
             }
@@ -86,24 +82,36 @@ class CollectionDetail extends Component {
         return tokens;
     };
 
-    loadCollectionAuctions = async () => {
-        const auctionIds = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
-
+    loadCollectionAuctions = async (tokens) => {
+        //const auctionIds = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
+        console.log('tokens', tokens);
         const auctions = [];
 
-        if (auctionIds.length > 0) {
-            for (let i = 0; i < auctionIds.length; i++) {
-                const _auctionId = auctionIds[i];
+        if (tokens && tokens.length > 0) {
+            for (let i = 0; i < tokens.length; i++) {
+                const token = tokens[i];
 
-                const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
+                const auction = await this.context.marketPlaceInstance.methods.getAuctionBy(this.state.collectionAddress, token.tokenId).call();
 
-                if (auction && auction.auctionStatus == AuctionStatusEnum.Running) {
+                if (auction && auction.auctionId > 0 && auction.auctionStatus == AuctionStatusEnum.Running) {
                     auctions.push(auction);
                 }
             }
         }
 
-        console.log('auctions', auctions);
+        // const auctions = [];
+
+        // if (auctionIds.length > 0) {
+        //     for (let i = 0; i < auctionIds.length; i++) {
+        //         const _auctionId = auctionIds[i];
+
+        //         const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
+
+        //         if (auction && auction.auctionStatus == AuctionStatusEnum.Running) {
+        //             auctions.push(auction);
+        //         }
+        //     }
+        // }
 
         return auctions;
     };
@@ -125,59 +133,79 @@ class CollectionDetail extends Component {
     render() {
         return (
             <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="section-title">
-                            <h2 className="wow fadeInUp" data-wow-delay=".4s">{this.state.name} ({this.state.symbol})</h2>
-                            <p className="wow fadeInUp" data-wow-delay=".6s">Browse user collections.</p>
-                            {this.state.canMint &&
-                                <p>
-                                    <Link to={'/collections/' + this.state.collectionAddress + '/new'}  >New token</Link>
-                                </p>
-                            }
+                <div className="breadcrumbs">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <div className="breadcrumbs-content">
+                                    <h1 className="page-title">{this.state.name} ({this.state.symbol})</h1>
+                                </div>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <ul className="breadcrumb-nav">
+                                    <li><Link to="/">Home</Link></li>
+                                    <li><Link to="/collections">Collections</Link></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <section className="section">
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-12">
+                                <div>
+                                    {this.state.canMint &&
+                                        <p>
+                                            <Link to={'/collections/' + this.state.collectionAddress + '/new'}  >New token</Link>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
 
-                <div className="row">
-                    <div className="col-12">
-                        <div className="category-grid-list">
-                            <div className="row">
-                                <div className="col-12">
-                                    <div className="tab-content" id="nav-tabContent">
-                                        <div className="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
-                                            <div className="row">
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="category-grid-list">
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <div className="tab-content" id="nav-tabContent">
+                                                <div className="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+                                                    <div className="row">
 
-                                                {this.state.tokens.map((ele, inx) => {
-                                                    const auction = this.state.auctions ? this.state.auctions.find(auction => auction.tokenId == ele.id) : null;
-                                                    return (
-                                                        <div key={inx} className="col-lg-4 col-md-6 col-12">
-                                                            <div className="single-item-grid">
-                                                                <div className="image">
-                                                                    <Link to={'/collections/' + this.state.collectionAddress + '/' + ele.id}>
-                                                                        <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
-                                                                    </Link>
-                                                                    {ele.owner === this.context.account &&
-                                                                        <i className="cross-badge lni lni-user"></i>
-                                                                    }
-                                                                    {auction && auction.auctionStatus == AuctionStatusEnum.Running &&
-                                                                        <span className="flat-badge sale">Sale</span>
-                                                                    }
+                                                        {this.state.tokens.map((ele, inx) => {
+                                                            const auction = this.state.auctions ? this.state.auctions.find(auction => auction.tokenId == ele.tokenId) : null;
+
+                                                            return (
+                                                                <div key={inx} className="col-lg-4 col-md-6 col-12">
+                                                                    <div className="single-item-grid">
+                                                                        <div className="image">
+                                                                            <Link to={'/collections/' + this.state.collectionAddress + '/' + ele.tokenId}>
+                                                                                <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
+                                                                            </Link>
+                                                                            {ele.owner === this.context.account &&
+                                                                                <i className="cross-badge lni lni-user"></i>
+                                                                            }
+                                                                            {auction && auction.auctionStatus == AuctionStatusEnum.Running &&
+                                                                                <span className="flat-badge sale">Sale</span>
+                                                                            }
+                                                                        </div>
+                                                                        <div className="content">
+                                                                            <a href="#!" className="tag">{ele.description}</a>
+                                                                            <h3 className="title">
+                                                                                <Link to={'/collections/' + this.state.collectionAddress + '/' + ele.tokenId}>
+                                                                                    {ele.title}
+                                                                                </Link>
+                                                                            </h3>
+                                                                            <AuctionPrice nft={ele} auction={auction} />
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="content">
-                                                                    <a href="#!" className="tag">{ele.description}</a>
-                                                                    <h3 className="title">
-                                                                        <Link to={'/collections/' + this.state.collectionAddress + '/' + ele.id}>
-                                                                            {ele.title} ({ele.id})
-                                                                        </Link>
-                                                                    </h3>
-                                                                    <AuctionPrice nft={ele} auction={auction} />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
+                                                            );
+                                                        })}
 
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -185,7 +213,7 @@ class CollectionDetail extends Component {
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
             </React.Fragment>
         );
     }

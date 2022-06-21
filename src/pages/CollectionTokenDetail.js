@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import AuctionManagement from "../components/AuctionManagement";
 import { AuctionStatusEnum } from "../helpers/enums";
-import { formatPrice } from "../helpers/utils";
+import { formatAddress, formatPrice } from "../helpers/utils";
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
@@ -26,8 +26,6 @@ class CollectionTokenDetail extends Component {
 
     componentDidMount = async () => {
         try {
-            console.log(this.state);
-
             await this.context.checkStateAsync();
 
             // load nft
@@ -42,7 +40,6 @@ class CollectionTokenDetail extends Component {
 
             const metadata = await response.json();
 
-            console.log('metadata', metadata);
             const owner = await this.NFTCollectionInstance.methods.ownerOf(this.state.tokenId).call();
 
             const nft = {
@@ -55,7 +52,6 @@ class CollectionTokenDetail extends Component {
 
             // check if MarketPlace is approved
             const approvedAddress = await this.NFTCollectionInstance.methods.getApproved(nft.tokenId).call();
-            console.log('approvedAddress', approvedAddress);
 
             const auction = await this.loadAuction(nft.tokenId);
 
@@ -79,28 +75,54 @@ class CollectionTokenDetail extends Component {
         //  TODO : Use context
         const collectionAuctions = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
 
-        for (let i = 0; i < collectionAuctions.length; i++) {
-            const _auctionId = collectionAuctions[i];
+        const auction = await this.context.marketPlaceInstance.methods.getAuctionBy(this.state.collectionAddress, tokenId).call();
 
-            const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
-
-            console.log('auction', auction);
-
-            if (auction && auction.auctionStatus == AuctionStatusEnum.Running&& auction.tokenId === tokenId) {
-                return auction;
-            }
+        if (auction && auction.auctionId > 0 && auction.auctionStatus == AuctionStatusEnum.Running) {
+            return auction;
         }
+
+        // for (let i = 0; i < collectionAuctions.length; i++) {
+        //     const _auctionId = collectionAuctions[i];
+
+        //     const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
+
+        //     console.log('auction', auction);
+
+        //     if (auction && auction.auctionStatus == AuctionStatusEnum.Running&& auction.tokenId === tokenId) {
+        //         return auction;
+        //     }
+        // }
 
         return null;
     };
 
     render() {
-        if (this.state.tokenId === 'zulu') return <Navigate to="/error" />
+        if (this.state.nft === 'zulu') return <Navigate to="/error" />
         return (
             <React.Fragment>
+                <div className="breadcrumbs">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <div className="breadcrumbs-content">
+                                    {this.state.nft &&
+                                        <h1 className="page-title">{this.state.nft.title}</h1>
+                                    }
+                                </div>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <ul className="breadcrumb-nav">
+                                    <li><Link to="/">Home</Link></li>
+                                    <li><Link to="/collections">Collections</Link></li>
+                                    <li><Link to={'/collections/' + this.state.collectionAddress}>{formatAddress(this.state.collectionAddress)}</Link></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <section className="item-details section">
-                    {this.state.nft &&
-                        <div className="container">
+                    <div className="container">
+                        {this.state.nft &&
                             <div className="top-area">
                                 <div className="row">
                                     <div className="col-lg-6 col-md-12 col-12">
@@ -166,9 +188,8 @@ class CollectionTokenDetail extends Component {
                                     </div>
                                 </div>
                             </div>
-
-                        </div>
-                    }
+                        }
+                    </div>
                 </section>
             </React.Fragment>
         );

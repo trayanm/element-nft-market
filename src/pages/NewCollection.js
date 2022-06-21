@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom'
 import ipfsClient from 'ipfs-http-client';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
@@ -75,11 +76,6 @@ class NewCollection extends Component {
             }
             const collectionAddress = await this.context.marketPlaceInstance.methods.createCollection(this.state.name, this.state.symbol, metadataAdded.path).send({ from: this.context.account });
             await this.context.refreshBlance();
-
-            console.log(collectionAddress);
-
-            // const accoutnBalance = await web3.eth.getBalance(this.context.account);
-            // this.context.setAccountBalance(accoutnBalance);
         } catch (error) {
             console.log(error);
         }
@@ -120,73 +116,91 @@ class NewCollection extends Component {
     render() {
         return (
             <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="section-title">
-                            <h2 className="wow fadeInUp" data-wow-delay=".4s">New Collection</h2>
-                            <p className="wow fadeInUp" data-wow-delay=".6s">Create new collection.</p>
+                <div className="breadcrumbs">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <div className="breadcrumbs-content">
+                                    <h1 className="page-title">New collection</h1>
+                                </div>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <ul className="breadcrumb-nav">
+                                    <li><Link to="/">Home</Link></li>
+                                    <li><Link to="/collections">Collections</Link></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <section className="contact-us section">
+                    <div className="container">
+                        <div className="row">
+                            <div className="col">
+                                <div className="form-main">
+                                    <div className="form-title">
+                                        <h2>New collection</h2>
+                                        <p>Create new collection</p>
+                                    </div>
+                                    <form onSubmit={(e) => this.handleSubmit(e)}>
+                                        <div className="row mb-3">
+                                            <label className="col-sm-3 col-form-label">Title</label>
+                                            <div className="col-sm-9">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Name..."
+                                                    value={this.state.name}
+                                                    maxLength="50"
+                                                    onChange={(e) => this.onChangeName(e)}
+                                                />
+                                            </div>
+                                        </div>
 
-                <div className="row">
-                    <div className="col">
-                        <form onSubmit={(e) => this.handleSubmit(e)}>
-                            <div className="row mb-3">
-                                <label className="col-sm-4 col-form-label">Title</label>
-                                <div className="col-sm-8">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Name..."
-                                        value={this.state.name}
-                                        maxLength="50"
-                                        onChange={(e) => this.onChangeName(e)}
-                                    />
-                                </div>
-                            </div>
+                                        <div className="row mb-3">
+                                            <label className="col-sm-3 col-form-label">Title</label>
+                                            <div className="col-sm-9">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Symbol..."
+                                                    value={this.state.symbol}
+                                                    maxLength="5"
+                                                    onChange={(e) => this.onChangeSymbol(e)}
+                                                />
+                                            </div>
+                                        </div>
 
-                            <div className="row mb-3">
-                                <label className="col-sm-4 col-form-label">Title</label>
-                                <div className="col-sm-8">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Symbol..."
-                                        value={this.state.symbol}
-                                        maxLength="5"
-                                        onChange={(e) => this.onChangeSymbol(e)}
-                                    />
+                                        <div className="row mb-3">
+                                            <label className="col-sm-3 col-form-label">Description</label>
+                                            <div className="col-sm-9">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Description..."
+                                                    value={this.state.description}
+                                                    maxLength="150"
+                                                    onChange={(e) => this.onChangeDescription(e)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mb-3">
+                                            <label className="col-sm-3 col-form-label">File</label>
+                                            <div className="col-sm-9">
+                                                <input
+                                                    type="file"
+                                                    className="form-control"
+                                                    onChange={(e) => this.onChangeFile(e)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <button type="submit" className="btn btn-primary">Save</button>
+                                    </form>
                                 </div>
                             </div>
-
-                            <div className="row mb-3">
-                                <label className="col-sm-4 col-form-label">Description</label>
-                                <div className="col-sm-8">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Description..."
-                                        value={this.state.description}
-                                        maxLength="150"
-                                        onChange={(e) => this.onChangeDescription(e)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <label className="col-sm-4 col-form-label">File</label>
-                                <div className="col-sm-8">
-                                    <input
-                                        type="file"
-                                        className="form-control"
-                                        onChange={(e) => this.onChangeFile(e)}
-                                    />
-                                </div>
-                            </div>
-                            <button type="submit" className="btn btn-primary">Save</button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </section>
             </React.Fragment>
         );
     }

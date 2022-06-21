@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom'
 import ipfsClient from 'ipfs-http-client';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
+import { formatAddress } from "../helpers/utils";
 
 const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
@@ -127,58 +129,77 @@ class NewCollectionToken extends Component {
     render() {
         return (
             <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="section-title">
-                            <h2 className="wow fadeInUp" data-wow-delay=".4s">New Token</h2>
-                            <p className="wow fadeInUp" data-wow-delay=".6s">Create new NFT token.</p>
+                <div className="breadcrumbs">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <div className="breadcrumbs-content">
+                                    <h1 className="page-title">New token</h1>
+                                </div>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <ul className="breadcrumb-nav">
+                                    <li><Link to="/">Home</Link></li>
+                                    <li><Link to="/collections">Collections</Link></li>
+                                    <li><Link to={'/collections/' + this.state.collectionAddress}>{formatAddress(this.state.collectionAddress)}</Link></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div className="row">
-                    <div className="col">
-                        <form onSubmit={(e) => this.handleSubmit(e)}>
-                            <div className="row mb-3">
-                                <label className="col-sm-4 col-form-label">Title</label>
-                                <div className="col-sm-8">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Name..."
-                                    value={this.state.name}
-                                    maxLength="50"
-                                    onChange={(e) => this.onChangeName(e)}
-                                />
+                <section className="contact-us section">
+                    <div className="container">
+                        <div className="row">
+                            <div className="col">
+                                <div className="form-main">
+                                    <div className="form-title">
+                                        <h2>New token</h2>
+                                        <p>Create new token</p>
+                                    </div>
+                                    <form onSubmit={(e) => this.handleSubmit(e)}>
+                                        <div className="row mb-3">
+                                            <label className="col-sm-4 col-form-label">Title</label>
+                                            <div className="col-sm-8">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Name..."
+                                                    value={this.state.name}
+                                                    maxLength="50"
+                                                    onChange={(e) => this.onChangeName(e)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mb-3">
+                                            <label className="col-sm-4 col-form-label">Description</label>
+                                            <div className="col-sm-8">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Description..."
+                                                    value={this.state.description}
+                                                    maxLength="150"
+                                                    onChange={(e) => this.onChangeDescription(e)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mb-3">
+                                            <label className="col-sm-4 col-form-label">File</label>
+                                            <div className="col-sm-8">
+                                                <input
+                                                    type="file"
+                                                    className="form-control"
+                                                    onChange={(e) => this.onChangeFile(e)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <button type="submit" className="btn btn-primary">Mint</button>
+                                    </form>
                                 </div>
                             </div>
-                            <div className="row mb-3">
-                                <label className="col-sm-4 col-form-label">Description</label>
-                                <div className="col-sm-8">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Description..."
-                                    value={this.state.description}
-                                    maxLength="150"
-                                    onChange={(e) => this.onChangeDescription(e)}
-                                />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <label className="col-sm-4 col-form-label">File</label>
-                                <div className="col-sm-8">
-                                <input
-                                    type="file"
-                                    className="form-control"
-                                    onChange={(e) => this.onChangeFile(e)}
-                                />
-                                </div>
-                            </div>
-                            <button type="submit" className="btn btn-primary">Mint</button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </section>
             </React.Fragment>
         );
     }

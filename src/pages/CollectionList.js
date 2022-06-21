@@ -55,7 +55,6 @@ class CollectionList extends Component {
             }
 
             const metadata = await response.json();
-            console.log(metadata);
 
             const collectionItеm = {
                 collectionId: collection.collectionId,
@@ -78,43 +77,64 @@ class CollectionList extends Component {
     render() {
         return (
             <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="section-title">
-                            <h2 className="wow fadeInUp" data-wow-delay=".4s">Collections</h2>
-                            <p className="wow fadeInUp" data-wow-delay=".6s">Browse user collections.</p>
+                <div className="breadcrumbs">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <div className="breadcrumbs-content">
+                                    <h1 className="page-title">Collections</h1>
+                                </div>
+                            </div>
+                            <div className="col-lg-6 col-md-6 col-12">
+                                <ul className="breadcrumb-nav">
+                                    <li><Link to="/">Home</Link></li>
+                                    <li>Collections</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <section className="section">
+                    <div className="container">
+                        {/* <div className="row">
+                            <div className="col-12">
+                                <div className="section-title">
+                                    <h2 className="wow fadeInUp" data-wow-delay=".4s">Collections</h2>
+                                    <p className="wow fadeInUp" data-wow-delay=".6s">Browse user collections.</p>
+                                </div>
+                            </div>
+                        </div> */}
 
-                <div className="row">
-                    <div className="col-12">
-                        <div className="category-grid-list">
-                            <div className="row">
-                                <div className="col-12">
-                                    <div className="tab-content" id="nav-tabContent">
-                                        <div className="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
-                                            <div className="row">
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="category-grid-list">
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <div className="tab-content" id="nav-tabContent">
+                                                <div className="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+                                                    <div className="row">
 
-                                                {this.state.collections.map((ele, inx) => (
-                                                    <div key={inx} className="col-lg-4 col-md-6 col-12">
-                                                        <div className="single-item-grid" >
-                                                            <div className="image">
-                                                                <Link to={'/collections/' + ele.collectionAddress}>
-                                                                    <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
-                                                                </Link>
+                                                        {this.state.collections.map((ele, inx) => (
+                                                            <div key={inx} className="col-lg-4 col-md-6 col-12">
+                                                                <div className="single-item-grid" >
+                                                                    <div className="image">
+                                                                        <Link to={'/collections/' + ele.collectionAddress}>
+                                                                            <img src={`https://ipfs.infura.io/ipfs/${ele.img}`} alt="#" />
+                                                                        </Link>
+                                                                    </div>
+                                                                    <div className="content">
+                                                                        <h3 className="title">
+                                                                            <Link to={'/collections/' + ele.collectionAddress}>
+                                                                                {ele.name}
+                                                                            </Link>
+                                                                        </h3>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div className="content">
-                                                                <h3 className="title">
-                                                                    <Link to={'/collections/' + ele.collectionAddress}>
-                                                                        {ele.name}
-                                                                    </Link>
-                                                                </h3>
-                                                            </div>
-                                                        </div>
+                                                        ))}
+
                                                     </div>
-                                                ))}
-
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -122,7 +142,7 @@ class CollectionList extends Component {
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
             </React.Fragment >
         );
     }

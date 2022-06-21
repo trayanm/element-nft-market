@@ -28,7 +28,7 @@ class AuctionManagement extends Component {
         this.state.collectionAddress = collectionAddress;
         this.state.approvedAddress = approvedAddress;
 
-        console.log('auction', this.state.auction);
+        console.log('auction', auction);
     }
 
     onChangeInitialPrice = (event) => {
@@ -36,8 +36,6 @@ class AuctionManagement extends Component {
 
         _state.initialPrice = parseFloat(event.currentTarget.value);
         this.setState(_state);
-
-        console.log(this.state.initialPrice);
     };
 
     onChangeBuyItNowPrice = (event) => {
@@ -45,8 +43,6 @@ class AuctionManagement extends Component {
 
         _state.buyItNowPrice = parseFloat(event.currentTarget.value);
         this.setState(_state);
-
-        console.log(this.state.buyItNowPrice);
     };
 
     onChangeBid = (event) => {
@@ -54,8 +50,6 @@ class AuctionManagement extends Component {
 
         _state.bid = parseFloat(event.currentTarget.value);
         this.setState(_state);
-
-        console.log(this.state.bid);
     };
 
     handleSubmitCancel = async (event) => {
@@ -74,8 +68,11 @@ class AuctionManagement extends Component {
         event.preventDefault();
 
         try {
-            const initialPrice = this.state.initialPrice != null ? web3.utils.toWei(web3.utils.toBN(this.state.initialPrice), 'ether') : 0;
-            const buyItNowPrice = this.state.buyItNowPrice != null ? web3.utils.toWei(web3.utils.toBN(this.state.buyItNowPrice), 'ether') : 0;
+            console.log('this.state.initialPrice', this.state.initialPrice);
+            console.log('this.state.buyItNowPrice', this.state.buyItNowPrice);
+
+            const initialPrice = this.state.initialPrice != null ? web3.utils.toWei(String(this.state.initialPrice), 'ether') : 0;
+            const buyItNowPrice = this.state.buyItNowPrice != null ? web3.utils.toWei(String(this.state.buyItNowPrice), 'ether') : 0;
 
             await this.context.marketPlaceInstance.methods.createAuction(
                 this.state.collectionAddress,
@@ -83,8 +80,8 @@ class AuctionManagement extends Component {
                 initialPrice,
                 buyItNowPrice
             ).send({ from: this.context.account });
-            await this.context.refreshBlance();
 
+            await this.context.refreshBlance();
         } catch (error) {
             console.log(error);
         }
@@ -94,9 +91,6 @@ class AuctionManagement extends Component {
         event.preventDefault();
 
         try {
-            console.log(this.context.marketPlaceInstance._address);
-            console.log(this.state.nft.tokenId);
-
             await this.NFTCollectionInstance.methods.approve(this.context.marketPlaceInstance._address, this.state.nft.tokenId).send({ from: this.context.account });
             await this.context.refreshBlance();
         } catch (error) {
@@ -108,8 +102,6 @@ class AuctionManagement extends Component {
         event.preventDefault();
 
         try {
-            console.log('buyItNowPrice', this.state.auction.buyItNowPrice);
-
             await this.context.marketPlaceInstance.methods.buyNowAuction(this.state.auction.auctionId).send({ from: this.context.account, value: this.state.auction.buyItNowPrice });
             await this.context.refreshBlance();
         } catch (error) {
@@ -146,8 +138,6 @@ class AuctionManagement extends Component {
 
     render() {
         if (this.state.nft.owner === this.context.account) {
-            console.log('this.state.nft.owner', this.state.nft.owner);
-            console.log('this.state.auction', this.state.auction);
             if (this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running) {
                 return (
                     <React.Fragment>

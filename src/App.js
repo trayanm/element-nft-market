@@ -81,23 +81,17 @@ class App extends Component {
     return (
       <div>
         <NavBar />
-        {/* Start Pricing Table Area */}
-        <section className="pricing-table section">
-          <div className="container">
-            <Routes >
-              <Route exact path="/" element={<Home />} />
-              <Route path="/some" element={<Some />} />
-              <Route path="/collections/:collectionAddress" element={<CollectionDetail />} />
-              <Route path="/collections/:collectionAddress/new" element={<NewCollectionToken />} />
-              <Route path="/collections/:collectionAddress/:tokenId" element={<CollectionTokenDetail />} />
-              <Route path="/collections/new" element={<NewCollection />} />
-              <Route path="/collections" element={<CollectionList />} />
-              <Route path="*" element={<Error />} />
-            </Routes>
+        <Routes >
+          <Route exact path="/" element={<Home />} />
+          <Route path="/some" element={<Some />} />
+          <Route path="/collections/:collectionAddress" element={<CollectionDetail />} />
+          <Route path="/collections/:collectionAddress/new" element={<NewCollectionToken />} />
+          <Route path="/collections/:collectionAddress/:tokenId" element={<CollectionTokenDetail />} />
+          <Route path="/collections/new" element={<NewCollection />} />
+          <Route path="/collections" element={<CollectionList />} />
+          <Route path="*" element={<Error />} />
+        </Routes>
 
-          </div>
-        </section>
-        {/*/ End Pricing Table Area */}
         <Footer />
         {/* scroll-top  */}
         <a href="#!" className="scroll-top btn-hover">

@@ -12,15 +12,19 @@ class Home extends Component {
   render() {
     return (
       <React.Fragment>
-        <div className="row">
-          <div className="col-12">
-            <div className="section-title">
-              <h2 className="wow fadeInUp" data-wow-delay=".4s">Home</h2>
-              <p className="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
-                Ipsum available, but the majority have suffered alteration in some form.</p>
+        <section className="section">
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <div className="section-title">
+                  <h2 className="wow fadeInUp" data-wow-delay=".4s">Home</h2>
+                  <p className="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
+                    Ipsum available, but the majority have suffered alteration in some form.</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </React.Fragment>
     );
   }

@@ -29,10 +29,10 @@ contract MarketPlace {
 
     enum AuctionStatus {
         //Approved, // ready for use
-        Running, // in progress
-        Closed, // closed with no buyer, need to revert funds
-        Finished, // finished with buyer, need to revert funds
-        Cancelled // canceled by seller, need to revert funds
+        Running, // 0: in progress
+        Closed, // 1: closed with no buyer, need to revert funds
+        Finished, // 2: finished with buyer, need to revert funds
+        Cancelled // 3: canceled by seller, need to revert funds
     }
 
     // Definitions
@@ -131,7 +131,7 @@ contract MarketPlace {
     //     return _createCollection(_name, _symbol);
     // }
 
-    function createCollection(string memory _name, string memory _symbol, string memory _tokenURI) external returns (address) {
+    function createCollection(string memory _name, string memory _symbol, string memory _metaURI) external returns (address) {
         NFTCollection collectionContract = new NFTCollection(_name, _symbol);
         // grant role
         collectionContract.grantRole(MINTER_ROLE, msg.sender);
@@ -142,7 +142,7 @@ contract MarketPlace {
 
         _collectionIds.increment();
         uint256 _collectionId = _collectionIds.current();
-        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _tokenURI);        
+        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _metaURI);        
 
         usercollections[msg.sender][_collectionId] = true;
 
@@ -151,12 +151,12 @@ contract MarketPlace {
         return _collectionAddress;
     }
 
-    function importCollection(address _collectionAddress, string memory _tokenURI)external returns (address) {
+    function importCollection(address _collectionAddress, string memory _metaURI)external returns (address) {
         // This method is not implemented
         revert();
         _collectionIds.increment();
         uint256 _collectionId = _collectionIds.current();
-        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _tokenURI);        
+        collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _metaURI);        
 
         usercollections[msg.sender][_collectionId] = true;
 

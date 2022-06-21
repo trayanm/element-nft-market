@@ -54,7 +54,7 @@ class NavBar extends Component {
                                                 <li className="nav-item"><Link to="/">Home</Link></li>
                                                 {/* <li className="nav-item"><Link to="/some">Some</Link></li> */}
                                                 <li className="nav-item"><Link to="/collections">Collections</Link></li>
-                                                <li className="nav-item"><Link to="/collections/new">New Collection</Link></li>
+                                                <li className="nav-item"><Link to="/collections/new">New collection</Link></li>
                                                 <li className="nav-item"><Link to="/Profile">Profile</Link></li>
                                             </ul>
                                         </div>
