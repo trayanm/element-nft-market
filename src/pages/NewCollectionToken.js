@@ -193,7 +193,11 @@ class NewCollectionToken extends Component {
                                                 />
                                             </div>
                                         </div>
-                                        <button type="submit" className="btn btn-primary">Mint</button>
+                                        <div className="col-12">
+                                            <div className="form-group button">
+                                                <button type="submit" className="btn">Mint</button>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                             </div>

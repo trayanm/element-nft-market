@@ -145,7 +145,11 @@ class AuctionManagement extends Component {
                             {/* <em>owner</em> | <em>auction</em> */}
                             <AuctionPrice nft={this.state.nft} auction={this.state.auction} />
                             <form onSubmit={(e) => this.handleSubmitCancel(e)}>
-                                <button type="submit" className="btn btn-danger">Cancel</button>
+                                <div className="col-12">
+                                    <div className="form-group button">
+                                        <button type="submit" className="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </React.Fragment>
@@ -183,13 +187,19 @@ class AuctionManagement extends Component {
                                             />
                                         </div>
                                     </div>
-                                    <button type="submit" className="btn btn-primary">Sell</button>
+                                    <div className="col-12">
+                                        <div className="form-group button">
+                                            <button type="submit" className="btn btn-danger">Sell</button>
+                                        </div>
+                                    </div>
                                 </form>
                             }
 
                             {this.state.approvedAddress !== this.context.marketPlaceInstance._address &&
                                 <form onSubmit={(e) => this.handleSubmitApprove(e)}>
-                                    <button type="submit" className="btn btn-success" >Approve to market</button>
+                                    <div className="form-group button">
+                                        <button type="submit" className="btn btn-success">Approve to market</button>
+                                    </div>
                                 </form>
                             }
                         </div>
@@ -217,13 +227,21 @@ class AuctionManagement extends Component {
                                         />
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-primary">Bid</button>
+                                <div className="col-12">
+                                    <div className="form-group button">
+                                        <button type="submit" className="btn btn-primary">Bid</button>
+                                    </div>
+                                </div>
                             </form>
 
                             <form onSubmit={(e) => this.handleSubmitBuyNow(e)}>
                                 <div className="row mt-3">
                                     <div className="col">
-                                        <button type="submit" className="btn btn-success" >Buy now</button>
+                                        <div className="col-12">
+                                            <div className="form-group button">
+                                                <button type="submit" className="btn btn-success">Buy now</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
