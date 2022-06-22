@@ -55,7 +55,7 @@ class NavBar extends Component {
                                                 {/* <li className="nav-item"><Link to="/some">Some</Link></li> */}
                                                 <li className="nav-item"><Link to="/collections">Collections</Link></li>
                                                 <li className="nav-item"><Link to="/collections/new">New collection</Link></li>
-                                                <li className="nav-item"><Link to="/Profile">Profile</Link></li>
+                                                {/* <li className="nav-item"><Link to="/Profile">Profile</Link></li> */}
                                             </ul>
                                         </div>
                                         {/* navbar collapse */}
@@ -68,8 +68,10 @@ class NavBar extends Component {
                                                             target="blank"
                                                             rel="noopener noreferrer"
                                                         >
+                                                            <i className="lni lni-user"></i>&nbsp;
                                                             {formatAddress(this.context.account)} ({formatPrice(this.context.accountBalance)})
-                                                        </a>}
+                                                        </a>
+                                                    }
                                                 </li>
                                             </ul>
                                         </div>

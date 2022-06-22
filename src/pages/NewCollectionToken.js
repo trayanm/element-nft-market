@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import ipfsClient from 'ipfs-http-client';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
@@ -89,7 +89,10 @@ class NewCollectionToken extends Component {
             //         //   collectionCtx.setNftIsLoading(false);  
             //     });
 
-            await this.NFTCollectionInstance.methods.safeMint(metadataAdded.path).send({ from: this.context.account });
+            // await this.NFTCollectionInstance.methods.safeMint(metadataAdded.path).send({ from: this.context.account });
+
+            console.log(this.context.marketPlaceInstance._address);
+            await this.context.marketPlaceInstance.methods.mint(this.state.collectionAddress, metadataAdded.path).send({ from: this.context.account });
             await this.context.refreshBlance();
 
         } catch (error) {

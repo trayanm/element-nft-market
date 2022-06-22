@@ -14,6 +14,7 @@ contract MarketPlace {
 
     Counters.Counter private _collectionIds;
     Counters.Counter private _auctionIds;
+    Counters.Counter private _directOfferIds;
 
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
 
@@ -27,12 +28,19 @@ contract MarketPlace {
     //     English // (not used for now)
     // }
 
+    enum DirectOfferStatus {
+        Open, // 0: open for acceptance
+        Accepted, // 1: accepted by token owner
+        Finished, // 2: finished with buyer
+        Canceled // 3: canceled by seller
+    }
+
     enum AuctionStatus {
         //Approved, // ready for use
         Running, // 0: in progress
         Closed, // 1: closed with no buyer, need to revert funds
         Finished, // 2: finished with buyer, need to revert funds
-        Cancelled // 3: canceled by seller, need to revert funds
+        Canceled // 3: canceled by seller, need to revert funds
     }
 
     // Definitions
@@ -56,12 +64,19 @@ contract MarketPlace {
         address ownerAddress;
         string metaURI; // like in ERC721 token URI
     }
-
-    struct DirectOffer{
-        address from;
-        uint256 collectionId;
+    
+    // Only 1 valid offer per buyer
+    // Buyer can send many offers
+    // Seller can accept many offers
+    // On buy performed - invalidate all other direct offers
+    struct DirectOfferItem {
+        address ownerAddress;
+        address collectionAddress; // ERC721 token of the collection
+        address buyerAddress; // offer send from address
+        uint256 directOfferId;
         uint256 tokenId;
         uint256 offeredPrice;
+        DirectOfferStatus directOfferStatus;
     }
 
     // properties
@@ -89,13 +104,16 @@ contract MarketPlace {
 
     // emitted when a collection is created
     event onCollectionCreated(uint256 indexed collectionId, address indexed collectionAddress, address indexed ownerAddress);
+
+    // emitted when a direct offer is created
+    event onDirectOfferCreated(address indexed collectionAddress, uint256 indexed directOfferId, uint256 indexed tokenId);
     // --
 
     // auctionId => AuctionItem
     mapping(uint256 => AuctionItem) auctionStore;
 
-    // auctionId => (collectionId => AuctionItem)
-    // mapping(uint256 => mapping(uint256 => AuctionItem)) auctionStoreExt;
+    // directOfferId => DirectOfferItem
+    mapping(uint256 => DirectOfferItem) directOfferStore;
 
     // collectionId => CollectionItem
     mapping(uint256 => CollectionItem) collectionStore;
@@ -111,32 +129,39 @@ contract MarketPlace {
 
     // _collectionAddress => _tokenId => _auctionId
     mapping(address=> mapping(uint256 => uint256)) tokenAuctions;
-    // 
+
+    // tokenDirectOffers[_collectionAddress][_tokenId][buyerAddress] = _directOfferId
+    // _collectionAddress => (_tokenId => (buyerAddress => _directOfferId))
+    mapping(address => mapping(uint256 => mapping(address => uint256))) tokenDirectOffers;
 
     // -- Modifiers
-    // modifier requireCollectionOwner(uint256 _collectionId) {
-    //     require(usercollections[msg.sender][_collectionId], 'Not collection owner');
-    //     _;
-    // }
     // --
 
-    // constructor() public {
-    //     // deploy NFT Collection contract
-    //     // add newly deployed contract to collection array
-    //     // _createCollection('TTM Collection', 'TTM', address(this), false);
-    // }
+     constructor() public {
+     }
+
+     // -- Mint
+     // TODO : ask if this is good idea
+     function mint(address _collectionAddress, string memory _tokenURI) external {
+        NFTCollection nftCollection = NFTCollection(_collectionAddress);
+
+        uint256 _tokenId = nftCollection.externalMint(msg.sender, _tokenURI);
+ 
+        // transfer to msg.sender
+        //nftCollection.transferFrom(address(this), msg.sender, _tokenId);
+
+        // set approve to MarketPlace
+        //nftCollection.approve(address(this), _tokenId);
+     }
+     // --
 
     // -- Collection management
-    // function createCollection(string memory _name, string memory _symbol) public returns (address) {
-    //     return _createCollection(_name, _symbol);
-    // }
-
     function createCollection(string memory _name, string memory _symbol, string memory _metaURI) external returns (address) {
         NFTCollection collectionContract = new NFTCollection(_name, _symbol);
         // grant role
         collectionContract.grantRole(MINTER_ROLE, msg.sender);
         // approve creator by default
-        // collectionContract.setApprovalForAll(msg.sender, true); // not applied for newly created tokens
+        collectionContract.setApprovalForAll(msg.sender, true); // not applied for newly created tokens
 
         address _collectionAddress = address(collectionContract);
 
@@ -253,21 +278,21 @@ contract MarketPlace {
 
         require(msg.value == _auction.buyItNowPrice, 'Buy now price is greater');
 
-        uint256 fee = msg.value.mul(FEE_SELL_PERCENTAGE).div(100);
-
         NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
 
         // transfer from MarketPalce as approved
         nftCollection.transferFrom(_auction.ownerAddress, msg.sender, _auction.tokenId);
 
         _auction.auctionStatus = AuctionStatus.Finished;
+
+        uint256 fee = msg.value.mul(FEE_SELL_PERCENTAGE).div(100);
         uint256 userFund = msg.value.sub(fee);
         userFunds[_auction.ownerAddress] = userFunds[_auction.ownerAddress].add(userFund);
 
         delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
 
         // TODO : Handle bids
-        // TODO : Handle buy request
+        // TODO : Handle direct offers
 
         emit onAuctionFinished(_auctionId, _auction.tokenId);
     }
@@ -280,14 +305,14 @@ contract MarketPlace {
         require(_auction.ownerAddress == msg.sender, 'Only auction owner can cancel');
         require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
 
-        NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
+        //NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
         //nftCollection.transferFrom(address(this), msg.sender, _auction.tokenId);
-        _auction.auctionStatus = AuctionStatus.Cancelled;
+        _auction.auctionStatus = AuctionStatus.Canceled;
 
         delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
 
         // TODO : Handle bids
-        // TODO : Handle buy request
+        // TODO : Handle direct offers
 
         emit onAuctionCancelled(_auctionId, _auction.tokenId);
     }
@@ -309,31 +334,83 @@ contract MarketPlace {
     // --
 
     // -- Direct offers
-    function createDirectOffer(address _collectionAddress, uint256 _tokenId, uint256 _offeredPrice) external{
+    function createDirectOffer(address _collectionAddress, uint256 _tokenId, uint256 _offeredPrice) external {
         NFTCollection nftCollection = NFTCollection(_collectionAddress);
 
+        address _ownerAddress = nftCollection.ownerOf(_tokenId);
         // requrie not own token
-        require(msg.sender != nftCollection.ownerOf(_tokenId), 'Already token owner');
+        require(msg.sender != _ownerAddress, 'Already token owner');
 
-        // require not active auction
+        // create direct offer
+        _directOfferIds.increment();
+        uint256 _directOfferId = _directOfferIds.current();
+            directOfferStore[_directOfferId] = DirectOfferItem({
+            ownerAddress : _ownerAddress,
+            collectionAddress: _collectionAddress,
+            buyerAddress:msg.sender,
+            directOfferId: _directOfferId,
+            tokenId: _tokenId, 
+            offeredPrice:_offeredPrice,
+            directOfferStatus: DirectOfferStatus.Open
+        });
 
+        tokenDirectOffers[_collectionAddress][_tokenId][msg.sender] = _directOfferId;
 
-        // check already better direct offer?
+        emit onDirectOfferCreated(_collectionAddress, _directOfferId, _tokenId);
     }
 
-    function getDirectOffers(uint256 _collectionId, uint256 _tokenId) external view{
+    function getDirectOffers(address _collectionAddress, uint256 _tokenId) external view {
 
     }
 
-    function cancelDirectOffer(uint256 _directOfferId) external{
-        // by DirecOffer.from
+    function cancelDirectOffer(uint256 _directOfferId) external {
+        DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
+
+        require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
+        require(_directOffer.buyerAddress == msg.sender, 'Only offer bayer can cancel');
+        require(_directOffer.directOfferStatus == DirectOfferStatus.Open, 'Offer is not open');
+
+        _directOffer.directOfferStatus = DirectOfferStatus.Canceled;
+
+        delete tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId][msg.sender];
     }
-    function acceptDirectOffer(uint256 _directOfferId) external{
+    function acceptDirectOffer(uint256 _directOfferId) external {
         // by token owner
+        DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
+
+        require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
+        require(_directOffer.directOfferStatus == DirectOfferStatus.Open, 'Offer is not open');
+
+        NFTCollection nftCollection = NFTCollection(_directOffer.collectionAddress);
+        require(msg.sender == nftCollection.ownerOf(_directOffer.tokenId), 'Not token owner');
+        
+        // check if MarketPlace is approved
+        require(address(this) == nftCollection.getApproved(_directOffer.tokenId), 'MarketPlace is not approved');
+
+        _directOffer.directOfferStatus = DirectOfferStatus.Accepted;
     }
 
-    function fulfillDirectOffer(uint256 _directOfferId) external payable{
+    function fulfillDirectOffer(uint256 _directOfferId) external payable {
+        // cancel auction
 
+        DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
+
+        require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
+        require(_directOffer.directOfferStatus == DirectOfferStatus.Accepted, 'Offer is not open');
+        require(_directOffer.buyerAddress == msg.sender, 'Only offer bayer can fullfill');
+
+        NFTCollection nftCollection = NFTCollection(_directOffer.collectionAddress);
+
+        // transfer from MarketPalce as approved
+        nftCollection.transferFrom(_directOffer.ownerAddress, msg.sender, _directOffer.tokenId);
+
+        _directOffer.directOfferStatus = DirectOfferStatus.Finished;
+
+        uint256 fee = msg.value.mul(FEE_SELL_PERCENTAGE).div(100);
+        uint256 userFund = msg.value.sub(fee);
+        userFunds[_directOffer.ownerAddress] = userFunds[_directOffer.ownerAddress].add(userFund);
+
+        //delete tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId];
     }
     // --
 

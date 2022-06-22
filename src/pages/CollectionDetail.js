@@ -4,6 +4,7 @@ import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 import AuctionPrice from "../components/AuctionPrice";
 import { AuctionStatusEnum } from "../helpers/enums";
+import Spinner from '../components/Spinner';
 
 class CollectionDetail extends Component {
     static contextType = AppContext;
@@ -12,7 +13,8 @@ class CollectionDetail extends Component {
         collectionAddress: null,
         auctions: [],
         tokens: [],
-        canMint: false
+        canMint: false,
+        loading: true
     };
 
     constructor(props) {
@@ -35,6 +37,8 @@ class CollectionDetail extends Component {
 
             _state.tokens = await this.loadTokens();
             _state.auctions = await this.loadCollectionAuctions(_state.tokens);
+
+            _state.loading = false;
 
             this.setState(_state);
         } catch (error) {
@@ -131,6 +135,10 @@ class CollectionDetail extends Component {
     };
 
     render() {
+        if (this.state.loading === true) {
+            return (<Spinner />);
+        }
+
         return (
             <React.Fragment>
                 <div className="breadcrumbs">

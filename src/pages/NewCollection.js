@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import ipfsClient from 'ipfs-http-client';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";

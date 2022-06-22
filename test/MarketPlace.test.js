@@ -51,7 +51,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(canMint, false, 'account_2 cannot mint on Symbol');
     });
 
-    it('Test: Minting', async function () {
+    it('Test: Mint through collection', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -75,6 +75,44 @@ contract('MarketPlace', function (accounts) {
             assert.notEqual(error, undefined, 'Error must be thrown');
             assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
         }
+    });
+
+    it('Test: Collection external mint', async function() {
+        await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        
+        let errorMessage = 'ERC721PresetMinterPauserAutoId: must have admin role to mint';
+        try{
+            await collectionContract_1.externalMint(account_1, '_tokenURI_1', { from: account_1 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
+    })
+    
+    it('Test: Mint through MarketPlace', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+
+        await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
+
+        let errorMessage = 'ERC721PresetMinterPauserAutoId: must have minter role to mint';
+        try{
+            await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_2 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
+
+        const newOwner_1 = await collectionContract_1.ownerOf(1);
+        assert.equal(newOwner_1, account_1, 'New owner is account_1');
+
+        const approved_1 = await collectionContract_1.getApproved(1);
+        assert.equal(approved_1, theMarketPlace.address, 'MarketPlace is approved');
     });
 
     it('Test: Auction create', async function () {
@@ -132,7 +170,7 @@ contract('MarketPlace', function (accounts) {
     });
 
 
-    it('Test: Get Auction', async function(){
+    it('Test: Get Auction', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -288,7 +326,7 @@ contract('MarketPlace', function (accounts) {
         await theMarketPlace.cancelAuction(1, { from: account_1 });
 
         const auction_1_after = await theMarketPlace.getAuction(1);
-        assert.equal(auction_1_after.auctionStatus, 3, 'auctionStatus is Cancelled');
+        assert.equal(auction_1_after.auctionStatus, 3, 'auctionStatus is Canceled');
 
         // try to buy canceled auction
         errorMessage = 'Auction is not running';
@@ -299,6 +337,59 @@ contract('MarketPlace', function (accounts) {
             assert.notEqual(error, undefined, 'Error must be thrown');
             assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
         }
+    });
+
+    it('Test: Direct offers without auction', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        await collectionContract_1.safeMint('_tokenURI_1', { from: account_1 });
+        await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
+
+        // create new from account_2
+
+        // create new from account_3
+
+        // create new from account_2
+
+        // create new from account_4
+
+        // cancel from account_3
+        // should be invalid from account_3
+
+        // accept from account_2
+
+        // should be invalid from account_1
+        // should be invalid from account_4
+    });
+
+    it('Test: Direct offers with auction', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        await collectionContract_1.safeMint('_tokenURI_1', { from: account_1 });
+        await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
+
+        // create auction
+        await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
+        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+
+        // create new from account_2
+
+        // create new from account_3
+
+        // create new from account_2
+
+        // create new from account_4
+
+        // cancel from account_3
+        // should be invalid from account_3
+
+        // accept from account_2
+
+        // should be invalid from account_2
+        // should be invalid from account_4
+        // auction status should be Canceled
     });
 
     it('Test: Tempalte', async function () {

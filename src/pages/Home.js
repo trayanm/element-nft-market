@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
@@ -17,9 +18,9 @@ class Home extends Component {
             <div className="row">
               <div className="col-12">
                 <div className="section-title">
-                  <h2 className="wow fadeInUp" data-wow-delay=".4s">Home</h2>
-                  <p className="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
-                    Ipsum available, but the majority have suffered alteration in some form.</p>
+                  <h2 className="wow fadeInUp" data-wow-delay=".4s">TTM Market</h2>
+                  <p className="wow fadeInUp" data-wow-delay=".6s">Create, Sell and Bid on user created graphic content. <br />
+                  Please check our <Link to="/collections">collections</Link>.</p>
                 </div>
               </div>
             </div>
