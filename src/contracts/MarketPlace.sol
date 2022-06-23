@@ -2,13 +2,15 @@
 pragma solidity ^0.8.0;
 
 // import "@openzeppelin/contracts/access/Ownable.sol";
- import '@openzeppelin/contracts/utils/math/SafeMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import "@openzeppelin/contracts/utils/Counters.sol";
-//import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
+import '@openzeppelin/contracts/utils/structs/EnumerableMap.sol';
+// import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 
 import './NFTCollection.sol';
 
 contract MarketPlace {
+    using EnumerableMap for EnumerableMap.AddressToUintMap;
     using Counters for Counters.Counter;
     using SafeMath for uint256;
 
@@ -36,7 +38,7 @@ contract MarketPlace {
     }
 
     enum AuctionStatus {
-        //Approved, // ready for use
+        // Approved, // ready for use
         Running, // 0: in progress
         Closed, // 1: closed with no buyer, need to revert funds
         Finished, // 2: finished with buyer, need to revert funds
@@ -45,8 +47,10 @@ contract MarketPlace {
 
     // Definitions
     struct AuctionItem {
-        address ownerAddress;
+        address ownerAddress; // TODO : Check if needed
         address collectionAddress;
+        // address highestBidderAddress;
+        // uint256 highestBid;
         uint256 auctionId; // auction Id, is generated
         uint256 tokenId; // token Id, is given
         uint256 buyItNowPrice; // buy now buyItNowPrice in case of type FixedPrice. Zero means - no buy now. Mandatory if Fixed price
@@ -61,7 +65,7 @@ contract MarketPlace {
     struct CollectionItem {
         uint256 collectionId; // TODO : Check if needed
         address collectionAddress; // ERC721 token of the collection
-        address ownerAddress;
+        address ownerAddress; // owner of the token
         string metaURI; // like in ERC721 token URI
     }
     
@@ -70,15 +74,21 @@ contract MarketPlace {
     // Seller can accept many offers
     // On buy performed - invalidate all other direct offers
     struct DirectOfferItem {
-        address ownerAddress;
+        address ownerAddress; // owner of the token // TODO : Check if needed
         address collectionAddress; // ERC721 token of the collection
         address buyerAddress; // offer send from address
-        uint256 directOfferId;
+        uint256 directOfferId; // TODO : Check if needed
         uint256 tokenId;
         uint256 offeredPrice;
         DirectOfferStatus directOfferStatus;
     }
-
+	
+	struct DirectOfferGroupItem {
+		// _buyerAddress => _directOfferId  
+        //uint256 length; //  TODO : Check
+		EnumerableMap.AddressToUintMap buyerMap; // offer send from address
+	}
+	
     // properties
     // msg.sender => generated funds
     mapping(address => uint256) public userFunds; // contains funds per user generated from sales. Bids will stored in other way
@@ -127,12 +137,15 @@ contract MarketPlace {
     // collectionAddress => auctionId[]
     mapping(address => uint256[]) collectionToAcutions;
 
-    // _collectionAddress => _tokenId => _auctionId
+    // _collectionAddress => (_tokenId => _auctionId)
     mapping(address=> mapping(uint256 => uint256)) tokenAuctions;
 
     // tokenDirectOffers[_collectionAddress][_tokenId][buyerAddress] = _directOfferId
     // _collectionAddress => (_tokenId => (buyerAddress => _directOfferId))
-    mapping(address => mapping(uint256 => mapping(address => uint256))) tokenDirectOffers;
+    //mapping(address => mapping(uint256 => mapping(address => uint256))) tokenDirectOffers;
+
+    // _collectionAddress => (_tokenId => DirectOfferGroupItem)
+    mapping(address => mapping(uint256 => DirectOfferGroupItem)) tokenDirectOffers;
 
     // -- Modifiers
     // --
@@ -146,12 +159,6 @@ contract MarketPlace {
         NFTCollection nftCollection = NFTCollection(_collectionAddress);
 
         uint256 _tokenId = nftCollection.externalMint(msg.sender, _tokenURI);
- 
-        // transfer to msg.sender
-        //nftCollection.transferFrom(address(this), msg.sender, _tokenId);
-
-        // set approve to MarketPlace
-        //nftCollection.approve(address(this), _tokenId);
      }
      // --
 
@@ -194,14 +201,10 @@ contract MarketPlace {
         return collectionStore[_collectionId];
     }
 
-    function getCollectionCount() external view returns(uint256){
+    function getCollectionCount() external view returns(uint256) {
         return _collectionIds.current();
     }
-    function getAuctionCount() external view returns(uint256){
-        return _auctionIds.current();
-    }
-
-    // --
+	// --
 
     // -- Auction Management
     function createAuction(
@@ -215,7 +218,7 @@ contract MarketPlace {
         // nftCollection.transferFrom(msg.sender, address(this), _tokenId); // TODO : use approve !!!
 
         // _initialPrice or _buyItNowPrice should be above zero
-        require(_initialPrice + _buyItNowPrice > 0, 'Token Price cannot be zero');
+        require(_initialPrice + _buyItNowPrice > 0, 'Token price cannot be zero');
 
         // check token owner
         require(msg.sender == nftCollection.ownerOf(_tokenId), 'Not token owner');
@@ -247,7 +250,14 @@ contract MarketPlace {
 
         tokenAuctions[_collectionAddress][_tokenId] = _auctionId;
 
+        // delete direct offer for specific token
+        delete tokenDirectOffers[_collectionAddress][_tokenId];
+
         emit onAuctionCreated(_auctionId, _tokenId);
+    }
+
+    function getAuctionCount() external view returns(uint256) {
+        return _auctionIds.current();
     }
 
     function getCollectionAuctions(address collectionAddress) external view returns (uint256[] memory) {
@@ -325,10 +335,28 @@ contract MarketPlace {
 
     // -- Auction actions
     // bid - handle user funds?
-    function bid() external payable {
+    function bid(uint256 _auctionId) external payable {
+        /*
+        AuctionItem storage _auction = auctionStore[_auctionId];
+
+        require(_auction.auctionId == _auctionId, 'Auction does not exists');
+        require(_auction.ownerAddress != msg.sender, 'Auction owner cannot buy it');
+        require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
+        require(_auction.highestBid < msg.value, 'Buy now is not allowed');
+
+        // return prev bid
+        // TODO : Ask if use userFunds
+        // send _auction.highestBid to _auction.highestBidderAddress
+
+        // load new bid
+        _auction.highestBid = msg.value;
+        _auction.highestBidderAddress = msg.sender;
+
+        emit onAuctionBid(_auctionId, msg.value);
+        */
+
         // not supported
         revert();
-        // emit onAuctionBid()
     }
 
     // --
@@ -338,30 +366,78 @@ contract MarketPlace {
         NFTCollection nftCollection = NFTCollection(_collectionAddress);
 
         address _ownerAddress = nftCollection.ownerOf(_tokenId);
+
         // requrie not own token
         require(msg.sender != _ownerAddress, 'Already token owner');
+
+        require(_ownerAddress != address(0), 'Token without owner');
+
+        // _offeredPrice should be above zero
+        require(_offeredPrice > 0, 'Offered price cannot be zero');
+
+        // require no active auction
+        require(tokenAuctions[_collectionAddress][_tokenId] == 0, 'Auction for this token exists');
 
         // create direct offer
         _directOfferIds.increment();
         uint256 _directOfferId = _directOfferIds.current();
-            directOfferStore[_directOfferId] = DirectOfferItem({
+        directOfferStore[_directOfferId] = DirectOfferItem({
             ownerAddress : _ownerAddress,
             collectionAddress: _collectionAddress,
-            buyerAddress:msg.sender,
+            buyerAddress: msg.sender,
             directOfferId: _directOfferId,
             tokenId: _tokenId, 
-            offeredPrice:_offeredPrice,
+            offeredPrice: _offeredPrice,
             directOfferStatus: DirectOfferStatus.Open
         });
 
-        tokenDirectOffers[_collectionAddress][_tokenId][msg.sender] = _directOfferId;
+        // tokenDirectOffers[_collectionAddress][_tokenId].buyerMap[msg.sender] = _directOfferId;
+        tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.set(msg.sender, _directOfferId);
 
         emit onDirectOfferCreated(_collectionAddress, _directOfferId, _tokenId);
     }
 
-    function getDirectOffers(address _collectionAddress, uint256 _tokenId) external view {
-
+    function getDirectOfferCount() external view returns(uint256) {
+        return _directOfferIds.current();
     }
+
+	function getDirectOffer(uint256 _directOfferId) public view returns (DirectOfferItem memory) {
+        DirectOfferItem memory _directOffer = directOfferStore[_directOfferId];
+
+        require(_directOffer.directOfferId == _directOfferId, 'DirectOffer does not exists');
+        return _directOffer;
+    }
+
+     function getDirectOffers(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem[] memory) {
+       uint256 length = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.length();
+
+        DirectOfferItem[] memory result = new DirectOfferItem[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            (address _ownerAddress, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.at(i);
+
+            result[i] = getDirectOffer(_directOfferId);
+        }
+
+       return result;
+     }
+
+     function getDirectOfferBy(address _buyerAddress, address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem memory) {
+        uint256 _directOfferId = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.get(_buyerAddress);
+
+        return getDirectOffer(_directOfferId);
+     }
+
+    // function getDirectOffers(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem[] memory) {
+    //     // TODO : Ask how to get list of DirectOfferItems
+    //     uint256 length = tokenDirectOffers[_collectionAddress][_tokenId].length;
+
+    //     if (length > 0) {
+    //         for (uint256 i = 0; i < length; i++) {
+                
+    //         }            
+    //     } 
+    // }
 
     function cancelDirectOffer(uint256 _directOfferId) external {
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
@@ -372,10 +448,10 @@ contract MarketPlace {
 
         _directOffer.directOfferStatus = DirectOfferStatus.Canceled;
 
-        delete tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId][msg.sender];
+        // remove direct offer by buyer
+        tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId].buyerMap.remove(msg.sender);
     }
     function acceptDirectOffer(uint256 _directOfferId) external {
-        // by token owner
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
         require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
@@ -391,18 +467,17 @@ contract MarketPlace {
     }
 
     function fulfillDirectOffer(uint256 _directOfferId) external payable {
-        // cancel auction
-
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
         require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
         require(_directOffer.directOfferStatus == DirectOfferStatus.Accepted, 'Offer is not open');
         require(_directOffer.buyerAddress == msg.sender, 'Only offer bayer can fullfill');
+        require(msg.value == _directOffer.offeredPrice, 'Offered price is incorrect');
 
         NFTCollection nftCollection = NFTCollection(_directOffer.collectionAddress);
 
-        // transfer from MarketPalce as approved
-        nftCollection.transferFrom(_directOffer.ownerAddress, msg.sender, _directOffer.tokenId);
+        // transfer from MarketPalce as buyer
+        nftCollection.transferFrom(_directOffer.ownerAddress, _directOffer.buyerAddress, _directOffer.tokenId);
 
         _directOffer.directOfferStatus = DirectOfferStatus.Finished;
 
@@ -410,7 +485,8 @@ contract MarketPlace {
         uint256 userFund = msg.value.sub(fee);
         userFunds[_directOffer.ownerAddress] = userFunds[_directOffer.ownerAddress].add(userFund);
 
-        //delete tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId];
+        // delete direct offer for specific token
+        delete tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId];
     }
     // --
 
