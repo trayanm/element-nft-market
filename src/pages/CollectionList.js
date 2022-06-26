@@ -3,35 +3,26 @@ import { Link } from 'react-router-dom';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 import { formatAddress } from "../helpers/utils";
+import Spinner from '../components/Spinner';
 
 class CollectionList extends Component {
     static contextType = AppContext;
 
     state = {
-        collections: []
+        collections: [],
+        loading: true
     };
 
     async componentDidMount() {
         try {
-            // Get network provider and web3 instance.
-            //this.web3 = web3;
-
-            // Use web3 to get the user's accounts.
-            //this.accounts = await web3.eth.getAccounts();
-
-            // Get the contract instance.
-            //this.networkId = await web3.eth.net.getId();
-
-            // this.MarketPlaceInstance = new web3.eth.Contract(
-            //     MarketPlace.abi,
-            //     MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
-            // );
-
-            //this.MarketPlaceInstance = this.context.marketPlaceInstance;
+            const _state = this.state;
 
             await this.context.checkStateAsync();
 
             await this.loadCollections();
+
+            _state.loading = false;
+            this.setState(_state);
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
@@ -75,6 +66,10 @@ class CollectionList extends Component {
     };
 
     render() {
+        if (this.state.loading === true) {
+            return (<Spinner />);
+        }
+
         return (
             <React.Fragment>
                 <div className="breadcrumbs">

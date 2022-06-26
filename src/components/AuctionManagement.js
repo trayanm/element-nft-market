@@ -16,7 +16,8 @@ class AuctionManagement extends Component {
 
         initialPrice: null,
         buyItNowPrice: null,
-        bid: null,
+        reservedPrice: null,
+        bid: null
     };
 
     constructor(props) {
@@ -28,7 +29,7 @@ class AuctionManagement extends Component {
         this.state.collectionAddress = collectionAddress;
         this.state.approvedAddress = approvedAddress;
 
-        console.log('auction', auction);
+        console.log(this.state.auction);
     }
 
     onChangeInitialPrice = (event) => {
@@ -42,6 +43,13 @@ class AuctionManagement extends Component {
         const _state = this.state;
 
         _state.buyItNowPrice = parseFloat(event.currentTarget.value);
+        this.setState(_state);
+    };
+
+    onChangeReservedPrice = (event) => {
+        const _state = this.state;
+
+        _state.reservedPrice = parseFloat(event.currentTarget.value);
         this.setState(_state);
     };
 
@@ -73,12 +81,21 @@ class AuctionManagement extends Component {
 
             const initialPrice = this.state.initialPrice != null ? web3.utils.toWei(String(this.state.initialPrice), 'ether') : 0;
             const buyItNowPrice = this.state.buyItNowPrice != null ? web3.utils.toWei(String(this.state.buyItNowPrice), 'ether') : 0;
+            const reservedPrice = this.state.reservedPrice != null ? web3.utils.toWei(String(this.state.reservedPrice), 'ether') : 0;
+
+            console.log({
+                initialPrice: initialPrice,
+                buyItNowPrice: buyItNowPrice,
+                reservedPrice: reservedPrice
+            });
 
             await this.context.marketPlaceInstance.methods.createAuction(
-                this.state.collectionAddress,
-                this.state.nft.tokenId,
-                initialPrice,
-                buyItNowPrice
+                /* address _collectionAddress */ this.state.collectionAddress,
+                /* uint256 _tokenId */ this.state.nft.tokenId,
+                /* uint256 _initialPrice */ initialPrice,
+                /* uint256 _reservedPrice */ reservedPrice,
+                /* uint256 _buyItNowPrice */ buyItNowPrice,
+                /* uint256 _durationDays */ 1
             ).send({ from: this.context.account });
 
             await this.context.refreshBlance();
@@ -112,12 +129,16 @@ class AuctionManagement extends Component {
     handleSubmitBid = async (event) => {
         event.preventDefault();
 
-        // TODO : Implement MarketPlace.bid
-        // await this.context.marketPlaceInstance.methods.bid(this.state.auction.auctionId, this.state.nft.tokenId).send({ from: this.context.account, value: this.state.bid });
-        // await this.context.refreshBlance();
+
+        console.log('this.state.bid', this.state.bid);
+
+        const bid = this.state.bid != null ? web3.utils.toWei(String(this.state.bid), 'ether') : 0;
+
+        await this.context.marketPlaceInstance.methods.bid(this.state.auction.auctionId).send({ from: this.context.account, value: bid });
+        await this.context.refreshBlance();
+
         try {
             // ...
-
         } catch (error) {
             console.log(error);
         }
@@ -172,6 +193,18 @@ class AuctionManagement extends Component {
                                                 placeholder="ETH"
                                                 className="form-control"
                                                 onChange={(e) => this.onChangeInitialPrice(e)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="row mb-3">
+                                        <label className="col-sm-4 col-form-label">Reserved price</label>
+                                        <div className="col-sm-8">
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                placeholder="ETH"
+                                                className="form-control"
+                                                onChange={(e) => this.onChangeReservedPrice(e)}
                                             />
                                         </div>
                                     </div>

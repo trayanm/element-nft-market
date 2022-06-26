@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Navigate, Link } from 'react-router-dom'
 import AuctionManagement from "../components/AuctionManagement";
+import DirectOfferManagement from "../components/DirectOfferManagement";
 import { AuctionStatusEnum } from "../helpers/enums";
 import { formatAddress, formatPrice } from "../helpers/utils";
 import { withRouter } from "../hooksHandler";
@@ -157,6 +158,12 @@ class CollectionTokenDetail extends Component {
                                                     collectionAddress={this.state.collectionAddress}
                                                     approvedAddress={this.state.approvedAddress}
                                                 />
+                                                {/* <DirectOfferManagement
+                                                    nft={this.state.nft}
+                                                    auction={this.state.auction}
+                                                    collectionAddress={this.state.collectionAddress}
+                                                    directOffers={directOffers}
+                                                /> */}
                                             </div>
                                             {/* <div className="contact-info">
                                                 <ul>

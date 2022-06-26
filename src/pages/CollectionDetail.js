@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 import AuctionPrice from "../components/AuctionPrice";
-import { AuctionStatusEnum } from "../helpers/enums";
+import { AuctionStatusEnum, DirectOfferStatus } from "../helpers/enums";
 import Spinner from '../components/Spinner';
 
 class CollectionDetail extends Component {
@@ -13,6 +13,7 @@ class CollectionDetail extends Component {
         collectionAddress: null,
         auctions: [],
         tokens: [],
+        // directOffers: [],
         canMint: false,
         loading: true
     };
@@ -37,6 +38,7 @@ class CollectionDetail extends Component {
 
             _state.tokens = await this.loadTokens();
             _state.auctions = await this.loadCollectionAuctions(_state.tokens);
+            // _state.directOffers = await this.loadCollectionDirectOffers(_state.tokens);
 
             _state.loading = false;
 
@@ -89,7 +91,7 @@ class CollectionDetail extends Component {
     loadCollectionAuctions = async (tokens) => {
         //const auctionIds = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
         console.log('tokens', tokens);
-        const auctions = [];
+        const result = [];
 
         if (tokens && tokens.length > 0) {
             for (let i = 0; i < tokens.length; i++) {
@@ -98,12 +100,12 @@ class CollectionDetail extends Component {
                 const auction = await this.context.marketPlaceInstance.methods.getAuctionBy(this.state.collectionAddress, token.tokenId).call();
 
                 if (auction && auction.auctionId > 0 && auction.auctionStatus == AuctionStatusEnum.Running) {
-                    auctions.push(auction);
+                    result.push(auction);
                 }
             }
         }
 
-        // const auctions = [];
+        // const result = [];
 
         // if (auctionIds.length > 0) {
         //     for (let i = 0; i < auctionIds.length; i++) {
@@ -112,13 +114,32 @@ class CollectionDetail extends Component {
         //         const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
 
         //         if (auction && auction.auctionStatus == AuctionStatusEnum.Running) {
-        //             auctions.push(auction);
+        //             result.push(auction);
         //         }
         //     }
         // }
 
-        return auctions;
+        return result;
     };
+
+    // loadCollectionDirectOffers = async (tokens) => {
+    //     let result = [];
+
+    //     if (tokens && tokens.length > 0) {
+    //         for (let i = 0; i < tokens.length; i++) {
+    //             const token = tokens[i];
+
+    //             // TODO : Filter hide by buyer or seller
+    //             const directOffers = await this.context.marketPlaceInstance.getDirectOffers(this.state.collectionAddress, token.tokenId).call();
+
+    //             if (directOffers && directOffers.length > 0) {                    
+    //                 result = result.concat(directOffers);
+    //             }
+    //         }
+    //     }
+
+    //     return result;
+    // };
 
     handleGiveApprove = async (event, id) => {
         event.preventDefault();
@@ -183,6 +204,7 @@ class CollectionDetail extends Component {
 
                                                         {this.state.tokens.map((ele, inx) => {
                                                             const auction = this.state.auctions ? this.state.auctions.find(auction => auction.tokenId == ele.tokenId) : null;
+                                                            //const directOffers = this.state.directOffers ? this.state.directOffers.filter(directOffer => directOffer.tokenId == ele.tokenId) : null;
 
                                                             return (
                                                                 <div key={inx} className="col-lg-4 col-md-6 col-12">
@@ -205,7 +227,7 @@ class CollectionDetail extends Component {
                                                                                     {ele.title}
                                                                                 </Link>
                                                                             </h3>
-                                                                            <AuctionPrice nft={ele} auction={auction} />
+                                                                            <AuctionPrice nft={ele} auction={auction} />                                                                            
                                                                         </div>
                                                                     </div>
                                                                 </div>

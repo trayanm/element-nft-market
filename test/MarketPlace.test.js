@@ -51,7 +51,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(canMint, false, 'account_2 cannot mint on Symbol');
     });
 
-    it('Test: Collection - Mint vie collection', async function () {
+    it('Test: Collection - Mint via collection', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -125,7 +125,15 @@ contract('MarketPlace', function (accounts) {
 
         let errorMessage = 'MarketPlace is not approved';
         try {
-            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+            await theMarketPlace.createAuction(
+                /* address _collectionAddress */ collectionitem_1.collectionAddress,
+                /* uint256 _tokenId */ 1,
+                /* uint256 _initialPrice */ 0,
+                /* uint256 _reservedPrice */ 0,
+                /* uint256 _buyItNowPrice */ 2,
+                /* uint256 _durationDays */ 2,
+                { from: account_1 }
+            );
         }
         catch (error) {
             assert.notEqual(error, undefined, 'Error must be thrown');
@@ -133,10 +141,26 @@ contract('MarketPlace', function (accounts) {
         }
 
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+                /* address _collectionAddress */ collectionitem_1.collectionAddress,
+                /* uint256 _tokenId */ 1,
+                /* uint256 _initialPrice */ 0,
+                /* uint256 _reservedPrice */ 0,
+                /* uint256 _buyItNowPrice */ 2,
+                /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         await collectionContract_1.approve(theMarketPlace.address, 2, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 2, 0, 3, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+                /* uint256 _tokenId */ 2,
+                /* uint256 _initialPrice */ 0,
+                /* uint256 _reservedPrice */ 0,
+                /* uint256 _buyItNowPrice */ 3,
+                /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         const auctionCount = await theMarketPlace.getAuctionCount();
         assert.equal(auctionCount, 2, "Count should be 2");
@@ -144,12 +168,20 @@ contract('MarketPlace', function (accounts) {
         const auction_1 = await theMarketPlace.getAuction(1);
         assert.equal(auction_1.auctionId, 1, 'auction id is 1');
         assert.equal(auction_1.tokenId, 1, 'token id is 1');
-        assert.equal(auction_1.buyItNowPrice, 2, 'buyItNowPrice id is 2');
+        assert.equal(auction_1.buyItNowPrice, 2, 'buyItNowPrice is 2');
         assert.equal(auction_1.auctionStatus, 0, 'auctionStatus is Running');
 
         errorMessage = 'Not token owner';
         try {
-            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 1, { from: account_2 });
+            await theMarketPlace.createAuction(
+                /* address _collectionAddress */ collectionitem_1.collectionAddress,
+                /* uint256 _tokenId */ 1,
+                /* uint256 _initialPrice */ 0,
+                /* uint256 _reservedPrice */ 0,
+                /* uint256 _buyItNowPrice */ 1,
+                /* uint256 _durationDays */ 2,
+                { from: account_2 }
+            );
         }
         catch (error) {
             assert.notEqual(error, undefined, 'Error must be thrown');
@@ -160,8 +192,25 @@ contract('MarketPlace', function (accounts) {
         errorMessage = 'Auction for this token exists';
         try {
             await collectionContract_1.approve(theMarketPlace.address, 3, { from: account_1 });
-            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 3, 0, 2, { from: account_1 });
-            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 3, 2, 4, { from: account_1 });
+            await theMarketPlace.createAuction(
+                /* address _collectionAddress */ collectionitem_1.collectionAddress,
+                /* uint256 _tokenId */ 3,
+                /* uint256 _initialPrice */ 0,
+                /* uint256 _reservedPrice */ 0,
+                /* uint256 _buyItNowPrice */ 2,
+                /* uint256 _durationDays */ 2,
+                { from: account_1 }
+            );
+
+            await theMarketPlace.createAuction(
+                    /* address _collectionAddress */ collectionitem_1.collectionAddress,
+                    /* uint256 _tokenId */ 3,
+                    /* uint256 _initialPrice */ 2,
+                    /* uint256 _reservedPrice */ 0,
+                    /* uint256 _buyItNowPrice */ 4,
+                    /* uint256 _durationDays */ 2,
+                { from: account_1 }
+            );
         }
         catch (error) {
             assert.notEqual(error, undefined, 'Error must be thrown');
@@ -178,14 +227,22 @@ contract('MarketPlace', function (accounts) {
         await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
 
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 2,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         const auction_Get = await theMarketPlace.getAuction(1);
         const auction_GetBy = await theMarketPlace.getAuctionBy(collectionitem_1.collectionAddress, 1);
 
         assert.equal(auction_Get.auctionId, auction_GetBy.auctionId, 'auction id is the same');
         assert.equal(auction_Get.tokenId, auction_GetBy.tokenId, 'token id is the same');
-        assert.equal(auction_Get.buyItNowPrice, auction_GetBy.buyItNowPrice, 'buyItNowPrice id is the same');
+        assert.equal(auction_Get.buyItNowPrice, auction_GetBy.buyItNowPrice, 'buyItNowPrice is the same');
         assert.equal(auction_Get.auctionStatus, auction_GetBy.auctionStatus, 'auctionStatus is the same');
     });
 
@@ -197,23 +254,47 @@ contract('MarketPlace', function (accounts) {
         await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
 
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 2,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         await collectionContract_1.approve(theMarketPlace.address, 2, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 2, 1, 0, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 2,
+            /* uint256 _initialPrice */ 1,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 0,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
-        let errorMessage = 'Token price cannot be zero';
-        try {
-            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 0, { from: account_1 });
-        }
-        catch (error) {
-            assert.notEqual(error, undefined, 'Error must be thrown');
-            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
-        }
+        // let errorMessage = 'Token price cannot be zero';
+        // try {
+        //     await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 0, { from: account_1 });
+        // }
+        // catch (error) {
+        //     assert.notEqual(error, undefined, 'Error must be thrown');
+        //     assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        // }
 
-        errorMessage = 'ERC721: owner query for nonexistent token';
+        let errorMessage = 'ERC721: owner query for nonexistent token';
         try {
-            await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 999, 0, 1, { from: account_1 });
+            await theMarketPlace.createAuction(
+                /* address _collectionAddress */ collectionitem_1.collectionAddress,
+                /* uint256 _tokenId */ 999,
+                /* uint256 _initialPrice */ 0,
+                /* uint256 _reservedPrice */ 0,
+                /* uint256 _buyItNowPrice */ 1,
+                /* uint256 _durationDays */ 2,
+                { from: account_1 }
+            );
         }
         catch (error) {
             assert.notEqual(error, undefined, 'Error must be thrown');
@@ -256,10 +337,26 @@ contract('MarketPlace', function (accounts) {
         await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
 
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 2,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         await collectionContract_1.approve(theMarketPlace.address, 2, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 2, 0, 3, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 2,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 3,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         // buy now other's nft
         await theMarketPlace.buyNowAuction(1, { from: account_2, value: 2 });
@@ -279,10 +376,26 @@ contract('MarketPlace', function (accounts) {
         await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_1 });
 
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 2,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         await collectionContract_1.approve(theMarketPlace.address, 2, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 2, 0, 3, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 2,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 3,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         // buy now other's nft
         await theMarketPlace.buyNowAuction(1, { from: account_2, value: 2 });
@@ -301,7 +414,15 @@ contract('MarketPlace', function (accounts) {
         await collectionContract_1.safeMint('_tokenURI_1', { from: account_1 });
 
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 2,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         // buy now other's nft
         await theMarketPlace.buyNowAuction(1, { from: account_2, value: 2 });
@@ -314,16 +435,24 @@ contract('MarketPlace', function (accounts) {
 
         // account_2 create new auction
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_2 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 2, 4, { from: account_2 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 2,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 4,
+            /* uint256 _durationDays */ 2,
+            { from: account_2 }
+        );
 
         const auctionCount = await theMarketPlace.getAuctionCount();
         assert.equal(auctionCount, 2, "auctionCount Count should be 2");
 
         // const auction_2 = await theMarketPlace.getAuctionBy(collectionitem_1.collectionAddress, 1);
         const auction_2 = await theMarketPlace.getAuction(2);
-        assert.equal(auction_2.auctionId, 2, 'token id is 2');
-        assert.equal(auction_2.initialPrice, 2, 'initialPrice id is 2');
-        assert.equal(auction_2.buyItNowPrice, 4, 'buyItNowPrice id is 4');
+        assert.equal(auction_2.auctionId, 2, 'auction id is 2');
+        assert.equal(auction_2.initialPrice, 2, 'initialPrice is 2');
+        assert.equal(auction_2.buyItNowPrice, 4, 'buyItNowPrice is 4');
         assert.equal(auction_2.auctionStatus, 0, 'auctionStatus should be Running');
     });
 
@@ -335,7 +464,15 @@ contract('MarketPlace', function (accounts) {
         await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
 
         await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 2,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         let errorMessage = 'Only auction owner can cancel';
         try {
@@ -361,6 +498,106 @@ contract('MarketPlace', function (accounts) {
             assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
         }
     });
+
+    it('Test: Auction - Bidding', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
+        await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_1 });
+
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 1,
+            /* uint256 _reservedPrice */ 2,
+            /* uint256 _buyItNowPrice */ 5,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
+
+        let auction = await theMarketPlace.getAuction(1);
+        assert.equal(auction.auctionId, 1, 'auction id is 1');
+        assert.equal(auction.tokenId, 1, 'token id is 1');
+        assert.equal(auction.initialPrice, 1, 'initialPrice is 2');
+        assert.equal(auction.reservedPrice, 2, 'reservedPrice id is 2');
+        assert.equal(auction.buyItNowPrice, 5, 'buyItNowPrice is 5');
+        assert.equal(auction.auctionStatus, 0, 'auctionStatus should be Running');
+        assert.equal(auction.highestBid, 0, 'highestBid should be 0');
+        assert.equal(auction.highestBidderAddress, '0x0000000000000000000000000000000000000000', 'highestBidderAddress should be zero');
+
+        // acount_2 bid 1 eth
+        await theMarketPlace.bid(1, { from: account_2, value: 1 });
+
+        auction = await theMarketPlace.getAuction(1);
+        assert.equal(auction.auctionId, 1, 'auction id is 1');
+        assert.equal(auction.initialPrice, 1, 'initialPrice is 1');
+        assert.equal(auction.buyItNowPrice, 5, 'buyItNowPrice is 5');
+        assert.equal(auction.auctionStatus, 0, 'auctionStatus should be Running');
+        assert.equal(auction.highestBid, 1, 'highestBid should be 1');
+        assert.equal(auction.highestBidderAddress, account_2, 'highestBidderAddress should be account_2');
+
+        // acount_3 bid 2 eth
+        await theMarketPlace.bid(1, { from: account_3, value: 2 });
+
+        auction = await theMarketPlace.getAuction(1);
+        assert.equal(auction.auctionId, 1, 'auction id is 1');
+        assert.equal(auction.initialPrice, 1, 'initialPrice is 1');
+        assert.equal(auction.buyItNowPrice, 5, 'buyItNowPrice is 5');
+        assert.equal(auction.auctionStatus, 0, 'auctionStatus should be Running');
+        assert.equal(auction.highestBid, 2, 'highestBid should be 2');
+        assert.equal(auction.highestBidderAddress, account_3, 'highestBidderAddress should be account_3');
+
+        // account_2 try to under bid
+        let errorMessage = 'Bid most be bigger';
+        try {
+            await theMarketPlace.bid(1, { from: account_2, value: 1 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }        
+    });
+
+    // it('Test: Auction - Bidding and funds', async function () {
+    //     await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+    //     const collectionitem_1 = await theMarketPlace.getCollection(1);
+    //     const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+    //     await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
+    //     await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_1 });
+
+    //     await theMarketPlace.createAuction(
+    //         /* address _collectionAddress */ collectionitem_1.collectionAddress,
+    //         /* uint256 _tokenId */ 1,
+    //         /* uint256 _initialPrice */ 1,
+    //         /* uint256 _reservedPrice */ 2,
+    //         /* uint256 _buyItNowPrice */ 5,
+    //         /* uint256 _durationDays */ 2,
+    //         { from: account_1 }
+    //     );
+
+    //     let balance_account_2 = await web3.eth.getBalance(account_2);
+    //     balance_account_2 = web3.utils.fromWei(balance_account_2, 'ether');
+
+    //     let balance_account_3 = await web3.eth.getBalance(account_3);
+    //     balance_account_3 = web3.utils.fromWei(balance_account_3, 'ether');
+
+    //     assert.equal(balance_account_2, 1000, 'balance of account_2 should be 1000000000000000000000');
+    //     assert.equal(balance_account_3, 1000, 'balance of account_3 should be 1000000000000000000000');
+
+    //     await theMarketPlace.bid(1, { from: account_2, value: 5 });
+    //     balance_account_2 = await web3.eth.getBalance(account_2);
+    //     // assert.equal(balance_account_2, 1, 'balance of account_2 should be 1000000000000000000000');
+
+    //     await theMarketPlace.bid(1, { from: account_3, value: 7 });
+    //     balance_account_3 = await web3.eth.getBalance(account_3);
+    //     // assert.equal(balance_account_3, 1, 'balance of account_3 should be 1000000000000000000000');
+
+    //     await theMarketPlace.claimFunds({ from: account_2 });
+
+    //     balance_account_2 = await web3.eth.getBalance(account_2);
+    //     assert.equal(balance_account_2, 1, 'balance of account_2 should be 1000000000000000000000');
+    // });
 
     it('Test: DirectOffer - Create', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
@@ -388,7 +625,15 @@ contract('MarketPlace', function (accounts) {
         }
 
         // create auction to validate direct offer creation no allowed
-        await theMarketPlace.createAuction(collectionitem_1.collectionAddress, 1, 0, 2, { from: account_1 });
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ 0,
+            /* uint256 _reservedPrice */ 0,
+            /* uint256 _buyItNowPrice */ 2,
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
 
         errorMessage = 'Auction for this token exists';
         try {
@@ -403,7 +648,7 @@ contract('MarketPlace', function (accounts) {
         const directOfferCount = await theMarketPlace.getDirectOfferCount();
         assert.equal(directOfferCount, 1, "should be 1");
 
-        const directOffer_1 = await theMarketPlace.getDirectOffer(1);
+        const directOffer_1 = await theMarketPlace.getDirectOffer(1, { from: account_1 });
         assert.equal(directOffer_1.ownerAddress, account_1, 'Owner is account_1');
         assert.equal(directOffer_1.collectionAddress, collectionitem_1.collectionAddress, 'Collection address is ok');
         assert.equal(directOffer_1.buyerAddress, account_2, 'buyerAddress is account_2');
@@ -418,7 +663,7 @@ contract('MarketPlace', function (accounts) {
         const directOfferCount_2 = await theMarketPlace.getDirectOfferCount();
         assert.equal(directOfferCount_2, 2, "Count should be 2");
 
-        const directOfferBy_1 = await theMarketPlace.getDirectOfferBy(account_2, collectionitem_1.collectionAddress, 2);
+        const directOfferBy_1 = await theMarketPlace.getDirectOfferBy(account_2, collectionitem_1.collectionAddress, 2, { from: account_1 });
         assert.equal(directOfferBy_1.ownerAddress, account_1, 'Owner is account_1');
         assert.equal(directOfferBy_1.collectionAddress, collectionitem_1.collectionAddress, 'Collection address is ok');
         assert.equal(directOfferBy_1.buyerAddress, account_2, 'buyerAddress is account_2');
@@ -439,7 +684,7 @@ contract('MarketPlace', function (accounts) {
         await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 2, 9, { from: account_2 });
         await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 2, 5, { from: account_2 });
 
-        const directOffers = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2);
+        const directOffers = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2, { from: account_1 });
         assert.equal(directOffers.length, 1, "Count should be 1");
         assert.equal(directOffers[0].ownerAddress, account_1, 'Owner is account_1');
         assert.equal(directOffers[0].collectionAddress, collectionitem_1.collectionAddress, 'Collection address is ok');
@@ -452,7 +697,7 @@ contract('MarketPlace', function (accounts) {
         // create again
         await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 2, 7, { from: account_2 });
 
-        const directOfferSingle = await theMarketPlace.getDirectOfferBy(account_2, collectionitem_1.collectionAddress, 2);
+        const directOfferSingle = await theMarketPlace.getDirectOfferBy(account_2, collectionitem_1.collectionAddress, 2, { from: account_1 });
         assert.equal(directOfferSingle.buyerAddress, account_2, 'buyerAddress is account_2');
         assert.equal(directOfferSingle.directOfferId, 3, 'Direct offer id is 3');
         assert.equal(directOfferSingle.tokenId, 2, 'Token Id is 2');
@@ -469,11 +714,11 @@ contract('MarketPlace', function (accounts) {
         await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 2, 9, { from: account_2 });
         await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 2, 5, { from: account_2 });
 
-        let directOffersFor_2 = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2);
+        let directOffersFor_2 = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2, { from: account_1 });
         assert.equal(directOffersFor_2.length, 1, "Count should be 1");
 
         await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 2, 50, { from: account_3 });
-        directOffersFor_2 = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2);
+        directOffersFor_2 = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2, { from: account_1 });
         assert.equal(directOffersFor_2.length, 2, "Count should be 2");
 
         let errorMessage = 'Only offer bayer can cancel';
@@ -487,7 +732,7 @@ contract('MarketPlace', function (accounts) {
 
         await theMarketPlace.cancelDirectOffer(2, { from: account_2 });
 
-        directOffersFor_2 = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2);
+        directOffersFor_2 = await theMarketPlace.getDirectOffers(collectionitem_1.collectionAddress, 2, { from: account_1 });
         assert.equal(directOffersFor_2.length, 1, "Count should be 1");
     });
 
@@ -513,7 +758,7 @@ contract('MarketPlace', function (accounts) {
 
         await theMarketPlace.acceptDirectOffer(2, { from: account_1 });
 
-        const directOfferSingle = await theMarketPlace.getDirectOffer(2);
+        const directOfferSingle = await theMarketPlace.getDirectOffer(2, { from: account_1 });
         assert.equal(directOfferSingle.ownerAddress, account_1, 'Owner is account_1');
         assert.equal(directOfferSingle.collectionAddress, collectionitem_1.collectionAddress, 'Collection address is ok');
         assert.equal(directOfferSingle.buyerAddress, account_2, 'buyerAddress is account_2');
