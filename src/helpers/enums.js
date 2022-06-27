@@ -5,9 +5,39 @@ export const AuctionStatusEnum = {
     Canceled: 3 // canceled by seller, need to revert funds
 }
 
-export const DirectOfferStatus = {
+export const DirectOfferStatusEnum = {
     Open: 0, // 0: open for acceptance
     Accepted: 1, // 1: accepted by token owner
     Finished: 2, // 2: finished with buyer
     Canceled: 3 // 3: canceled by seller
+}
+
+export function GetAuctionStatusTitle(auctionStatus) {
+    let result = '';
+
+    switch (parseInt(auctionStatus)) {
+        case AuctionStatusEnum.Running: result = 'Running'; break;
+        case AuctionStatusEnum.Closed: result = 'Closed'; break;
+        case AuctionStatusEnum.Finished: result = 'Finished'; break;
+        case AuctionStatusEnum.Canceled: result = 'Canceled'; break;
+        default:
+            break;
+    }
+
+    return result;
+}
+
+export function GetDirectOfferStatusTitle(directOfferStatus) {
+    let result = '';
+
+    switch (parseInt(directOfferStatus)) {
+        case DirectOfferStatusEnum.Open: result = 'Open'; console.log('Open'); break;
+        case DirectOfferStatusEnum.Accepted: result = 'Accepted'; break;
+        case DirectOfferStatusEnum.Finished: result = 'Finished'; break;
+        case DirectOfferStatusEnum.Canceled: result = 'Canceled'; break;
+        default:
+            break;
+    }
+
+    return result;
 }

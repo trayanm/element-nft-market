@@ -6,17 +6,21 @@ class DirectOfferManagement extends Component {
 
     state = {
         nft: null,
+        auction: null,
         directOffers: null,
+        collectionAddress: null,
 
         offeredPrice: null
     };
 
     constructor(props) {
         super(props);
-        const { nft, directOffers } = props;
+        const { nft, auction, directOffers, collectionAddress } = props;
 
         this.state.nft = nft;
+        this.state.auction = auction;
         this.state.directOffers = directOffers;
+        this.state.collectionAddress = collectionAddress;
     };
 
     onChangeOfferedPrice = (event) => {
@@ -87,7 +91,7 @@ class DirectOfferManagement extends Component {
         return (
             <React.Fragment>
                 <div>
-                    <h1>DirectOfferManagement</h1>
+                    <em>DirectOfferManagement</em>
                 </div>
             </React.Fragment>
         );

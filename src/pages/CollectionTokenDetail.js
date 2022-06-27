@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Navigate, Link } from 'react-router-dom'
 import AuctionManagement from "../components/AuctionManagement";
-import DirectOfferManagement from "../components/DirectOfferManagement";
+import DirectOfferByBuyer from "../components/DirectOfferByBuyer";
+import DirectOffersByOwner from "../components/DirectOffersByOwner";
 import { AuctionStatusEnum } from "../helpers/enums";
 import { formatAddress, formatPrice } from "../helpers/utils";
 import { withRouter } from "../hooksHandler";
@@ -15,7 +16,10 @@ class CollectionTokenDetail extends Component {
         tokenId: null,
         nft: null,
         auction: null,
-        approvedAddress: null
+        approvedAddress: null,
+
+        directOffersByOwner: null,
+        directOfferByBuyer: null
     };
 
     constructor(props) {
@@ -27,6 +31,8 @@ class CollectionTokenDetail extends Component {
 
     componentDidMount = async () => {
         try {
+            const _state = this.state;
+
             await this.context.checkStateAsync();
 
             // load nft
@@ -56,11 +62,20 @@ class CollectionTokenDetail extends Component {
 
             const auction = await this.loadAuction(nft.tokenId);
 
-            const _state = this.state;
+            if (nft.owner == this.context.account) {
+                const directOffersByOwner = await this.loadDirectOffersByOwner(nft.tokenId);
+                _state.directOffersByOwner = directOffersByOwner;
+            } else {
+                const directOfferByBuyer = await this.loadDirectOfferByBuyer(nft.tokenId);
+                _state.directOfferByBuyer = directOfferByBuyer;
+            }
 
-            _state.auction = auction;
+            // const directOffers = await this.loadDirectOffers(nft.tokenId);
+
             _state.nft = nft;
+            _state.auction = auction;
             _state.approvedAddress = approvedAddress;
+
             this.setState(_state);
 
         } catch (error) {
@@ -79,22 +94,78 @@ class CollectionTokenDetail extends Component {
         const auction = await this.context.marketPlaceInstance.methods.getAuctionBy(this.state.collectionAddress, tokenId).call();
 
         if (auction && auction.auctionId > 0 && auction.auctionStatus == AuctionStatusEnum.Running) {
-            return auction;
+            return {
+                ownerAddress: auction.ownerAddress,
+                collectionAddress: auction.collectionAddress,
+                highestBidderAddress: auction.highestBidderAddress,
+                highestBid: auction.highestBid,
+                auctionId: auction.auctionId,
+                tokenId: auction.tokenId,
+                buyItNowPrice: auction.buyItNowPrice,
+                initialPrice: auction.initialPrice,
+                endTime: auction.endTime,
+                auctionStatus: auction.auctionStatus
+            };
         }
 
-        // for (let i = 0; i < collectionAuctions.length; i++) {
-        //     const _auctionId = collectionAuctions[i];
-
-        //     const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
-
-        //     console.log('auction', auction);
-
-        //     if (auction && auction.auctionStatus == AuctionStatusEnum.Running&& auction.tokenId === tokenId) {
-        //         return auction;
-        //     }
-        // }
-
         return null;
+    };
+
+    loadDirectOffersByOwner = async (tokenId) => {
+        console.log('getDirectOffersByOwner', { collectionAddress: this.state.collectionAddress, tokenId: tokenId });
+
+        try {
+            const directOffers = [];
+
+            const subList = await this.context.marketPlaceInstance.methods.getDirectOffersByOwner(this.state.collectionAddress, tokenId).call({ from: this.context.account });
+
+            if (subList && subList.length > 0) {
+                for (let i = 0; i < subList.length; i++) {
+                    const directOffer = subList[i];
+
+                    if (directOffer.directOfferId > 0) {
+                        directOffers.push({
+                            ownerAddress: directOffer.ownerAddress,
+                            collectionAddress: directOffer.collectionAddress,
+                            buyerAddress: directOffer.buyerAddress,
+                            directOfferId: directOffer.directOfferId,
+                            tokenId: directOffer.tokenId,
+                            offeredPrice: directOffer.offeredPrice,
+                            directOfferStatus: directOffer.directOfferStatus
+                        });
+                    }
+                }
+            }
+
+            return directOffers;
+
+        } catch (error) {
+            // Catch any errors for any of the above operations.
+            alert(
+                `Failed to load web3, accounts, or contract. Check console for details.`,
+            );
+            console.error(error);
+        }
+    };
+
+    loadDirectOfferByBuyer = async (tokenId) => {
+        console.log('getDirectOfferByBuyer', { collectionAddress: this.state.collectionAddress, tokenId: tokenId });
+
+        try {
+            const directOffer = await this.context.marketPlaceInstance.methods.getDirectOfferByBuyer(this.state.collectionAddress, tokenId).call({ from: this.context.account });
+
+            if (directOffer.directOfferId > 0) {
+                return directOffer;
+            }
+
+            return null;
+        } catch (error) {
+            // Catch any errors for any of the above operations.
+            alert(
+                `Failed to load web3, accounts, or contract. Check console for details.`,
+            );
+            console.error(error);
+        }
     };
 
     render() {
@@ -158,11 +229,27 @@ class CollectionTokenDetail extends Component {
                                                     collectionAddress={this.state.collectionAddress}
                                                     approvedAddress={this.state.approvedAddress}
                                                 />
+
+                                                {this.state.nft.owner === this.context.account &&
+                                                    <DirectOffersByOwner
+                                                        nft={this.state.nft}
+                                                        collectionAddress={this.state.collectionAddress}
+                                                        directOffers={this.state.directOffersByOwner}
+                                                    />
+                                                }
+
+                                                {this.state.nft.owner !== this.context.account &&
+                                                    <DirectOfferByBuyer
+                                                        nft={this.state.nft}
+                                                        collectionAddress={this.state.collectionAddress}
+                                                        directOffer={this.state.directOfferByBuyer}
+                                                    />
+                                                }
                                                 {/* <DirectOfferManagement
                                                     nft={this.state.nft}
                                                     auction={this.state.auction}
                                                     collectionAddress={this.state.collectionAddress}
-                                                    directOffers={directOffers}
+                                                    directOffers={this.state.directOffers}
                                                 /> */}
                                             </div>
                                             {/* <div className="contact-info">

@@ -26,9 +26,6 @@ class AuctionPrice extends Component {
                     {this.state.auction && this.state.auction.initialPrice > 0 &&
                         <li className="price"><span>Initial</span><br />{formatPrice(this.state.auction.initialPrice)} ETH</li>
                     }
-                    {this.state.auction && this.state.auction.reservedPrice > 0 &&
-                        <li className="price"><span>Reserved</span><br />{formatPrice(this.state.auction.reservedPrice)} ETH</li>
-                    }
                     {this.state.auction && this.state.auction.highestBid > 0 &&
                         <li className="price"><span>High</span><br />{formatPrice(this.state.auction.highestBid)} ETH</li>
                     }

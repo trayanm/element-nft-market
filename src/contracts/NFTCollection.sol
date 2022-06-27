@@ -38,7 +38,7 @@ contract NFTCollection is ERC721, ERC721Enumerable, AccessControl {
         return _tokenIdToTokenURI[tokenId];
     }
 
-    function safeMint(string memory _tokenURI) public returns(uint256) {
+    function safeMint(string memory _tokenURI) public returns (uint256) {
         require(hasRole(MINTER_ROLE, _msgSender()), 'ERC721PresetMinterPauserAutoId: must have minter role to mint');
         require(!_tokenURIExists[_tokenURI], 'The token URI should be unique');
         tokenURIs.push(_tokenURI);
@@ -50,7 +50,7 @@ contract NFTCollection is ERC721, ERC721Enumerable, AccessControl {
         return _id;
     }
 
-    function externalMint(address owner, string memory _tokenURI) public returns(uint256) {
+    function externalMint(address owner, string memory _tokenURI) public returns (uint256) {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), 'ERC721PresetMinterPauserAutoId: must have admin role to mint');
         //require(hasRole(MINTER_ROLE, _msgSender()), 'ERC721PresetMinterPauserAutoId: must have minter role to mint');
         require(!_tokenURIExists[_tokenURI], 'The token URI should be unique');
@@ -72,6 +72,6 @@ contract NFTCollection is ERC721, ERC721Enumerable, AccessControl {
     //     address owner = ERC721.ownerOf(tokenId);
     //     require(to != owner, "ERC721: approval to current owner");
 
-    //     _approve(to, tokenId);        
+    //     _approve(to, tokenId);
     // }
 }

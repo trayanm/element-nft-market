@@ -100,7 +100,18 @@ class CollectionDetail extends Component {
                 const auction = await this.context.marketPlaceInstance.methods.getAuctionBy(this.state.collectionAddress, token.tokenId).call();
 
                 if (auction && auction.auctionId > 0 && auction.auctionStatus == AuctionStatusEnum.Running) {
-                    result.push(auction);
+                    result.push({
+                        ownerAddress: auction.ownerAddress,
+                        collectionAddress: auction.collectionAddress,
+                        highestBidderAddress: auction.highestBidderAddress,
+                        highestBid: auction.highestBid,
+                        auctionId: auction.auctionId,
+                        tokenId: auction.tokenId,
+                        buyItNowPrice: auction.buyItNowPrice,
+                        initialPrice: auction.initialPrice,
+                        endTime: auction.endTime,
+                        auctionStatus: auction.auctionStatus
+                    });
                 }
             }
         }

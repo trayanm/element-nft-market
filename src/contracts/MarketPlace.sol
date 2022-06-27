@@ -60,7 +60,7 @@ contract MarketPlace is Ownable {
         uint256 auctionId; // auction Id, is generated
         uint256 tokenId; // token Id, is given
         uint256 buyItNowPrice; // buy now buyItNowPrice in case of type FixedPrice. Zero means - no buy now. Mandatory if Fixed price
-        uint256 reservedPrice; // buy out price below which the sell cannot happend (not used for now)
+        // uint256 reservedPrice; // buy out price below which the sell cannot happend (not used for now)
         uint256 initialPrice; // starting auction price (not used for now)
         //uint256 minBidStep; // minimum allowed bid step. Zero means - no min (not used for now)
         //uint256 maxBidStep; // maximum allowed bid step. Zero means - no max (not used for now)
@@ -121,10 +121,6 @@ contract MarketPlace is Ownable {
     // _collectionAddress => (_tokenId => _auctionId)
     mapping(address => mapping(uint256 => uint256)) tokenAuctions;
 
-    // tokenDirectOffers[_collectionAddress][_tokenId][buyerAddress] = _directOfferId
-    // _collectionAddress => (_tokenId => (buyerAddress => _directOfferId))
-    //mapping(address => mapping(uint256 => mapping(address => uint256))) tokenDirectOffers;
-
     // _collectionAddress => (_tokenId => DirectOfferGroupItem)
     mapping(address => mapping(uint256 => DirectOfferGroupItem)) tokenDirectOffers;
 
@@ -149,9 +145,6 @@ contract MarketPlace is Ownable {
 
     // emitted when a collection is created
     event onCollectionCreated(uint256 indexed collectionId, address indexed collectionAddress, address indexed ownerAddress);
-
-    // emitted when a direct offer is created
-    // event onDirectOfferCreated(address indexed collectionAddress, uint256 indexed directOfferId, uint256 indexed tokenId);
     // --
 
     // -- Modifiers
@@ -161,7 +154,6 @@ contract MarketPlace is Ownable {
      }
 
      // -- Mint
-     // TODO : ask if this is good idea
      function mint(address _collectionAddress, string memory _tokenURI) external returns(uint256) {
         NFTCollection nftCollection = NFTCollection(_collectionAddress);
 
@@ -226,7 +218,6 @@ contract MarketPlace is Ownable {
         address _collectionAddress,
         uint256 _tokenId,
         uint256 _initialPrice,
-        uint256 _reservedPrice,
         uint256 _buyItNowPrice,
         uint256 _durationDays
     ) external {
@@ -259,7 +250,7 @@ contract MarketPlace is Ownable {
             auctionId: _auctionId,
             tokenId: _tokenId,
             buyItNowPrice: _buyItNowPrice,
-            reservedPrice: _reservedPrice,
+            //reservedPrice: 0,
             initialPrice: _initialPrice,
             //minBidStep: 0,
             //maxBidStep: 0,
@@ -393,7 +384,11 @@ contract MarketPlace is Ownable {
             require(_auction.ownerAddress != msg.sender, 'Auction owner cannot bid');
             require(_auction.highestBidderAddress != msg.sender, 'Already highest bidder');
             // require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
-            require(msg.value > _auction.highestBid , 'Bid most be bigger');
+
+            // current bid must be above initial price and above zero
+
+            require(msg.value >= _auction.initialPrice , 'Bid is less than initial');
+            require(msg.value > _auction.highestBid , 'Bid is less than highest');
 
             // return prev bid
             // send _auction.highestBid to _auction.highestBidderAddress
@@ -419,7 +414,7 @@ contract MarketPlace is Ownable {
             if(ended) {
                 NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
 
-                if(_auction.highestBid > _auction.initialPrice && _auction.highestBid > _auction.reservedPrice) {
+                if(_auction.highestBid > _auction.initialPrice) {
                     _auction.auctionStatus = AuctionStatus.Finished;
 
                     // peform transfer
@@ -439,12 +434,12 @@ contract MarketPlace is Ownable {
                     _auction.auctionStatus = AuctionStatus.Closed;
 
                     // return money
-                    if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
-                        userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
-                    }
+                    // if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
+                    //     userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
+                    // }
 
                     emit onAuctionClosed(_auction.auctionId, _auction.tokenId);
-                }            
+                }
             }
         }        
     }
@@ -481,29 +476,13 @@ contract MarketPlace is Ownable {
             directOfferStatus: DirectOfferStatus.Open
         });
 
-        // tokenDirectOffers[_collectionAddress][_tokenId].buyerMap[msg.sender] = _directOfferId;
         tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.set(msg.sender, _directOfferId);
-
-        // emit onDirectOfferCreated(_collectionAddress, _directOfferId, _tokenId);
     }
 
-    function getDirectOfferCount() external view returns(uint256) {
-        // not used
-        return _directOfferIds.current();
-    }
+    function getDirectOffersByOwner(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem[] memory) {
+        NFTCollection nftCollection = NFTCollection(_collectionAddress);
+        require(msg.sender == nftCollection.ownerOf(_tokenId), 'Not token owner');
 
-	function getDirectOffer(uint256 _directOfferId) public view returns (DirectOfferItem memory) {
-        DirectOfferItem memory _directOffer = directOfferStore[_directOfferId];
-
-        require(_directOffer.directOfferId == _directOfferId, 'DirectOffer does not exists');
-
-        // visible only for buyer or seller
-        require(_directOffer.ownerAddress == msg.sender || _directOffer.buyerAddress == msg.sender, 'Only seller or buyer');
-
-        return _directOffer;
-    }
-
-     function getDirectOffers(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem[] memory) {
        uint256 length = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.length();
 
         DirectOfferItem[] memory result = new DirectOfferItem[](length);
@@ -512,18 +491,63 @@ contract MarketPlace is Ownable {
             (, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.at(i);
 
             // visible only for buyer or seller
-            result[i] = getDirectOffer(_directOfferId);
+            result[i] = directOfferStore[_directOfferId];
         }
 
        return result;
-     }
+    }
 
-     function getDirectOfferBy(address _buyerAddress, address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem memory) {
-        uint256 _directOfferId = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.get(_buyerAddress);
+    function getDirectOfferByBuyer(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem memory){
+        // sender is the buyer
+        (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(msg.sender);
 
-        // visible only for buyer or seller
-        return getDirectOffer(_directOfferId);
-     }
+        if(success)
+        {
+            //require(success, 'Offer not found');
+
+            DirectOfferItem memory _directOffer = directOfferStore[_directOfferId];
+
+            return _directOffer;
+        }
+    }
+
+    // function getDirectOfferCount() external view returns(uint256) {
+    //     // not used
+    //     return _directOfferIds.current();
+    // }
+
+	// function getDirectOffer(uint256 _directOfferId) public view returns (DirectOfferItem memory) {
+    //     DirectOfferItem memory _directOffer = directOfferStore[_directOfferId];
+
+    //     require(_directOffer.directOfferId == _directOfferId, 'DirectOffer does not exists');
+
+    //     // visible only for buyer or seller
+    //     require(_directOffer.ownerAddress == msg.sender || _directOffer.buyerAddress == msg.sender, 'Only seller or buyer');
+
+    //     return _directOffer;
+    // }
+
+    //  function getDirectOffers(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem[] memory) {
+    //    uint256 length = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.length();
+
+    //     DirectOfferItem[] memory result = new DirectOfferItem[](length);
+
+    //     for (uint256 i = 0; i < length; i++) {
+    //         (, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.at(i);
+
+    //         // visible only for buyer or seller
+    //         result[i] = getDirectOffer(_directOfferId);
+    //     }
+
+    //    return result;
+    //  }
+
+    //  function getDirectOfferBy(address _buyerAddress, address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem memory) {
+    //     uint256 _directOfferId = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.get(_buyerAddress);
+
+    //     // visible only for buyer or seller
+    //     return getDirectOffer(_directOfferId);
+    //  }
 
     // function getDirectOffers(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem[] memory) {
     //     // TODO : Ask how to get list of DirectOfferItems
@@ -536,10 +560,15 @@ contract MarketPlace is Ownable {
     //     } 
     // }
 
-    function cancelDirectOffer(uint256 _directOfferId) external {
+    function cancelDirectOffer(address _collectionAddress, uint256 _tokenId) external {
+        // sender is the buyer
+        (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(msg.sender);
+
+        require(success, 'Offer not found');
+
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
-        require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
+        // require(_directOffer.directOfferId == _directOfferId, 'Offer not found');
         require(_directOffer.buyerAddress == msg.sender, 'Only offer bayer can cancel');
         require(_directOffer.directOfferStatus == DirectOfferStatus.Open, 'Offer is not open');
 
@@ -549,10 +578,15 @@ contract MarketPlace is Ownable {
         tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId].buyerMap.remove(msg.sender);
     }
 
-    function acceptDirectOffer(uint256 _directOfferId) external {
+    function acceptDirectOffer(address _collectionAddress, uint256 _tokenId, address _buyerAddress) external {
+
+        (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(_buyerAddress);
+
+        require(success, 'Offer not found');
+
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
-        require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
+        // require(_directOffer.directOfferId == _directOfferId, 'Offer not found');
         require(_directOffer.directOfferStatus == DirectOfferStatus.Open, 'Offer is not open');
 
         NFTCollection nftCollection = NFTCollection(_directOffer.collectionAddress);
@@ -564,11 +598,16 @@ contract MarketPlace is Ownable {
         _directOffer.directOfferStatus = DirectOfferStatus.Accepted;
     }
 
-    function fulfillDirectOffer(uint256 _directOfferId) external payable {
+    function fulfillDirectOffer(address _collectionAddress, uint256 _tokenId) external payable {
+        // sender is the buyer
+        (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(msg.sender);
+
+        require(success, 'Offer not found');
+
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
-        require(_directOffer.directOfferId == _directOfferId, 'Offer does not exists');
-        require(_directOffer.directOfferStatus == DirectOfferStatus.Accepted, 'Offer is not open');
+        // require(_directOffer.directOfferId == _directOfferId, 'Offer not found');
+        require(_directOffer.directOfferStatus == DirectOfferStatus.Accepted, 'Offer is not accepted');
         require(_directOffer.buyerAddress == msg.sender, 'Only offer bayer can fullfill');
         require(msg.value == _directOffer.offeredPrice, 'Offered price is incorrect');
 
