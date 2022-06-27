@@ -65,4 +65,13 @@ contract NFTCollection is ERC721, ERC721Enumerable, AccessControl {
 
         return _id;
     }
+
+    // function externalApprove(address to, uint256 tokenId) public {
+    //     require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), 'ERC721PresetMinterPauserAutoId: must have admin role to mint');
+
+    //     address owner = ERC721.ownerOf(tokenId);
+    //     require(to != owner, "ERC721: approval to current owner");
+
+    //     _approve(to, tokenId);        
+    // }
 }

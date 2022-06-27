@@ -12,8 +12,8 @@ module.exports = {
     ganache: {
       host: "127.0.0.1",
       port: 8545,
-      gas     : 20000000,
-      gasPrice: 25000000000,
+      gas     : 30000000,
+      gasPrice: 20000000000,
       network_id: "*" //match any network id
     },
     rinkeby: {
@@ -52,7 +52,7 @@ module.exports = {
         evmVersion: 'byzantium', // Default: "petersburg"
         optimizer: {
           enabled: true,
-          runs: 200
+          runs: 50
         }
       }
     }

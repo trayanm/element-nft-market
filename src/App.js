@@ -20,27 +20,6 @@ class App extends Component {
 
   componentDidMount = async () => {
     try {
-      // // Get network provider and web3 instance.
-      // //this.web3 = await getWeb3();
-
-      // // Get the contract instance.
-      // this.networkId = await web3.eth.net.getId();
-      // this.context.setNetworkId(this.networkId);
-
-      // // Use web3 to get the user's accounts.
-      // this.accounts = await web3.eth.getAccounts();
-      // this.context.setAccount(this.accounts[0]);
-
-      // this.accoutnBalance = await web3.eth.getBalance(this.accounts[0]);
-      // this.context.setAccountBalance(this.accoutnBalance);
-
-      // this.MarketPlaceInstance = new web3.eth.Contract(
-      //   MarketPlace.abi,
-      //   MarketPlace.networks[this.networkId] && MarketPlace.networks[this.networkId].address
-      // );
-
-      // this.context.setMarketPlaceInstance(this.MarketPlaceInstance);
-      // this.context.setMktIsLoading(false);
 
       await this.context.checkStateAsync();
       await this.context.refreshBlance();
@@ -51,6 +30,7 @@ class App extends Component {
         // web3Ctx.loadAccount(web3);
         // accounts[0] && MarketPlaceCtx.loadUserFunds(mktContract, accounts[0]);
         this.context.setAccount(accounts[0]);
+        window.location.reload();
       });
 
       // Metamask Event Subscription - Network changed
@@ -68,6 +48,41 @@ class App extends Component {
         .on('error', (error) => {
           console.log(error);
         });
+
+      this.context.marketPlaceInstance.events.onAuctionFinished()
+        .on('data', async (event) => {
+          // collectionCtx.updateCollection(nftContract, event.returnValues.tokenId, event.returnValues.to);
+          // collectionCtx.setNftIsLoading(false);
+          //console.log('onCollectionCreated', event);
+          await this.context.refreshBlance();
+          await this.context.refreshUserFunds();
+        })
+        .on('error', (error) => {
+          console.log(error);
+        });
+
+      this.context.marketPlaceInstance.events.onAuctionBid()
+        .on('data', async (event) => {
+          // collectionCtx.updateCollection(nftContract, event.returnValues.tokenId, event.returnValues.to);
+          // collectionCtx.setNftIsLoading(false);
+          //console.log('onCollectionCreated', event);
+          await this.context.refreshBlance();
+        })
+        .on('error', (error) => {
+          console.log(error);
+        });
+
+      this.context.marketPlaceInstance.events.onAuctionCancelled()
+        .on('data', async (event) => {
+          // collectionCtx.updateCollection(nftContract, event.returnValues.tokenId, event.returnValues.to);
+          // collectionCtx.setNftIsLoading(false);
+          //console.log('onCollectionCreated', event);
+          await this.context.refreshBlance();
+        })
+        .on('error', (error) => {
+          console.log(error);
+        });
+
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(

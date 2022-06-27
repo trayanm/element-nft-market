@@ -375,7 +375,7 @@ contract('MarketPlace', function (accounts) {
         await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
         await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_1 });
 
-        await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
+        // await collectionContract_1.approve(theMarketPlace.address, 1, { from: account_1 });
         await theMarketPlace.createAuction(
             /* address _collectionAddress */ collectionitem_1.collectionAddress,
             /* uint256 _tokenId */ 1,
@@ -386,7 +386,7 @@ contract('MarketPlace', function (accounts) {
             { from: account_1 }
         );
 
-        await collectionContract_1.approve(theMarketPlace.address, 2, { from: account_1 });
+        //await collectionContract_1.approve(theMarketPlace.address, 2, { from: account_1 });
         await theMarketPlace.createAuction(
             /* address _collectionAddress */ collectionitem_1.collectionAddress,
             /* uint256 _tokenId */ 2,
@@ -405,6 +405,9 @@ contract('MarketPlace', function (accounts) {
 
         const newOwner_1 = await collectionContract_1.ownerOf(1);
         assert.equal(newOwner_1, account_2, 'New owner is account_2');
+
+        // const approved_2 = await collectionContract_1.getApproved(1);
+        // assert.equal(approved_2, theMarketPlace.address, 'MarketPlace is approved');
     });
 
     it('Test: Auction - Buy now and sell again', async function () {
@@ -527,7 +530,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(auction.highestBidderAddress, '0x0000000000000000000000000000000000000000', 'highestBidderAddress should be zero');
 
         // acount_2 bid 1 eth
-        await theMarketPlace.bid(1, { from: account_2, value: 1 });
+        await theMarketPlace.bidAuction(1, { from: account_2, value: 1 });
 
         auction = await theMarketPlace.getAuction(1);
         assert.equal(auction.auctionId, 1, 'auction id is 1');
@@ -538,7 +541,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(auction.highestBidderAddress, account_2, 'highestBidderAddress should be account_2');
 
         // acount_3 bid 2 eth
-        await theMarketPlace.bid(1, { from: account_3, value: 2 });
+        await theMarketPlace.bidAuction(1, { from: account_3, value: 2 });
 
         auction = await theMarketPlace.getAuction(1);
         assert.equal(auction.auctionId, 1, 'auction id is 1');
@@ -551,12 +554,12 @@ contract('MarketPlace', function (accounts) {
         // account_2 try to under bid
         let errorMessage = 'Bid most be bigger';
         try {
-            await theMarketPlace.bid(1, { from: account_2, value: 1 });
+            await theMarketPlace.bidAuction(1, { from: account_2, value: 1 });
         }
         catch (error) {
             assert.notEqual(error, undefined, 'Error must be thrown');
             assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
-        }        
+        }
     });
 
     // it('Test: Auction - Bidding and funds', async function () {
@@ -585,11 +588,11 @@ contract('MarketPlace', function (accounts) {
     //     assert.equal(balance_account_2, 1000, 'balance of account_2 should be 1000000000000000000000');
     //     assert.equal(balance_account_3, 1000, 'balance of account_3 should be 1000000000000000000000');
 
-    //     await theMarketPlace.bid(1, { from: account_2, value: 5 });
+    //     await theMarketPlace.bidAuction(1, { from: account_2, value: 5 });
     //     balance_account_2 = await web3.eth.getBalance(account_2);
     //     // assert.equal(balance_account_2, 1, 'balance of account_2 should be 1000000000000000000000');
 
-    //     await theMarketPlace.bid(1, { from: account_3, value: 7 });
+    //     await theMarketPlace.bidAuction(1, { from: account_3, value: 7 });
     //     balance_account_3 = await web3.eth.getBalance(account_3);
     //     // assert.equal(balance_account_3, 1, 'balance of account_3 should be 1000000000000000000000');
 

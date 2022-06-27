@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import "@openzeppelin/contracts/utils/Counters.sol";
 import '@openzeppelin/contracts/utils/structs/EnumerableMap.sol';
@@ -9,7 +9,7 @@ import '@openzeppelin/contracts/utils/structs/EnumerableMap.sol';
 
 import './NFTCollection.sol';
 
-contract MarketPlace {
+contract MarketPlace is Ownable {
     // TODO : Add Access control
     // TODO : Add option enableDirectOffer
     // TODO : Add option enableAucion
@@ -27,6 +27,7 @@ contract MarketPlace {
 
     // Fees
     uint256 constant FEE_SELL_PERCENTAGE = 3; // percentage of buy price
+    uint256 profit;
 
     // Enums
     // enum AuctionType {
@@ -99,6 +100,34 @@ contract MarketPlace {
     // msg.sender => generated funds
     mapping(address => uint256) public userFunds; // contains funds per user generated from sales. Bids will stored in other way
 
+    // auctionId => AuctionItem
+    mapping(uint256 => AuctionItem) auctionStore;
+
+    // directOfferId => DirectOfferItem
+    mapping(uint256 => DirectOfferItem) directOfferStore;
+
+    // collectionId => CollectionItem
+    mapping(uint256 => CollectionItem) collectionStore;
+
+    // uint256 public auctionCount = 0;
+    // uint256 public collectionCount = 0;
+
+    // ownerAddress => (collectionId => isOwner)
+    // mapping(address => mapping(uint256 => bool)) userCollections;
+
+    // collectionAddress => auctionId[]
+    mapping(address => uint256[]) collectionToAcutions;
+
+    // _collectionAddress => (_tokenId => _auctionId)
+    mapping(address => mapping(uint256 => uint256)) tokenAuctions;
+
+    // tokenDirectOffers[_collectionAddress][_tokenId][buyerAddress] = _directOfferId
+    // _collectionAddress => (_tokenId => (buyerAddress => _directOfferId))
+    //mapping(address => mapping(uint256 => mapping(address => uint256))) tokenDirectOffers;
+
+    // _collectionAddress => (_tokenId => DirectOfferGroupItem)
+    mapping(address => mapping(uint256 => DirectOfferGroupItem)) tokenDirectOffers;
+
     // -- Events
     // emitted when an auction is craated
     event onAuctionCreated(uint256 indexed auctionId, uint256 indexed tokenId);
@@ -116,42 +145,14 @@ contract MarketPlace {
     event onAuctionBid(uint256 indexed auctionId, uint256 bid);
 
     // emitted when an user claims his funds
-    event onFundsClaimed(address indexed user, uint256 amount);
+    // event onFundsClaimed(address indexed user, uint256 amount);
 
     // emitted when a collection is created
     event onCollectionCreated(uint256 indexed collectionId, address indexed collectionAddress, address indexed ownerAddress);
 
     // emitted when a direct offer is created
-    event onDirectOfferCreated(address indexed collectionAddress, uint256 indexed directOfferId, uint256 indexed tokenId);
+    // event onDirectOfferCreated(address indexed collectionAddress, uint256 indexed directOfferId, uint256 indexed tokenId);
     // --
-
-    // auctionId => AuctionItem
-    mapping(uint256 => AuctionItem) auctionStore;
-
-    // directOfferId => DirectOfferItem
-    mapping(uint256 => DirectOfferItem) directOfferStore;
-
-    // collectionId => CollectionItem
-    mapping(uint256 => CollectionItem) collectionStore;
-
-    // uint256 public auctionCount = 0;
-    // uint256 public collectionCount = 0;
-
-    // ownerAddress => (collectionId => isOwner)
-    mapping(address => mapping(uint256 => bool)) usercollections;
-
-    // collectionAddress => auctionId[]
-    mapping(address => uint256[]) collectionToAcutions;
-
-    // _collectionAddress => (_tokenId => _auctionId)
-    mapping(address=> mapping(uint256 => uint256)) tokenAuctions;
-
-    // tokenDirectOffers[_collectionAddress][_tokenId][buyerAddress] = _directOfferId
-    // _collectionAddress => (_tokenId => (buyerAddress => _directOfferId))
-    //mapping(address => mapping(uint256 => mapping(address => uint256))) tokenDirectOffers;
-
-    // _collectionAddress => (_tokenId => DirectOfferGroupItem)
-    mapping(address => mapping(uint256 => DirectOfferGroupItem)) tokenDirectOffers;
 
     // -- Modifiers
     // --
@@ -161,11 +162,21 @@ contract MarketPlace {
 
      // -- Mint
      // TODO : ask if this is good idea
-     function mint(address _collectionAddress, string memory _tokenURI) external {
+     function mint(address _collectionAddress, string memory _tokenURI) external returns(uint256) {
         NFTCollection nftCollection = NFTCollection(_collectionAddress);
 
         uint256 _tokenId = nftCollection.externalMint(msg.sender, _tokenURI);
+
+        return _tokenId;
      }
+
+    //  function mintMany(address _collectionAddress, string[] memory _tokenURIList) external {
+    //     NFTCollection nftCollection = NFTCollection(_collectionAddress);
+
+    //     for (uint256 i = 0; i < _tokenURIList.length; i++) {
+    //         nftCollection.externalMint(msg.sender, _tokenURIList[i]);
+    //     }
+    //  }
      // --
 
     // -- Collection management
@@ -182,7 +193,7 @@ contract MarketPlace {
         uint256 _collectionId = _collectionIds.current();
         collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _metaURI);        
 
-        usercollections[msg.sender][_collectionId] = true;
+        // userCollections[msg.sender][_collectionId] = true;
 
         emit onCollectionCreated(_collectionId, _collectionAddress, msg.sender);
 
@@ -190,13 +201,11 @@ contract MarketPlace {
     }
 
     function importCollection(address _collectionAddress, string memory _metaURI)external returns (address) {
-        // This method is not implemented
-        revert();
         _collectionIds.increment();
         uint256 _collectionId = _collectionIds.current();
         collectionStore[_collectionId] = CollectionItem(_collectionId, _collectionAddress, msg.sender, _metaURI);        
 
-        usercollections[msg.sender][_collectionId] = true;
+        // userCollections[msg.sender][_collectionId] = true;
 
         emit onCollectionCreated(_collectionId, _collectionAddress, msg.sender);
 
@@ -298,30 +307,37 @@ contract MarketPlace {
         require(_auction.auctionId == _auctionId, 'Auction does not exists');
         
         _checkAuction(_auction);
+        
+        if(_auction.auctionStatus == AuctionStatus.Running) {
+            require(_auction.ownerAddress != msg.sender, 'Auction owner cannot buy it');
+            // require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
+            require(_auction.buyItNowPrice > 0, 'Buy now is not allowed');
 
-        require(_auction.ownerAddress != msg.sender, 'Auction owner cannot buy it');
-        require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
-        require(_auction.buyItNowPrice > 0, 'Buy now is not allowed');
+            require(msg.value == _auction.buyItNowPrice, 'Buy now price is greater');
 
-        require(msg.value == _auction.buyItNowPrice, 'Buy now price is greater');
+            NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
 
-        NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
+            // transfer from MarketPalce as approved
+            nftCollection.transferFrom(_auction.ownerAddress, msg.sender, _auction.tokenId);
 
-        // transfer from MarketPalce as approved
-        nftCollection.transferFrom(_auction.ownerAddress, msg.sender, _auction.tokenId);
+            // TODO : Approve to market after transfer
+            // approve token to market
+            // nftCollection.approve(address(this), _auction.tokenId);
 
-        _auction.auctionStatus = AuctionStatus.Finished;
+            _auction.auctionStatus = AuctionStatus.Finished;
 
-        uint256 fee = msg.value.mul(FEE_SELL_PERCENTAGE).div(100);
-        uint256 userFund = msg.value.sub(fee);
-        userFunds[_auction.ownerAddress] = userFunds[_auction.ownerAddress].add(userFund);
+            uint256 fee = msg.value.mul(FEE_SELL_PERCENTAGE).div(100);
+            uint256 userFund = msg.value.sub(fee);
+            profit = profit.add(fee);
+            userFunds[_auction.ownerAddress] = userFunds[_auction.ownerAddress].add(userFund);
 
-        delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
+            delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
 
-        // TODO : Handle bids
-        // TODO : Handle direct offers
+            // TODO : Handle bids
+            // TODO : Handle direct offers
 
-        emit onAuctionFinished(_auctionId, _auction.tokenId);
+            emit onAuctionFinished(_auctionId, _auction.tokenId);
+        }        
     }
 
     // cancel auction (auction owner) - handle user funds?
@@ -332,22 +348,24 @@ contract MarketPlace {
 
         _checkAuction(_auction);
 
-        require(_auction.ownerAddress == msg.sender, 'Only auction owner can cancel');
-        require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
+        if(_auction.auctionStatus == AuctionStatus.Running) {
+            require(_auction.ownerAddress == msg.sender, 'Only auction owner can cancel');
+            // require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
 
-        //NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
-        //nftCollection.transferFrom(address(this), msg.sender, _auction.tokenId);
-        _auction.auctionStatus = AuctionStatus.Canceled;
+            //NFTCollection nftCollection = NFTCollection(_auction.collectionAddress);
+            //nftCollection.transferFrom(address(this), msg.sender, _auction.tokenId);
+            _auction.auctionStatus = AuctionStatus.Canceled;
 
-        delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
+            delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
 
-        // return prev bid
-        // send _auction.highestBid to _auction.highestBidderAddress
-        if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
-            userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
+            // return prev bid
+            // send _auction.highestBid to _auction.highestBidderAddress
+            if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
+                userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
+            }
+
+            emit onAuctionCancelled(_auctionId, _auction.tokenId);
         }
-
-        emit onAuctionCancelled(_auctionId, _auction.tokenId);
     }
 
     // --
@@ -356,7 +374,7 @@ contract MarketPlace {
     function checkAuction(uint256 _auctionId) external {
         AuctionItem storage _auction = auctionStore[_auctionId];
 
-        require(_auction.auctionId == _auctionId, 'Auction does not exists');
+        //require(_auction.auctionId == _auctionId, 'Auction does not exists');
 
         _checkAuction(_auction);
     }
@@ -364,29 +382,31 @@ contract MarketPlace {
 
     // -- Auction actions
     // bid - handle user funds?
-    function bid(uint256 _auctionId) external payable {
+    function bidAuction(uint256 _auctionId) external payable {
         AuctionItem storage _auction = auctionStore[_auctionId];
 
         require(_auction.auctionId == _auctionId, 'Auction does not exists');
 
         _checkAuction(_auction);
 
-        require(_auction.ownerAddress != msg.sender, 'Auction owner cannot bid');
-        require(_auction.highestBidderAddress != msg.sender, 'Already highest bidder');
-        require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
-        require(msg.value > _auction.highestBid , 'Bid most be bigger');
+        if(_auction.auctionStatus == AuctionStatus.Running) {
+            require(_auction.ownerAddress != msg.sender, 'Auction owner cannot bid');
+            require(_auction.highestBidderAddress != msg.sender, 'Already highest bidder');
+            // require(_auction.auctionStatus == AuctionStatus.Running, 'Auction is not running');
+            require(msg.value > _auction.highestBid , 'Bid most be bigger');
 
-        // return prev bid
-        // send _auction.highestBid to _auction.highestBidderAddress
-        if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
-            userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
+            // return prev bid
+            // send _auction.highestBid to _auction.highestBidderAddress
+            if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
+                userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
+            }
+
+            // load new bid
+            _auction.highestBid = msg.value;
+            _auction.highestBidderAddress = msg.sender;
+
+            emit onAuctionBid(_auctionId, msg.value);
         }
-
-        // load new bid
-        _auction.highestBid = msg.value;
-        _auction.highestBidderAddress = msg.sender;
-
-        emit onAuctionBid(_auctionId, msg.value);
     }
 
     // TODO : Ask how to execute over time or how to set gas storage to execute internaly
@@ -405,10 +425,15 @@ contract MarketPlace {
                     // peform transfer
                     uint256 fee = _auction.highestBid.mul(FEE_SELL_PERCENTAGE).div(100);
                     uint256 userFund = _auction.highestBid.sub(fee);
+                    profit = profit.add(fee);
                     userFunds[_auction.ownerAddress] = userFunds[_auction.ownerAddress].add(userFund);
 
                     // transfer from MarketPalce as approved
                     nftCollection.transferFrom(_auction.ownerAddress, msg.sender, _auction.tokenId);
+
+                    // TODO : Approve to market after transfer
+
+                    emit onAuctionFinished(_auction.auctionId, _auction.tokenId);
                 }
                 else {
                     _auction.auctionStatus = AuctionStatus.Closed;
@@ -417,6 +442,8 @@ contract MarketPlace {
                     if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
                         userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
                     }
+
+                    emit onAuctionClosed(_auction.auctionId, _auction.tokenId);
                 }            
             }
         }        
@@ -433,7 +460,7 @@ contract MarketPlace {
         // requrie not own token
         require(msg.sender != _ownerAddress, 'Already token owner');
 
-        require(_ownerAddress != address(0), 'Token without owner');
+        //require(_ownerAddress != address(0), 'Token without owner');
 
         // _offeredPrice should be above zero
         require(_offeredPrice > 0, 'Offered price cannot be zero');
@@ -457,10 +484,11 @@ contract MarketPlace {
         // tokenDirectOffers[_collectionAddress][_tokenId].buyerMap[msg.sender] = _directOfferId;
         tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.set(msg.sender, _directOfferId);
 
-        emit onDirectOfferCreated(_collectionAddress, _directOfferId, _tokenId);
+        // emit onDirectOfferCreated(_collectionAddress, _directOfferId, _tokenId);
     }
 
     function getDirectOfferCount() external view returns(uint256) {
+        // not used
         return _directOfferIds.current();
     }
 
@@ -481,7 +509,7 @@ contract MarketPlace {
         DirectOfferItem[] memory result = new DirectOfferItem[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            (address _ownerAddress, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.at(i);
+            (, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.at(i);
 
             // visible only for buyer or seller
             result[i] = getDirectOffer(_directOfferId);
@@ -520,6 +548,7 @@ contract MarketPlace {
         // remove direct offer by buyer
         tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId].buyerMap.remove(msg.sender);
     }
+
     function acceptDirectOffer(uint256 _directOfferId) external {
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
@@ -548,6 +577,8 @@ contract MarketPlace {
         // transfer from MarketPalce as buyer
         nftCollection.transferFrom(_directOffer.ownerAddress, _directOffer.buyerAddress, _directOffer.tokenId);
 
+        // TODO : Approve to market after transfer        
+
         _directOffer.directOfferStatus = DirectOfferStatus.Finished;
 
         uint256 fee = msg.value.mul(FEE_SELL_PERCENTAGE).div(100);
@@ -560,13 +591,25 @@ contract MarketPlace {
     // --
 
     function claimFunds() external {
-        require(userFunds[msg.sender] > 0, 'This user has no funds to be claimed');
+        require(userFunds[msg.sender] > 0, 'No funds to be claimed');
 
         uint256 fundsToClaim = userFunds[msg.sender];
         userFunds[msg.sender] = 0;
         payable(msg.sender).transfer(fundsToClaim);
 
-        emit onFundsClaimed(msg.sender, fundsToClaim);
+        // emit onFundsClaimed(msg.sender, fundsToClaim);
+    }
+
+    function withdrawProfit() public onlyOwner() {
+        uint256 _profit = profit;
+        profit = 0;
+
+        address payable to = payable(msg.sender);
+        to.transfer(_profit);
+    }
+
+    function getProfitAmount() public onlyOwner() returns(uint256) {
+        return profit;
     }
 
     // Fallback: reverts if Ether is sent to this smart-contract by mistake

@@ -10,9 +10,9 @@ class NavBar extends Component {
     connectWalletHandler = async () => {
         try {
             // Request account access
-            //await window.ethereum.request({ method: 'eth_requestAccounts' });
-            // const accounts = await web3.eth.getAccounts();
-            // this.context.setAccount(accounts[0]);
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await web3.eth.getAccounts();
+            this.context.setAccount(accounts[0]);
 
         } catch (error) {
             console.error(error);
@@ -29,10 +29,19 @@ class NavBar extends Component {
         }
     };
 
+    claimProfitAmount = async () => {
+        try {
+            await this.context.marketPlaceInstance.methods.withdrawProfit().send({ from: this.context.account });
+            await this.context.refreshBlance();
+            await this.context.refreshProfitAmount();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     render() {
         return (
             <React.Fragment>
-                {/* Start Header Area */}
                 <header className="header navbar-area">
                     <div className="container">
                         <div className="row align-items-center">
@@ -58,7 +67,6 @@ class NavBar extends Component {
                                                 {/* <li className="nav-item"><Link to="/Profile">Profile</Link></li> */}
                                             </ul>
                                         </div>
-                                        {/* navbar collapse */}
                                         <div className="login-button">
                                             <ul>
                                                 <li>
@@ -94,17 +102,23 @@ class NavBar extends Component {
                                                     {`Claim ${formatPrice(this.context.userFunds)} ETH`}
                                                 </button>
                                             }
+
+                                            {this.context.marketOwner == this.context.account &&
+                                                <button
+                                                type="button"
+                                                className="btn btn-block navbar-btn text-white"
+                                                onClick={this.claimProfitAmount}
+                                            >
+                                                {`Profit ${formatPrice(this.context.profitAmount)} ETH`}
+                                            </button>
+                                        }
                                         </div>
                                     </nav>
-                                    {/* navbar */}
                                 </div>
                             </div>
                         </div>
-                        {/* row */}
                     </div>
-                    {/* container */}
                 </header>
-                {/* End Header Area */}
             </React.Fragment>
         );
     }

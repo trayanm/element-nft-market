@@ -227,7 +227,7 @@ class CollectionDetail extends Component {
                                                                                     {ele.title}
                                                                                 </Link>
                                                                             </h3>
-                                                                            <AuctionPrice nft={ele} auction={auction} />                                                                            
+                                                                            <AuctionPrice nft={ele} auction={auction} />
                                                                         </div>
                                                                     </div>
                                                                 </div>

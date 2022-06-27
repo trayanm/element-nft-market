@@ -5,8 +5,14 @@ const AppContext = React.createContext({
 
     refreshBlance: null,
 
+    marketOwner: null,
+    setMarketOwner: null,
+
     account: null,
     setAccount: null,
+
+    profitAmount: null,
+    setProfitAmount: null,
 
     userFunds: null,
     refreshUserFunds: null,

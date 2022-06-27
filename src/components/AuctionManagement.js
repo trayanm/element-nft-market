@@ -134,7 +134,7 @@ class AuctionManagement extends Component {
 
         const bid = this.state.bid != null ? web3.utils.toWei(String(this.state.bid), 'ether') : 0;
 
-        await this.context.marketPlaceInstance.methods.bid(this.state.auction.auctionId).send({ from: this.context.account, value: bid });
+        await this.context.marketPlaceInstance.methods.bidAuction(this.state.auction.auctionId).send({ from: this.context.account, value: bid });
         await this.context.refreshBlance();
 
         try {

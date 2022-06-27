@@ -8,6 +8,12 @@ class AppProvider extends React.Component {
     state = {
         checkState: null,
 
+        marketOwner: null,
+        setMarketOwner: null,
+
+        profitAmount: null,
+        setProfitAmount: null,
+
         account: null,
         setAccount: null,
 
@@ -17,7 +23,6 @@ class AppProvider extends React.Component {
         setNetworkId: null,
 
         etherscanUrl: null,
-
 
         marketPlaceInstance: null,
         setMarketPlaceInstance: null,
@@ -47,6 +52,18 @@ class AppProvider extends React.Component {
         return result;
     };
 
+    setProfitAmount = (profitAmount) => {
+        const _state = this.state;
+        _state.profitAmount = profitAmount;
+        this.setState(_state);
+    };
+
+    setMarketOwner = (marketOwner) => {
+        const _state = this.state;
+        _state.marketOwner = marketOwner;
+        this.setState(_state);
+    };
+
     setMktIsLoading = (mktIsLoading) => {
         const _state = this.state;
         _state.mktIsLoading = mktIsLoading;
@@ -68,6 +85,7 @@ class AppProvider extends React.Component {
     setMarketPlaceInstance = (marketPlaceInstance) => {
         const _state = this.state;
         _state.marketPlaceInstance = marketPlaceInstance;
+        // _state.marketOwner = await marketPlaceInstance.owner();        
         this.setState(_state);
     };
 
@@ -108,8 +126,16 @@ class AppProvider extends React.Component {
             );
 
             const userFunds = await this.state.marketPlaceInstance.methods.userFunds(this.state.account).call();
-
             _state.userFunds = userFunds;
+
+            const marketOwner = await this.state.marketPlaceInstance.methods.owner().call();
+            _state.marketOwner = marketOwner;
+
+            if (_state.account === _state.marketOwner) {
+                const profitAmount = await this.state.marketPlaceInstance.methods.getProfitAmount().call();
+
+                _state.profitAmount = profitAmount;
+            }
 
             _state.mktIsLoading = false;
             this.setState(_state);
@@ -126,7 +152,18 @@ class AppProvider extends React.Component {
 
         _state.userFunds = userFunds;
         this.setState(_state);
-    }
+    };
+
+    refreshProfitAmount = async () => {
+        const _state = this.state;
+
+        if (_state.account === _state.marketOwner) {
+            const profitAmount = await this.state.marketPlaceInstance.methods.getProfitAmount().call();
+
+            _state.profitAmount = profitAmount;
+            this.setState(_state);
+        }
+    };
 
     refreshBlance = async () => {
         const accoutnBalance = await web3.eth.getBalance(this.state.account);
@@ -142,8 +179,15 @@ class AppProvider extends React.Component {
                     checkStateAsync: this.checkStateAsync,
                     refreshBlance: this.refreshBlance,
 
+                    marketOwner: this.state.marketOwner,
+                    setMarketOwner: this.setMarketOwner,
+
                     account: this.state.account,
                     setAccount: this.setAccount,
+
+                    profitAmount: this.state.profitAmount,
+                    setProfitAmount: this.setProfitAmount,
+                    refreshProfitAmount: this.refreshProfitAmount,
 
                     userFunds: this.state.userFunds,
                     refreshUserFunds: this.refreshUserFunds,

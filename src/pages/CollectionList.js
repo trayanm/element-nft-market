@@ -21,6 +21,18 @@ class CollectionList extends Component {
 
             await this.loadCollections();
 
+            // Event subscription
+            this.context.marketPlaceInstance.events.onCollectionCreated()
+                .on('data', async (event) => {
+                    // collectionCtx.updateCollection(nftContract, event.returnValues.tokenId, event.returnValues.to);
+                    // collectionCtx.setNftIsLoading(false);
+                    await this.loadCollections();
+                    console.log('onCollectionCreated', event);
+                })
+                .on('error', (error) => {
+                    console.log(error);
+                });
+
             _state.loading = false;
             this.setState(_state);
         } catch (error) {
