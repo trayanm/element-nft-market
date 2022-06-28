@@ -94,6 +94,7 @@ contract MarketPlace is Ownable {
 		// _buyerAddress => _directOfferId  
         //uint256 length; //  TODO : Check
 		EnumerableMap.AddressToUintMap buyerMap; // offer send from address
+        bool active; // TODO : delete tokenDirectOffers[_collectionAddress][_tokenId]; is not working as expected 
 	}
 	
     // properties
@@ -264,12 +265,14 @@ contract MarketPlace is Ownable {
         tokenAuctions[_collectionAddress][_tokenId] = _auctionId;
 
         // delete direct offer for specific token
-        delete tokenDirectOffers[_collectionAddress][_tokenId];
+        tokenDirectOffers[_collectionAddress][_tokenId].active = false;
+        // delete tokenDirectOffers[_collectionAddress][_tokenId];
 
         emit onAuctionCreated(_auctionId, _tokenId);
     }
 
     function getAuctionCount() external view returns(uint256) {
+        // used for tests
         return _auctionIds.current();
     }
 
@@ -312,8 +315,11 @@ contract MarketPlace is Ownable {
             nftCollection.transferFrom(_auction.ownerAddress, msg.sender, _auction.tokenId);
 
             // TODO : Approve to market after transfer
-            // approve token to market
-            // nftCollection.approve(address(this), _auction.tokenId);
+
+            // return to the current highest bidder if any
+            if(_auction.highestBid > 0 && _auction.highestBidderAddress != address(0)) {
+                userFunds[_auction.highestBidderAddress] = userFunds[_auction.highestBidderAddress].add(_auction.highestBid);
+            }
 
             _auction.auctionStatus = AuctionStatus.Finished;
 
@@ -323,9 +329,6 @@ contract MarketPlace is Ownable {
             userFunds[_auction.ownerAddress] = userFunds[_auction.ownerAddress].add(userFund);
 
             delete tokenAuctions[_auction.collectionAddress][_auction.tokenId]; // reset
-
-            // TODO : Handle bids
-            // TODO : Handle direct offers
 
             emit onAuctionFinished(_auctionId, _auction.tokenId);
         }        
@@ -476,6 +479,7 @@ contract MarketPlace is Ownable {
             directOfferStatus: DirectOfferStatus.Open
         });
 
+        tokenDirectOffers[_collectionAddress][_tokenId].active = true;
         tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.set(msg.sender, _directOfferId);
     }
 
@@ -483,7 +487,9 @@ contract MarketPlace is Ownable {
         NFTCollection nftCollection = NFTCollection(_collectionAddress);
         require(msg.sender == nftCollection.ownerOf(_tokenId), 'Not token owner');
 
-       uint256 length = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.length();
+        require(tokenDirectOffers[_collectionAddress][_tokenId].active == true, 'Offers not found');
+
+        uint256 length = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.length();
 
         DirectOfferItem[] memory result = new DirectOfferItem[](length);
 
@@ -494,21 +500,20 @@ contract MarketPlace is Ownable {
             result[i] = directOfferStore[_directOfferId];
         }
 
-       return result;
+        return result;
     }
 
     function getDirectOfferByBuyer(address _collectionAddress, uint256 _tokenId) external view returns(DirectOfferItem memory){
         // sender is the buyer
         (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(msg.sender);
 
-        if(success)
-        {
-            //require(success, 'Offer not found');
+        require(success &&  tokenDirectOffers[_collectionAddress][_tokenId].active == true, 'Offer not found');
 
-            DirectOfferItem memory _directOffer = directOfferStore[_directOfferId];
+        //require(success, 'Offer not found');
 
-            return _directOffer;
-        }
+        DirectOfferItem memory _directOffer = directOfferStore[_directOfferId];
+
+        return _directOffer;
     }
 
     // function getDirectOfferCount() external view returns(uint256) {
@@ -564,13 +569,13 @@ contract MarketPlace is Ownable {
         // sender is the buyer
         (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(msg.sender);
 
-        require(success, 'Offer not found');
+        require(success && tokenDirectOffers[_collectionAddress][_tokenId].active == true, 'Offer not found');
 
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
         // require(_directOffer.directOfferId == _directOfferId, 'Offer not found');
         require(_directOffer.buyerAddress == msg.sender, 'Only offer bayer can cancel');
-        require(_directOffer.directOfferStatus == DirectOfferStatus.Open, 'Offer is not open');
+        require(_directOffer.directOfferStatus == DirectOfferStatus.Open || _directOffer.directOfferStatus == DirectOfferStatus.Accepted, 'Offer is not open');
 
         _directOffer.directOfferStatus = DirectOfferStatus.Canceled;
 
@@ -582,7 +587,7 @@ contract MarketPlace is Ownable {
 
         (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(_buyerAddress);
 
-        require(success, 'Offer not found');
+        require(success && tokenDirectOffers[_collectionAddress][_tokenId].active == true, 'Offer not found');
 
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
@@ -602,7 +607,7 @@ contract MarketPlace is Ownable {
         // sender is the buyer
         (bool success, uint256 _directOfferId) = tokenDirectOffers[_collectionAddress][_tokenId].buyerMap.tryGet(msg.sender);
 
-        require(success, 'Offer not found');
+        require(success && tokenDirectOffers[_collectionAddress][_tokenId].active == true, 'Offer not found');
 
         DirectOfferItem storage _directOffer = directOfferStore[_directOfferId];
 
@@ -624,8 +629,10 @@ contract MarketPlace is Ownable {
         uint256 userFund = msg.value.sub(fee);
         userFunds[_directOffer.ownerAddress] = userFunds[_directOffer.ownerAddress].add(userFund);
 
-        // delete direct offer for specific token
-        delete tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId];
+        // delete all direct offers for token
+        // delete tokenDirectOffers[_directOffer.collectionAddress][_directOffer.tokenId];
+        tokenDirectOffers[_collectionAddress][_tokenId].active = false;
+        // delete tokenDirectOffers[_collectionAddress][_tokenId];
     }
     // --
 

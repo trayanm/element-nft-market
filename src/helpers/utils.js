@@ -14,3 +14,4 @@ export const formatPrice = (buyItNowPrice) => {
 export const formatAddress = (address) => {
   return address.substr(0, 7) + '...' + address.substr(address.length - 7);
 };
+

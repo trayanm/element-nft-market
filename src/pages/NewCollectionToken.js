@@ -92,7 +92,6 @@ class NewCollectionToken extends Component {
 
             // await this.NFTCollectionInstance.methods.safeMint(metadataAdded.path).send({ from: this.context.account });
 
-            console.log(this.context.marketPlaceInstance._address);
             await this.context.marketPlaceInstance.methods.mint(this.state.collectionAddress, metadataAdded.path).send({ from: this.context.account });
             await this.context.refreshBlance();
 

@@ -49,7 +49,7 @@ class DirectOfferByBuyer extends Component {
     handleSubmitCancel = async (event, buyerAddress) => {
         event.preventDefault();
 
-        await this.context.marketPlaceInstance.methods.cancelDirectOffer(this.state.collectionAddress, this.state.nft.tokenId).send({ from: this.context.account});
+        await this.context.marketPlaceInstance.methods.cancelDirectOffer(this.state.collectionAddress, this.state.nft.tokenId).send({ from: this.context.account });
         await this.context.refreshBlance();
 
         try {
@@ -74,7 +74,7 @@ class DirectOfferByBuyer extends Component {
 
     componentDidMount = async () => {
         try {
-
+            // ...
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
@@ -101,7 +101,7 @@ class DirectOfferByBuyer extends Component {
                                         </div>
                                     </div>
                                 </form>
-                                {this.state.directOffer.directOfferStatus == DirectOfferStatusEnum.Accepted &&
+                                {this.state.directOffer == null || this.state.directOffer.directOfferStatus == DirectOfferStatusEnum.Accepted &&
                                     <form onSubmit={(e) => this.handleSubmitFulfill(e)}>
                                         <div className="col-12">
                                             <div className="form-group button">

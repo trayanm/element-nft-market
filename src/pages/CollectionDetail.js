@@ -5,6 +5,9 @@ import AppContext from "../store/app-context";
 import AuctionPrice from "../components/AuctionPrice";
 import { AuctionStatusEnum, DirectOfferStatus } from "../helpers/enums";
 import Spinner from '../components/Spinner';
+import web3 from "../connection/web3";
+import { dateUtility } from "../helpers/dateUtility";
+import Countdown from "react-countdown";
 
 class CollectionDetail extends Component {
     static contextType = AppContext;
@@ -90,8 +93,9 @@ class CollectionDetail extends Component {
 
     loadCollectionAuctions = async (tokens) => {
         //const auctionIds = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
-        console.log('tokens', tokens);
         const result = [];
+
+        const now = new Date();
 
         if (tokens && tokens.length > 0) {
             for (let i = 0; i < tokens.length; i++) {
@@ -100,7 +104,8 @@ class CollectionDetail extends Component {
                 const auction = await this.context.marketPlaceInstance.methods.getAuctionBy(this.state.collectionAddress, token.tokenId).call();
 
                 if (auction && auction.auctionId > 0 && auction.auctionStatus == AuctionStatusEnum.Running) {
-                    result.push({
+
+                    const auctionItem = {
                         ownerAddress: auction.ownerAddress,
                         collectionAddress: auction.collectionAddress,
                         highestBidderAddress: auction.highestBidderAddress,
@@ -111,7 +116,12 @@ class CollectionDetail extends Component {
                         initialPrice: auction.initialPrice,
                         endTime: auction.endTime,
                         auctionStatus: auction.auctionStatus
-                    });
+                    };
+
+                    auctionItem.endDateTime = new Date(auctionItem.endTime * 1000);
+                    auctionItem.ended = auctionItem.endDateTime <= now;
+
+                    result.push(auctionItem);
                 }
             }
         }
@@ -164,6 +174,10 @@ class CollectionDetail extends Component {
 
         await this.NFTCollectionInstance.methods.approve(this.state.collectionAddress, id).send({ from: this.context.account });
         await this.context.refreshBlance();
+    };
+
+    handleCountDownComplete = async (event, auctionId) => {
+        // ...
     };
 
     render() {
@@ -239,6 +253,9 @@ class CollectionDetail extends Component {
                                                                                 </Link>
                                                                             </h3>
                                                                             <AuctionPrice nft={ele} auction={auction} />
+                                                                            {auction && auction.endTime > 0 &&
+                                                                                <Countdown date={auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e, auction.auctionId)} />
+                                                                            }
                                                                         </div>
                                                                     </div>
                                                                 </div>

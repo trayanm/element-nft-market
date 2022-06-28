@@ -8,6 +8,7 @@ import { formatAddress, formatPrice } from "../helpers/utils";
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
+
 class CollectionTokenDetail extends Component {
     static contextType = AppContext;
 
@@ -32,6 +33,8 @@ class CollectionTokenDetail extends Component {
     componentDidMount = async () => {
         try {
             const _state = this.state;
+
+
 
             await this.context.checkStateAsync();
 
@@ -88,13 +91,15 @@ class CollectionTokenDetail extends Component {
     };
 
     loadAuction = async (tokenId) => {
-        //  TODO : Use context
+        const now = new Date();
+
         const collectionAuctions = await this.context.marketPlaceInstance.methods.getCollectionAuctions(this.state.collectionAddress).call();
 
         const auction = await this.context.marketPlaceInstance.methods.getAuctionBy(this.state.collectionAddress, tokenId).call();
 
         if (auction && auction.auctionId > 0 && auction.auctionStatus == AuctionStatusEnum.Running) {
-            return {
+
+            const auctionItem = {
                 ownerAddress: auction.ownerAddress,
                 collectionAddress: auction.collectionAddress,
                 highestBidderAddress: auction.highestBidderAddress,
@@ -106,14 +111,17 @@ class CollectionTokenDetail extends Component {
                 endTime: auction.endTime,
                 auctionStatus: auction.auctionStatus
             };
+
+            auctionItem.endDateTime = new Date(auctionItem.endTime * 1000);
+            auctionItem.ended = auctionItem.endDateTime <= now;
+
+            return auctionItem;
         }
 
         return null;
     };
 
     loadDirectOffersByOwner = async (tokenId) => {
-        console.log('getDirectOffersByOwner', { collectionAddress: this.state.collectionAddress, tokenId: tokenId });
-
         try {
             const directOffers = [];
 
@@ -140,17 +148,17 @@ class CollectionTokenDetail extends Component {
             return directOffers;
 
         } catch (error) {
-            // Catch any errors for any of the above operations.
-            alert(
-                `Failed to load web3, accounts, or contract. Check console for details.`,
-            );
-            console.error(error);
+            // Skip errors
+            // alert(
+            //     `Failed to load web3, accounts, or contract. Check console for details.`,
+            // );
+            // console.error(error);
         }
+
+        return null;
     };
 
     loadDirectOfferByBuyer = async (tokenId) => {
-        console.log('getDirectOfferByBuyer', { collectionAddress: this.state.collectionAddress, tokenId: tokenId });
-
         try {
             const directOffer = await this.context.marketPlaceInstance.methods.getDirectOfferByBuyer(this.state.collectionAddress, tokenId).call({ from: this.context.account });
 
@@ -160,12 +168,14 @@ class CollectionTokenDetail extends Component {
 
             return null;
         } catch (error) {
-            // Catch any errors for any of the above operations.
-            alert(
-                `Failed to load web3, accounts, or contract. Check console for details.`,
-            );
-            console.error(error);
+            // Skip errors
+            // alert(
+            //     `Failed to load web3, accounts, or contract. Check console for details.`,
+            // );
+            // console.error(error);            
         }
+
+        return null;
     };
 
     render() {
@@ -209,14 +219,11 @@ class CollectionTokenDetail extends Component {
                                     <div className="col-lg-6 col-md-12 col-12">
                                         <div className="product-info">
                                             <h2 className="title">{this.state.nft.title}</h2>
-                                            <h3 className="price">
-                                                {/* {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.initialPrice > 0 &&
-                                                    <span className="price-line"><span className="price-tag">Initial</span>{formatPrice(this.state.auction.initialPrice)} ETH</span>
-                                                } */}
+                                            {/* <h3 className="price">
                                                 {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.buyItNowPrice > 0 &&
                                                     <span>{formatPrice(this.state.auction.buyItNowPrice)} ETH</span>
                                                 }
-                                            </h3>
+                                            </h3> */}
                                             <div className="list-info">
                                                 <div>
                                                     {this.state.nft.description}
@@ -245,29 +252,7 @@ class CollectionTokenDetail extends Component {
                                                         directOffer={this.state.directOfferByBuyer}
                                                     />
                                                 }
-                                                {/* <DirectOfferManagement
-                                                    nft={this.state.nft}
-                                                    auction={this.state.auction}
-                                                    collectionAddress={this.state.collectionAddress}
-                                                    directOffers={this.state.directOffers}
-                                                /> */}
                                             </div>
-                                            {/* <div className="contact-info">
-                                                <ul>
-                                                    <li>
-                                                        <a href="tel:+002562352589" className="call">
-                                                            <i className="lni lni-phone-set"></i>
-                                                            +00 256 235 2589
-                                                            <span>Call &amp; Get more info</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="mailto:example@gmail.com" className="mail">
-                                                            <i className="lni lni-envelope"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div> */}
                                             <div className="social-share">
                                                 <h4>Share</h4>
                                                 <ul>

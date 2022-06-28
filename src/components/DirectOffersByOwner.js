@@ -47,6 +47,10 @@ class DirectOffersByOwner extends Component {
     };
 
     render() {
+        if (this.state.directOffers == null) {
+            return (<></>);
+        }
+
         return (
             <React.Fragment>
                 <div>

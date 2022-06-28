@@ -3,6 +3,8 @@ import AppContext from "../store/app-context";
 import AuctionPrice from "./AuctionPrice";
 import web3 from "../connection/web3";
 import { AuctionStatusEnum } from "../helpers/enums";
+import { formatPrice } from "../helpers/utils";
+import Countdown from "react-countdown";
 
 class AuctionManagement extends Component {
     static contextType = AppContext;
@@ -27,8 +29,6 @@ class AuctionManagement extends Component {
         this.state.auction = auction;
         this.state.collectionAddress = collectionAddress;
         this.state.approvedAddress = approvedAddress;
-
-        console.log(this.state.auction);
     }
 
     onChangeInitialPrice = (event) => {
@@ -60,7 +60,7 @@ class AuctionManagement extends Component {
             await this.context.refreshBlance();
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -68,16 +68,8 @@ class AuctionManagement extends Component {
         event.preventDefault();
 
         try {
-            console.log('this.state.initialPrice', this.state.initialPrice);
-            console.log('this.state.buyItNowPrice', this.state.buyItNowPrice);
-
             const initialPrice = this.state.initialPrice != null ? web3.utils.toWei(String(this.state.initialPrice), 'ether') : 0;
             const buyItNowPrice = this.state.buyItNowPrice != null ? web3.utils.toWei(String(this.state.buyItNowPrice), 'ether') : 0;
-
-            console.log({
-                initialPrice: initialPrice,
-                buyItNowPrice: buyItNowPrice
-            });
 
             await this.context.marketPlaceInstance.methods.createAuction(
                 /* address _collectionAddress */ this.state.collectionAddress,
@@ -89,7 +81,7 @@ class AuctionManagement extends Component {
 
             await this.context.refreshBlance();
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -100,7 +92,7 @@ class AuctionManagement extends Component {
             await this.NFTCollectionInstance.methods.approve(this.context.marketPlaceInstance._address, this.state.nft.tokenId).send({ from: this.context.account });
             await this.context.refreshBlance();
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -111,25 +103,35 @@ class AuctionManagement extends Component {
             await this.context.marketPlaceInstance.methods.buyNowAuction(this.state.auction.auctionId).send({ from: this.context.account, value: this.state.auction.buyItNowPrice });
             await this.context.refreshBlance();
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
     handleSubmitBid = async (event) => {
         event.preventDefault();
 
-
-        console.log('this.state.bid', this.state.bid);
-
-        const bid = this.state.bid != null ? web3.utils.toWei(String(this.state.bid), 'ether') : 0;
-
-        await this.context.marketPlaceInstance.methods.bidAuction(this.state.auction.auctionId).send({ from: this.context.account, value: bid });
-        await this.context.refreshBlance();
-
         try {
+            const bid = this.state.bid != null ? web3.utils.toWei(String(this.state.bid), 'ether') : 0;
+
+            await this.context.marketPlaceInstance.methods.bidAuction(this.state.auction.auctionId).send({ from: this.context.account, value: bid });
+            await this.context.refreshBlance();
+
             // ...
         } catch (error) {
-            console.log(error);
+            // console.log(error);
+        }
+    };
+
+    handleSubmitFinish = async (event) => {
+        event.preventDefault();
+
+        try {
+            await this.context.marketPlaceInstance.methods.checkAuction(this.state.auction.auctionId).send({ from: this.context.account });
+            await this.context.refreshBlance();
+
+            // ...
+        } catch (error) {
+            // console.log(error);
         }
     };
 
@@ -146,6 +148,10 @@ class AuctionManagement extends Component {
         }
     };
 
+    handleCountDownComplete = async (event) => {
+        // ...
+    };
+
     render() {
         if (this.state.nft.owner === this.context.account) {
             if (this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running) {
@@ -154,6 +160,7 @@ class AuctionManagement extends Component {
                         <div className="actions">
                             {/* <em>owner</em> | <em>auction</em> */}
                             <AuctionPrice nft={this.state.nft} auction={this.state.auction} />
+                            <Countdown date={this.state.auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e)} />
                             <form onSubmit={(e) => this.handleSubmitCancel(e)}>
                                 <div className="col-12">
                                     <div className="form-group button">
@@ -161,6 +168,17 @@ class AuctionManagement extends Component {
                                     </div>
                                 </div>
                             </form>
+
+                            {this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.ended &&
+                                <form onSubmit={(e) => this.handleSubmitFinish(e)}>
+                                    <div className="col-12">
+                                        <div className="form-group button">
+                                            <button type="submit" className="btn btn-danger">Finish</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            }
+
                         </div>
                     </React.Fragment>
                 );
@@ -224,37 +242,52 @@ class AuctionManagement extends Component {
                         <div className="actions">
                             {/* <em>not owner</em> | <em>auction</em> */}
                             <AuctionPrice nft={this.state.nft} auction={this.state.auction} />
-                            <form onSubmit={(e) => this.handleSubmitBid(e)}>
-                                <div className="row mb-3">
-                                    <label className="col-sm-4 col-form-label">Bid</label>
-                                    <div className="col-sm-8">
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            placeholder="ETH"
-                                            className="form-control"
-                                            onChange={(e) => this.onChangeBid(e)}
-                                        />
+                            <Countdown date={this.state.auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e)} />
+                            {this.state.auction.highestBidderAddress != this.context.account &&
+                                <form onSubmit={(e) => this.handleSubmitBid(e)}>
+                                    <div className="row mb-3">
+                                        <label className="col-sm-4 col-form-label">Bid</label>
+                                        <div className="col-sm-8">
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                placeholder="ETH"
+                                                className="form-control"
+                                                onChange={(e) => this.onChangeBid(e)}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-12">
-                                    <div className="form-group button">
-                                        <button type="submit" className="btn btn-primary">Bid</button>
+                                    <div className="col-12">
+                                        <div className="form-group button">
+                                            <button type="submit" className="btn btn-primary">Bid</button>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            }
 
-                            <form onSubmit={(e) => this.handleSubmitBuyNow(e)}>
-                                <div className="row mt-3">
-                                    <div className="col">
-                                        <div className="col-12">
-                                            <div className="form-group button">
-                                                <button type="submit" className="btn btn-success">Buy now</button>
+                            {this.state.auction.buyItNowPrice > 0 &&
+                                <form onSubmit={(e) => this.handleSubmitBuyNow(e)}>
+                                    <div className="row mt-3">
+                                        <div className="col">
+                                            <div className="col-12">
+                                                <div className="form-group button">
+                                                    <button type="submit" className="btn btn-success">Buy for {formatPrice(this.state.auction.buyItNowPrice)} ETH</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            }
+
+                            {this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.ended &&
+                                <form onSubmit={(e) => this.handleSubmitFinish(e)}>
+                                    <div className="col-12">
+                                        <div className="form-group button">
+                                            <button type="submit" className="btn btn-danger">Finish</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            }
                         </div>
                     </React.Fragment>
                 );

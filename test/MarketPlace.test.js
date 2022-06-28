@@ -590,11 +590,26 @@ contract('MarketPlace', function (accounts) {
         await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
         await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_1 });
 
-        const directOffersByOwner = await theMarketPlace.getDirectOffersByOwner(collectionitem_1.collectionAddress, 2, { from: account_1 });
-        const directOfferByBuyer = await theMarketPlace.getDirectOfferByBuyer(collectionitem_1.collectionAddress, 2, { from: account_2 });
+        let errorMessage = 'Offers not found';
+        try {
+            const directOffersByOwner = await theMarketPlace.getDirectOffersByOwner(collectionitem_1.collectionAddress, 2, { from: account_1 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
+
+        errorMessage = 'Offer not found';
+        try {
+            const directOfferByBuyer = await theMarketPlace.getDirectOfferByBuyer(collectionitem_1.collectionAddress, 2, { from: account_2 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
     });
 
-    xit('Test: DirectOffer - Create', async function () {
+    it('Test: DirectOffer - Create', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -667,7 +682,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(directOfferBy_1.directOfferStatus, 0, 'directOfferStatus is zero');
     });
 
-    xit('Test: DirectOffer - Create ovveride', async function () {
+    it('Test: DirectOffer - Create ovveride', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -698,7 +713,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(directOfferSingle.offeredPrice, 7, 'offeredPrice is 7');
     });
 
-    xit('Test: DirectOffer - Create multi and cancel', async function () {
+    it('Test: DirectOffer - Create multi and cancel', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -739,7 +754,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(directOffersFor_2.length, 1, "Count should be 1");
     });
 
-    xit('Test: DirectOffer - Accept and transfer', async function () {
+    it('Test: DirectOffer - Accept and transfer', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -796,5 +811,43 @@ contract('MarketPlace', function (accounts) {
         const newOwner_2 = await collectionContract_1.ownerOf(2);
         assert.notEqual(newOwner_2, account_1, 'New owner is not account_1');
         assert.equal(newOwner_2, account_2, 'New owner is account_2');
+    });
+
+    it('Test: DirectOffer - Violation after transfer', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
+
+        await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 1, 5, { from: account_2 }); // 1
+        await theMarketPlace.createDirectOffer(collectionitem_1.collectionAddress, 1, 9, { from: account_3 }); //
+
+        await theMarketPlace.acceptDirectOffer(collectionitem_1.collectionAddress, 1, account_2, { from: account_1 });
+        await theMarketPlace.acceptDirectOffer(collectionitem_1.collectionAddress, 1, account_3, { from: account_1 });
+
+        await theMarketPlace.fulfillDirectOffer(collectionitem_1.collectionAddress, 1, { from: account_2, value: 5 });
+
+        const newOwner_2 = await collectionContract_1.ownerOf(1);
+        assert.notEqual(newOwner_2, account_1, 'New owner is not account_1');
+        assert.equal(newOwner_2, account_2, 'New owner is account_2');
+
+        let errorMessage = 'Offer not found';
+        try {
+            const offerBy_3 = await theMarketPlace.getDirectOfferByBuyer(collectionitem_1.collectionAddress, 1, { from: account_3 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
+
+        // account_3 try to fullfill, because his offer is also accepted
+        errorMessage = 'Offer not found';
+        try {
+            await theMarketPlace.fulfillDirectOffer(collectionitem_1.collectionAddress, 1, { from: account_3, value: 9 });
+        }
+        catch (error) {
+            assert.notEqual(error, undefined, 'Error must be thrown');
+            assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
+        }
     });
 });
