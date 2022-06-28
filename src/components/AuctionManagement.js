@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import AppContext from "../store/app-context";
-import AuctionPrice from "./AuctionPrice";
 import web3 from "../connection/web3";
 import { AuctionStatusEnum } from "../helpers/enums";
 import { formatPrice } from "../helpers/utils";
@@ -56,7 +55,7 @@ class AuctionManagement extends Component {
         event.preventDefault();
 
         try {
-            await this.context.marketPlaceInstance.methods.cancelAuction(this.state.nft.tokenId).send({ from: this.context.account });
+            await this.context.marketPlaceInstance.methods.cancelAuction(this.state.auction.auctionId).send({ from: this.context.account });
             await this.context.refreshBlance();
 
         } catch (error) {
@@ -135,9 +134,16 @@ class AuctionManagement extends Component {
         }
     };
 
+    handleCountDownComplete = async (event) => {
+        // ...
+    };
+
     componentDidMount = async () => {
         try {
             this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress)
+
+            console.log(this.state.approvedAddress);
+            console.log(this.context.marketPlaceInstance._address);
 
         } catch (error) {
             // Catch any errors for any of the above operations.
@@ -148,48 +154,46 @@ class AuctionManagement extends Component {
         }
     };
 
-    handleCountDownComplete = async (event) => {
-        // ...
-    };
-
     render() {
         if (this.state.nft.owner === this.context.account) {
             if (this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running) {
                 return (
                     <React.Fragment>
-                        <div className="actions">
-                            {/* <em>owner</em> | <em>auction</em> */}
-                            <AuctionPrice nft={this.state.nft} auction={this.state.auction} />
-                            <Countdown date={this.state.auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e)} />
+                        {/* <em>owner</em> | <em>auction</em> */}
+                        <div className="action-sec">
                             <form onSubmit={(e) => this.handleSubmitCancel(e)}>
-                                <div className="col-12">
-                                    <div className="form-group button">
-                                        <button type="submit" className="btn btn-danger">Cancel</button>
+                                <div className="row mb-3">
+                                    <div className="col-12">
+                                        <div className="form-group">
+                                            <button type="submit" className="btn btn-danger">Cancel auction</button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
+                        </div>
 
-                            {this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.ended &&
+                        {this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.ended &&
+                            <div className="action-sec">
                                 <form onSubmit={(e) => this.handleSubmitFinish(e)}>
-                                    <div className="col-12">
-                                        <div className="form-group button">
-                                            <button type="submit" className="btn btn-danger">Finish</button>
+                                    <div className="row mb-3">
+                                        <div className="col-12">
+                                            <div className="form-group">
+                                                <button type="submit" className="btn btn-danger">Finish auction</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
-                            }
-
-                        </div>
+                            </div>
+                        }
                     </React.Fragment>
                 );
             }
             else {
                 return (
                     <React.Fragment>
-                        <div className="actions">
-                            {/* <em>owner</em> | <em>no auction</em> */}
-
-                            {this.state.approvedAddress === this.context.marketPlaceInstance._address &&
+                        {/* <em>owner</em> | <em>no auction</em> */}
+                        {this.state.approvedAddress === this.context.marketPlaceInstance._address &&
+                            <div className="action-sec">
                                 <form onSubmit={(e) => this.handleSubmitSell(e)}>
                                     <div className="row mb-3">
                                         <label className="col-sm-4 col-form-label">Initial price</label>
@@ -216,22 +220,28 @@ class AuctionManagement extends Component {
                                         </div>
                                     </div>
                                     <div className="col-12">
-                                        <div className="form-group button">
-                                            <button type="submit" className="btn btn-danger">Sell</button>
+                                        <div className="form-group">
+                                            <button type="submit" className="btn btn-danger">Create auction</button>
                                         </div>
                                     </div>
                                 </form>
-                            }
+                            </div>
+                        }
 
-                            {this.state.approvedAddress !== this.context.marketPlaceInstance._address &&
+                        {this.state.approvedAddress !== this.context.marketPlaceInstance._address &&
+                            <div className="action-sec">
                                 <form onSubmit={(e) => this.handleSubmitApprove(e)}>
-                                    <div className="form-group button">
-                                        <button type="submit" className="btn btn-success">Approve to market</button>
+                                    <div className="row mb-3">
+                                        <div className="col-12">
+                                            <div className="form-group">
+                                                <button type="submit" className="btn btn-success">Approve to market</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
-                            }
-                        </div>
-                    </React.Fragment>
+                            </div>
+                        }
+                    </React.Fragment >
                 );
             }
         }
@@ -239,35 +249,11 @@ class AuctionManagement extends Component {
             if (this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running) {
                 return (
                     <React.Fragment>
-                        <div className="actions">
-                            {/* <em>not owner</em> | <em>auction</em> */}
-                            <AuctionPrice nft={this.state.nft} auction={this.state.auction} />
-                            <Countdown date={this.state.auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e)} />
-                            {this.state.auction.highestBidderAddress != this.context.account &&
-                                <form onSubmit={(e) => this.handleSubmitBid(e)}>
-                                    <div className="row mb-3">
-                                        <label className="col-sm-4 col-form-label">Bid</label>
-                                        <div className="col-sm-8">
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                placeholder="ETH"
-                                                className="form-control"
-                                                onChange={(e) => this.onChangeBid(e)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-12">
-                                        <div className="form-group button">
-                                            <button type="submit" className="btn btn-primary">Bid</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            }
-
-                            {this.state.auction.buyItNowPrice > 0 &&
+                        {/* <em>not owner</em> | <em>auction</em> */}
+                        {this.state.auction.buyItNowPrice > 0 &&
+                            <div className="action-sec">
                                 <form onSubmit={(e) => this.handleSubmitBuyNow(e)}>
-                                    <div className="row mt-3">
+                                    <div className="row mb-3">
                                         <div className="col">
                                             <div className="col-12">
                                                 <div className="form-group button">
@@ -277,29 +263,57 @@ class AuctionManagement extends Component {
                                         </div>
                                     </div>
                                 </form>
-                            }
+                            </div>
+                        }
 
-                            {this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.ended &&
-                                <form onSubmit={(e) => this.handleSubmitFinish(e)}>
+                        {this.state.auction.highestBidderAddress != this.context.account &&
+                            <div className="action-sec">
+                                <form onSubmit={(e) => this.handleSubmitBid(e)}>
+                                    <div className="row mb-3">
+                                        <div className="col-sm-4">
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                placeholder="ETH"
+                                                className="form-control"
+                                                onChange={(e) => this.onChangeBid(e)}
+                                            />
+                                        </div>
+                                        <div className="col-sm-4">
+                                            <button type="submit" className="btn btn-primary">Bid to auction</button>
+                                        </div>
+                                    </div>
                                     <div className="col-12">
-                                        <div className="form-group button">
-                                            <button type="submit" className="btn btn-danger">Finish</button>
+                                        <div className="form-group">
+
                                         </div>
                                     </div>
                                 </form>
-                            }
-                        </div>
-                    </React.Fragment>
+                            </div>
+                        }
+
+                        {this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.ended &&
+                            <div className="action-sec">
+                                <form onSubmit={(e) => this.handleSubmitFinish(e)}>
+                                    <div className="row mb-3">
+                                        <div className="col-12">
+                                            <div className="form-group">
+                                                <button type="submit" className="btn btn-primary">Finish auction</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        }
+                    </React.Fragment >
                 );
             }
             else {
                 return (
                     <React.Fragment>
-                        <div className="actions">
-                            <span>
-                                {/* nothing */}
-                            </span>
-                        </div>
+                        <span>
+                            {/* nothing */}
+                        </span>
                     </React.Fragment>
                 );
             }

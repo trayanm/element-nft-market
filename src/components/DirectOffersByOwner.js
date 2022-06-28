@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { DirectOfferStatusEnum, GetDirectOfferStatusTitle } from "../helpers/enums";
+import { DirectOfferStatusEnum, getDirectOfferStatusTitle } from "../helpers/enums";
 import { formatPrice } from "../helpers/utils";
 import AppContext from "../store/app-context";
 
@@ -24,7 +24,7 @@ class DirectOffersByOwner extends Component {
     handleSubmitAccept = async (event, buyerAddress) => {
         event.preventDefault();
 
-        await this.context.marketPlaceInstance.methods.acceptDirectOffer(this.state.collectionAddress, this.state.nft.tokenId, buyerAddress).send({ from: this.context.account});
+        await this.context.marketPlaceInstance.methods.acceptDirectOffer(this.state.collectionAddress, this.state.nft.tokenId, buyerAddress).send({ from: this.context.account });
         await this.context.refreshBlance();
 
         try {
@@ -54,19 +54,31 @@ class DirectOffersByOwner extends Component {
         return (
             <React.Fragment>
                 <div>
-                    <em>DirectOffersByOwner</em>
                     {this.state.directOffers.map((ele, inx) => (
                         <div key={inx}>
-                            Offer: {formatPrice(ele.offeredPrice)} ETH ({GetDirectOfferStatusTitle(ele.directOfferStatus)})
+
                             {ele.directOfferStatus == DirectOfferStatusEnum.Open &&
-                                    <form onSubmit={(e) => this.handleSubmitAccept(e, ele.buyerAddress)}>
-                                        <div className="col-12">
-                                            <div className="form-group button">
-                                                <button type="submit" className="btn btn-danger">Accept</button>
+                                <form onSubmit={(e) => this.handleSubmitAccept(e, ele.buyerAddress)}>
+                                    <div className="row">
+                                        <label className="col-8 col-form-label">Offer: {formatPrice(ele.offeredPrice)} ETH ({getDirectOfferStatusTitle(ele.directOfferStatus)})</label>
+                                        <div className="col-4">
+                                            <div className="form-group">
+                                                <button type="submit" className="btn btn-primary">Accept</button>
                                             </div>
                                         </div>
-                                    </form>
-                                }
+                                    </div>
+                                </form>
+                            }
+
+                            {ele.directOfferStatus != DirectOfferStatusEnum.Open &&
+                                <div className="row">
+                                    <label className="col-8 col-form-label">Offer: {formatPrice(ele.offeredPrice)} ETH ({getDirectOfferStatusTitle(ele.directOfferStatus)})</label>
+                                    <div className="col-4">
+                                        <div className="form-group">
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     ))}
                 </div>

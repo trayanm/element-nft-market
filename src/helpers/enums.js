@@ -12,7 +12,7 @@ export const DirectOfferStatusEnum = {
     Canceled: 3 // 3: canceled by seller
 }
 
-export function GetAuctionStatusTitle(auctionStatus) {
+export function getAuctionStatusTitle(auctionStatus) {
     let result = '';
 
     switch (parseInt(auctionStatus)) {
@@ -27,7 +27,7 @@ export function GetAuctionStatusTitle(auctionStatus) {
     return result;
 }
 
-export function GetDirectOfferStatusTitle(directOfferStatus) {
+export function getDirectOfferStatusTitle(directOfferStatus) {
     let result = '';
 
     switch (parseInt(directOfferStatus)) {

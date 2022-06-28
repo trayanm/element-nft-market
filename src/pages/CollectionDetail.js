@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
-import AuctionPrice from "../components/AuctionPrice";
 import { AuctionStatusEnum, DirectOfferStatus } from "../helpers/enums";
 import Spinner from '../components/Spinner';
 import web3 from "../connection/web3";
 import { dateUtility } from "../helpers/dateUtility";
 import Countdown from "react-countdown";
+import { formatPrice } from "../helpers/utils";
 
 class CollectionDetail extends Component {
     static contextType = AppContext;
@@ -126,41 +126,8 @@ class CollectionDetail extends Component {
             }
         }
 
-        // const result = [];
-
-        // if (auctionIds.length > 0) {
-        //     for (let i = 0; i < auctionIds.length; i++) {
-        //         const _auctionId = auctionIds[i];
-
-        //         const auction = await this.context.marketPlaceInstance.methods.getAuction(_auctionId).call();
-
-        //         if (auction && auction.auctionStatus == AuctionStatusEnum.Running) {
-        //             result.push(auction);
-        //         }
-        //     }
-        // }
-
         return result;
     };
-
-    // loadCollectionDirectOffers = async (tokens) => {
-    //     let result = [];
-
-    //     if (tokens && tokens.length > 0) {
-    //         for (let i = 0; i < tokens.length; i++) {
-    //             const token = tokens[i];
-
-    //             // TODO : Filter hide by buyer or seller
-    //             const directOffers = await this.context.marketPlaceInstance.getDirectOffers(this.state.collectionAddress, token.tokenId).call();
-
-    //             if (directOffers && directOffers.length > 0) {                    
-    //                 result = result.concat(directOffers);
-    //             }
-    //         }
-    //     }
-
-    //     return result;
-    // };
 
     handleGiveApprove = async (event, id) => {
         event.preventDefault();
@@ -242,8 +209,15 @@ class CollectionDetail extends Component {
                                                                                 <i className="cross-badge lni lni-user"></i>
                                                                             }
                                                                             {auction && auction.auctionStatus == AuctionStatusEnum.Running &&
-                                                                                <span className="flat-badge sale">Sale</span>
+                                                                                <>
+                                                                                    <span className="flat-badge sale">Sale &nbsp;
+                                                                                        {auction && auction.endTime > 0 &&
+                                                                                            <Countdown date={auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e, auction.auctionId)} />
+                                                                                        }
+                                                                                    </span>
+                                                                                </>
                                                                             }
+
                                                                         </div>
                                                                         <div className="content">
                                                                             <a href="#!" className="tag">{ele.description}</a>
@@ -252,10 +226,33 @@ class CollectionDetail extends Component {
                                                                                     {ele.title}
                                                                                 </Link>
                                                                             </h3>
-                                                                            <AuctionPrice nft={ele} auction={auction} />
-                                                                            {auction && auction.endTime > 0 &&
-                                                                                <Countdown date={auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e, auction.auctionId)} />
-                                                                            }
+                                                                            {/* <AuctionPrice nft={ele} auction={auction} /> */}
+                                                                            <ul className="info">
+                                                                                {auction &&
+                                                                                    <>
+                                                                                        {auction.initialPrice > 0 &&
+                                                                                            <li className="price"><span>Initial</span><br />{formatPrice(auction.initialPrice)} ETH</li>
+                                                                                        }
+                                                                                        {auction.highestBid > 0 &&
+
+                                                                                            <>
+                                                                                                {auction.highestBidderAddress == this.context.account &&
+                                                                                                    <li className="price my-bid" title="You are highest bidder"><span>High</span><br />{formatPrice(auction.highestBid)} ETH </li>
+                                                                                                }
+
+                                                                                                {auction.highestBidderAddress != this.context.account &&
+                                                                                                    <li className="price"><span>High</span><br />{formatPrice(auction.highestBid)} ETH</li>
+                                                                                                }
+                                                                                            </>
+                                                                                        }
+                                                                                        {auction.buyItNowPrice > 0 &&
+                                                                                            <li className="price"><span>Buy now</span><br />{formatPrice(auction.buyItNowPrice)} ETH</li>
+                                                                                        }
+
+                                                                                        <li><em>{auction.ended}</em></li>
+                                                                                    </>
+                                                                                }
+                                                                            </ul>
                                                                         </div>
                                                                     </div>
                                                                 </div>

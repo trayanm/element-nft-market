@@ -4421,6 +4421,7 @@ blockquote .shape {
 
 .single-item-grid .image .sale {
   background: #dc3545;
+  font-family: monospace;
 }
 
 .single-item-grid .image .rent {
@@ -4491,10 +4492,18 @@ blockquote .shape {
   font-weight: 600;
   color: #5830e0;
   float: left;
-  position: relative;
-  top: 5px;
+  /* position: relative; */
+  /* top: 5px; */
   margin-right: 20px;
+  padding: 5px;
 }
+
+.single-item-grid .content .info .price.my-bid {
+  background-color: #00d13f;
+  color: #fff;
+  border-radius: 4px;
+}
+
 .single-item-grid .content .info .price span {
   color: #000;
 }
@@ -6301,6 +6310,26 @@ blockquote .shape {
   min-width: 100px;
 }
 
+.item-details .product-info .list-info .auction-management {
+
+}
+
+.item-details .product-info .list-info .auction-management .action-sec{
+margin-top: 20px;
+}
+
+.item-details .product-info .counter {
+  font-size: 20px;
+  color: #000;
+  background: #efedf4;
+  padding-top: 5px;
+  border-radius: 4px;
+  padding-bottom: 5px;
+  width: auto;
+  text-align: center;
+  font-family: monospace;
+}
+
 .item-details .product-info .contact-info {
   margin-top: 30px;
 }
@@ -6362,12 +6391,6 @@ blockquote .shape {
   background-color: #5830e0;
   color: #fff;
   border-color: transparent;
-}
-
-.item-details .product-info .auction-options{
-  border-top: 1px solid #eee;
-margin-top: 30px;
-padding-top: 30px;
 }
 
 .item-details .product-info .social-share {
@@ -6650,6 +6673,12 @@ padding-top: 30px;
 .item-details-sidebar .single-block.contant-seller .form-box textarea.form-control-custom::placeholder {
   color: #081828;
   padding: 0 !important;
+}
+
+.item-details-sidebar .list-info {
+  border-top: 1px solid #eee;
+  margin-top: 30px;
+  padding-top: 30px;
 }
 
 /* How It Works */

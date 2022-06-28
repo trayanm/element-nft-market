@@ -7,7 +7,7 @@ import { AuctionStatusEnum } from "../helpers/enums";
 import { formatAddress, formatPrice } from "../helpers/utils";
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
-
+import Countdown from "react-countdown";
 
 class CollectionTokenDetail extends Component {
     static contextType = AppContext;
@@ -205,68 +205,146 @@ class CollectionTokenDetail extends Component {
                 <section className="item-details section">
                     <div className="container">
                         {this.state.nft &&
-                            <div className="top-area">
-                                <div className="row">
-                                    <div className="col-lg-6 col-md-12 col-12">
-                                        <div className="product-images">
-                                            <main id="gallery">
-                                                <div className="main-img">
-                                                    <img src={`https://ipfs.infura.io/ipfs/${this.state.nft.img}`} id="current" alt="#" />
-                                                </div>
-                                            </main>
+                            <>
+                                <div className="top-area">
+                                    <div className="row">
+                                        <div className="col-lg-6 col-md-12 col-12">
+                                            <div className="product-images">
+                                                <main id="gallery">
+                                                    <div className="main-img">
+                                                        <img src={`https://ipfs.infura.io/ipfs/${this.state.nft.img}`} id="current" alt="#!" />
+                                                    </div>
+                                                </main>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-lg-6 col-md-12 col-12">
-                                        <div className="product-info">
-                                            <h2 className="title">{this.state.nft.title}</h2>
-                                            {/* <h3 className="price">
-                                                {this.state.auction && this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.buyItNowPrice > 0 &&
-                                                    <span>{formatPrice(this.state.auction.buyItNowPrice)} ETH</span>
-                                                }
-                                            </h3> */}
-                                            <div className="list-info">
-                                                <div>
-                                                    {this.state.nft.description}
+                                        <div className="col-lg-6 col-md-12 col-12">
+                                            <div className="product-info">
+                                                <h2 className="title">{this.state.nft.title}</h2>
+                                                <div className="auction-options">
+                                                    {this.state.auction && !this.state.auction.ended &&
+                                                        <div className="list-info">
+                                                            <div className="counter">Ends in:
+                                                                <span>
+                                                                    <Countdown date={this.state.auction.endDateTime} daysInHours={true} onComplete={(e) => this.handleCountDownComplete(e)} />
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <div className="list-info">
+                                                        {this.state.auction &&
+                                                            <ul>
+                                                                {this.state.auction.initialPrice > 0 &&
+                                                                    <li><span>Initial:</span> {formatPrice(this.state.auction.initialPrice)} ETH</li>
+                                                                }
+                                                                {this.state.auction.buyItNowPrice > 0 &&
+                                                                    <li><span>Buy now:</span> {formatPrice(this.state.auction.buyItNowPrice)} ETH</li>
+                                                                }
+                                                                {this.state.auction.highestBid > 0 &&
+                                                                    <>
+                                                                        {this.state.auction.highestBidderAddress == this.context.account &&
+                                                                            <li><span>High:</span> {formatPrice(this.state.auction.highestBid)} ETH by <strong>You</strong></li>
+                                                                        }
+
+                                                                        {this.state.auction.highestBidderAddress != this.context.account &&
+                                                                            <li><span>High:</span> {formatPrice(this.state.auction.highestBid)} ETH</li>
+                                                                        }
+                                                                    </>
+                                                                }
+                                                            </ul>
+                                                        }
+
+                                                        <div className="auction-management">
+                                                            <AuctionManagement
+                                                                nft={this.state.nft}
+                                                                auction={this.state.auction}
+                                                                collectionAddress={this.state.collectionAddress}
+                                                                approvedAddress={this.state.approvedAddress}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* {this.state.nft.owner === this.context.account &&
+                                                            <div className="list-info">
+                                                                <DirectOffersByOwner
+                                                                    nft={this.state.nft}
+                                                                    collectionAddress={this.state.collectionAddress}
+                                                                    directOffers={this.state.directOffersByOwner}
+                                                                />
+                                                            </div>
+                                                        } */}
+
+                                                    {/* {this.state.nft.owner !== this.context.account &&
+                                                            <div className="list-info">
+                                                                <DirectOfferByBuyer
+                                                                    nft={this.state.nft}
+                                                                    collectionAddress={this.state.collectionAddress}
+                                                                    directOffer={this.state.directOfferByBuyer}
+                                                                />
+                                                            </div>
+                                                        } */}
                                                 </div>
-                                            </div>
-                                            <div className="auction-options">
-                                                <AuctionManagement
-                                                    nft={this.state.nft}
-                                                    auction={this.state.auction}
-                                                    collectionAddress={this.state.collectionAddress}
-                                                    approvedAddress={this.state.approvedAddress}
-                                                />
-
-                                                {this.state.nft.owner === this.context.account &&
-                                                    <DirectOffersByOwner
-                                                        nft={this.state.nft}
-                                                        collectionAddress={this.state.collectionAddress}
-                                                        directOffers={this.state.directOffersByOwner}
-                                                    />
-                                                }
-
-                                                {this.state.nft.owner !== this.context.account &&
-                                                    <DirectOfferByBuyer
-                                                        nft={this.state.nft}
-                                                        collectionAddress={this.state.collectionAddress}
-                                                        directOffer={this.state.directOfferByBuyer}
-                                                    />
-                                                }
-                                            </div>
-                                            <div className="social-share">
-                                                <h4>Share</h4>
-                                                <ul>
-                                                    <li><a href="#!" className="facebook"><i className="lni lni-facebook-filled"></i></a></li>
-                                                    <li><a href="#!" className="twitter"><i className="lni lni-twitter-original"></i></a></li>
-                                                    <li><a href="#!" className="google"><i className="lni lni-google"></i></a></li>
-                                                    <li><a href="#!" className="linkedin"><i className="lni lni-linkedin-original"></i></a></li>
-                                                    <li><a href="#!" className="pinterest"><i className="lni lni-pinterest"></i></a></li>
-                                                </ul>
+                                                <div className="social-share">
+                                                    <h4>Share</h4>
+                                                    <ul>
+                                                        <li><a href="#!" className="facebook"><i className="lni lni-facebook-filled"></i></a></li>
+                                                        <li><a href="#!" className="twitter"><i className="lni lni-twitter-original"></i></a></li>
+                                                        <li><a href="#!" className="google"><i className="lni lni-google"></i></a></li>
+                                                        <li><a href="#!" className="linkedin"><i className="lni lni-linkedin-original"></i></a></li>
+                                                        <li><a href="#!" className="pinterest"><i className="lni lni-pinterest"></i></a></li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <div className="item-details-blocks">
+                                    <div className="row">
+                                        <div className="col-lg-8 col-md-7 col-12">
+
+                                            <div className="single-block description">
+                                                <h3>Description</h3>
+                                                <p>
+                                                    {this.state.nft.description}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-4 col-md-5 col-12">
+                                            <div className="item-details-sidebar">
+                                                {!this.state.auction && this.state.nft.owner !== this.context.account &&
+                                                    <div className="single-block">
+                                                        <h3>Direct offer</h3>
+                                                        <div>
+                                                            <DirectOfferByBuyer
+                                                                nft={this.state.nft}
+                                                                collectionAddress={this.state.collectionAddress}
+                                                                directOffer={this.state.directOfferByBuyer}
+                                                            />
+                                                            {/* <img src="assets/images/testimonial/testi3.jpg" alt="#!" />
+                                                            <h4>Miliya Jessy</h4>
+                                                            <span>Member Since May 15,2023</span>
+                                                            <a href="#!" className="see-all">See All Ads</a> */}
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                {!this.state.auction && this.state.nft.owner === this.context.account && this.state.directOffersByOwner &&
+                                                    <div className="single-block">
+                                                        <h3>Direct offers</h3>
+                                                        <div className="">
+                                                            <DirectOffersByOwner
+                                                                nft={this.state.nft}
+                                                                collectionAddress={this.state.collectionAddress}
+                                                                directOffers={this.state.directOffersByOwner}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
                         }
                     </div>
                 </section>
