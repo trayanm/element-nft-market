@@ -160,17 +160,20 @@ class AuctionManagement extends Component {
                 return (
                     <React.Fragment>
                         {/* <em>owner</em> | <em>auction</em> */}
-                        <div className="action-sec">
-                            <form onSubmit={(e) => this.handleSubmitCancel(e)}>
-                                <div className="row mb-3">
-                                    <div className="col-12">
-                                        <div className="form-group">
-                                            <button type="submit" className="btn btn-danger">Cancel auction</button>
+
+                        {!this.state.auction.ended &&
+                            <div className="action-sec">
+                                <form onSubmit={(e) => this.handleSubmitCancel(e)}>
+                                    <div className="row mb-3">
+                                        <div className="col-12">
+                                            <div className="form-group">
+                                                <button type="submit" className="btn btn-danger">Cancel auction</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
-                        </div>
+                                </form>
+                            </div>
+                        }
 
                         {this.state.auction.auctionStatus == AuctionStatusEnum.Running && this.state.auction.ended &&
                             <div className="action-sec">

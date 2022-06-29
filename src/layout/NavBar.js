@@ -103,13 +103,13 @@ class NavBar extends Component {
                                                 </button>
                                             }
 
-                                            {this.context.marketOwner == this.context.account &&
+                                            {this.context.marketOwner == this.context.account && this.context.profitAmount > 0 &&
                                                 <button
                                                 type="button"
                                                 className="btn btn-block navbar-btn text-white"
                                                 onClick={this.claimProfitAmount}
                                             >
-                                                {`Profit ${formatPrice(this.context.profitAmount)} ETH`}
+                                                {`Profit ${formatPrice(this.context.profitAmount)} ETH`} 
                                             </button>
                                         }
                                         </div>

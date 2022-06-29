@@ -165,7 +165,7 @@ class NewCollection extends Component {
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Title</label>
+                                                <label className="col-sm-3 col-form-label">Symbol</label>
                                                 <div className="col-sm-9">
                                                     <input
                                                         type="text"
@@ -210,7 +210,7 @@ class NewCollection extends Component {
                                 }
                                 {this.state.submitted &&
                                     <div>
-                                        <h4>Thank you for choosing TTM Market</h4>
+                                        <h4>Thank you for choosing Moon Life Market</h4>
                                         <p>Please check our <Link to="/collections">collections</Link>.</p>
                                     </div>
                                 }

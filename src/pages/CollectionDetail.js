@@ -208,7 +208,7 @@ class CollectionDetail extends Component {
                                                                             {ele.owner === this.context.account &&
                                                                                 <i className="cross-badge lni lni-user"></i>
                                                                             }
-                                                                            {auction && auction.auctionStatus == AuctionStatusEnum.Running &&
+                                                                            {auction && !auction.ended && auction.auctionStatus == AuctionStatusEnum.Running &&
                                                                                 <>
                                                                                     <span className="flat-badge sale">Sale &nbsp;
                                                                                         {auction && auction.endTime > 0 &&
@@ -249,7 +249,7 @@ class CollectionDetail extends Component {
                                                                                             <li className="price"><span>Buy now</span><br />{formatPrice(auction.buyItNowPrice)} ETH</li>
                                                                                         }
 
-                                                                                        <li><em>{auction.ended}</em></li>
+                                                                                        {/* <li><em>{auction.ended}</em></li> */}
                                                                                     </>
                                                                                 }
                                                                             </ul>

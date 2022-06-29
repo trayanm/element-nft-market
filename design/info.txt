@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: Viga-Regular
+font link: https://fonts.google.com/specimen/Viga
+font author: Fontstage
+font author site: http://www.fontstage.com/
+
+
+icon designer: Lil Squid
+icon designer link: /Lil Squid
+        
+{"bg":"transparent","icon-gradient-0":"#4E1A70","icon-gradient-1":"#2B4CF2","font":"#000000","slogan":"#141414"}
+      

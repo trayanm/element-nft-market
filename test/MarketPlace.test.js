@@ -24,7 +24,7 @@ contract('MarketPlace', function (accounts) {
         theMarketPlace = await MarketPlace.new();
     });
 
-    xit('Test: Collection - create', async function () {
+    it('Test: Collection - create', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         await theMarketPlace.createCollection('Doodle', 'DOO', 'collectionURI_2', { from: account_2 });
 
@@ -52,7 +52,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(canMint, false, 'account_2 cannot mint on Symbol');
     });
 
-    xit('Test: Collection - Mint via collection', async function () {
+    it('Test: Collection - Mint via collection', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -78,7 +78,7 @@ contract('MarketPlace', function (accounts) {
         }
     });
 
-    xit('Test: Collection - Mint external', async function () {
+    it('Test: Collection - Mint external', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -93,7 +93,7 @@ contract('MarketPlace', function (accounts) {
         }
     });
 
-    xit('Test: MarketPlace - mint', async function () {
+    it('Test: MarketPlace - mint', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -116,13 +116,14 @@ contract('MarketPlace', function (accounts) {
         assert.equal(approved_1, theMarketPlace.address, 'MarketPlace is approved');
     });
 
-    xit('Test: Auction - Create', async function () {
+    it('Test: Auction - Create', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
         await collectionContract_1.safeMint('_tokenURI_1', { from: account_1 });
         await collectionContract_1.safeMint('_tokenURI_2', { from: account_1 });
         await collectionContract_1.safeMint('_tokenURI_3', { from: account_1 });
+        await collectionContract_1.safeMint('_tokenURI_4', { from: account_1 });
 
         let errorMessage = 'MarketPlace is not approved';
         try {
@@ -160,8 +161,8 @@ contract('MarketPlace', function (accounts) {
             { from: account_1 }
         );
 
-        const auctionCount = await theMarketPlace.getAuctionCount();
-        assert.equal(auctionCount, 2, "Count should be 2");
+        // const auctionCount = await theMarketPlace.getAuctionCount();
+        // assert.equal(auctionCount, 2, "Count should be 2");
 
         const auction_1 = await theMarketPlace.getAuction(1);
         assert.equal(auction_1.auctionId, 1, 'auction id is 1');
@@ -214,7 +215,7 @@ contract('MarketPlace', function (accounts) {
     });
 
 
-    xit('Test: Auction - Get', async function () {
+    it('Test: Auction - Get', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -240,7 +241,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(auction_Get.auctionStatus, auction_GetBy.auctionStatus, 'auctionStatus is the same');
     });
 
-    xit('Test: Auction - Buy now violations', async function () {
+    it('Test: Auction - Buy now violations', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -320,7 +321,7 @@ contract('MarketPlace', function (accounts) {
         }
     });
 
-    xit('Test: Auction - Buy now and transfer', async function () {
+    it('Test: Auction - Buy now and transfer', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -357,7 +358,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(newOwner_1, account_2, 'New owner is account_2');
     });
 
-    xit('Test: Auction - Buy now and transfer after MarketPlace mint', async function () {
+    it('Test: Auction - Buy now and transfer after MarketPlace mint', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -397,7 +398,7 @@ contract('MarketPlace', function (accounts) {
         // assert.equal(approved_2, theMarketPlace.address, 'MarketPlace is approved');
     });
 
-    xit('Test: Auction - Buy now and sell again', async function () {
+    it('Test: Auction - Buy now and sell again', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -433,8 +434,8 @@ contract('MarketPlace', function (accounts) {
             { from: account_2 }
         );
 
-        const auctionCount = await theMarketPlace.getAuctionCount();
-        assert.equal(auctionCount, 2, "auctionCount Count should be 2");
+        // const auctionCount = await theMarketPlace.getAuctionCount();
+        // assert.equal(auctionCount, 2, "auctionCount Count should be 2");
 
         // const auction_2 = await theMarketPlace.getAuctionBy(collectionitem_1.collectionAddress, 1);
         const auction_2 = await theMarketPlace.getAuction(2);
@@ -444,7 +445,7 @@ contract('MarketPlace', function (accounts) {
         assert.equal(auction_2.auctionStatus, 0, 'auctionStatus should be Running');
     });
 
-    xit('Test: Auction - Cancel', async function () {
+    it('Test: Auction - Cancel', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -486,7 +487,7 @@ contract('MarketPlace', function (accounts) {
         }
     });
 
-    xit('Test: Auction - Bidding', async function () {
+    it('Test: Auction - Bidding', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
         const collectionitem_1 = await theMarketPlace.getCollection(1);
         const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
@@ -544,7 +545,7 @@ contract('MarketPlace', function (accounts) {
         }
     });
 
-    // xit('Test: Auction - Bidding and funds', async function () {
+    // it('Test: Auction - Bidding and funds', async function () {
     //     await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
     //     const collectionitem_1 = await theMarketPlace.getCollection(1);
     //     const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);

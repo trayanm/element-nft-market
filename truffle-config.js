@@ -52,7 +52,7 @@ module.exports = {
         evmVersion: 'byzantium', // Default: "petersburg"
         optimizer: {
           enabled: true,
-          runs: 50
+          runs: 30
         }
       }
     }

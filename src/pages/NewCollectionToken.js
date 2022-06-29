@@ -212,7 +212,7 @@ class NewCollectionToken extends Component {
                                 }
                                 {this.state.submitted &&
                                     <div>
-                                        <h4>Thank you for choosing TTM Market</h4>
+                                        <h4>Thank you for choosing Moon Life Market</h4>
                                         <p>Go to collection <Link to={'/collections/' + this.state.collectionAddress}>{formatAddress(this.state.collectionAddress)}</Link>.</p>
                                     </div>
                                 }

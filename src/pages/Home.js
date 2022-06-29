@@ -18,7 +18,7 @@ class Home extends Component {
             <div className="row">
               <div className="col-12">
                 <div className="section-title">
-                  <h2 className="wow fadeInUp" data-wow-delay=".4s">TTM Market</h2>
+                  <h2 className="wow fadeInUp" data-wow-delay=".4s">Moon Life Market</h2>
                   <p className="wow fadeInUp" data-wow-delay=".6s">Create, Sell and Bid on user created graphic content. <br />
                   Please check our <Link to="/collections">collections</Link>.</p>
                 </div>

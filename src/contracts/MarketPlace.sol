@@ -94,7 +94,7 @@ contract MarketPlace is Ownable {
 		// _buyerAddress => _directOfferId  
         //uint256 length; //  TODO : Check
 		EnumerableMap.AddressToUintMap buyerMap; // offer send from address
-        bool active; // TODO : delete tokenDirectOffers[_collectionAddress][_tokenId]; is not working as expected 
+        bool active; // describes if the offers for the current pair collectionAddress => tokenId are active
 	}
 	
     // properties
@@ -227,7 +227,9 @@ contract MarketPlace is Ownable {
         // nftCollection.transferFrom(msg.sender, address(this), _tokenId); // TODO : use approve !!!
 
         // _initialPrice or _buyItNowPrice should be above zero
-        //require(_initialPrice + _buyItNowPrice > 0, 'Token price cannot be zero');
+        // require(_initialPrice + _buyItNowPrice > 0, 'Token price cannot be zero');
+
+        // require (_initialPrice <= _buyItNowPrice, 'Invalid prices');
 
         // check token owner
         require(msg.sender == nftCollection.ownerOf(_tokenId), 'Not token owner');
@@ -271,10 +273,10 @@ contract MarketPlace is Ownable {
         emit onAuctionCreated(_auctionId, _tokenId);
     }
 
-    function getAuctionCount() external view returns(uint256) {
-        // used for tests
-        return _auctionIds.current();
-    }
+    // function getAuctionCount() external view returns(uint256) {
+    //     // used for tests
+    //     return _auctionIds.current();
+    // }
 
     function getCollectionAuctions(address collectionAddress) external view returns (uint256[] memory) {
         return collectionToAcutions[collectionAddress];
