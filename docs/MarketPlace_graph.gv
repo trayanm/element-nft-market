@@ -1,0 +1,154 @@
+digraph G {
+  graph [ ratio = "auto", page = "100", compound =true, bgcolor = "#2e3e56" ];
+  node [ style = "filled", fillcolor = "#edad56", color = "#edad56", penwidth =3 ];
+  edge [ color = "#fcfcfc", penwidth =2, fontname = "helvetica Neue Ultra Light" ];
+subgraph "clusterMarketPlace" {
+  graph [ label = "MarketPlace", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "MarketPlace.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "MarketPlace.mint" [ label = "mint", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.createCollection" [ label = "createCollection", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.getCollection" [ label = "getCollection", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.getCollectionCount" [ label = "getCollectionCount", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.createAuction" [ label = "createAuction", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.getCollectionAuctions" [ label = "getCollectionAuctions", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.getAuction" [ label = "getAuction" ];
+  "MarketPlace.getAuctionBy" [ label = "getAuctionBy", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.buyNowAuction" [ label = "buyNowAuction", color = "brown", fillcolor = "#ffbdb9" ];
+  "MarketPlace.cancelAuction" [ label = "cancelAuction", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.checkAuction" [ label = "checkAuction", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.bidAuction" [ label = "bidAuction", color = "brown", fillcolor = "#ffbdb9" ];
+  "MarketPlace._checkAuction" [ label = "_checkAuction" ];
+  "MarketPlace.createDirectOffer" [ label = "createDirectOffer", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.getDirectOffersByOwner" [ label = "getDirectOffersByOwner", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.getDirectOfferByBuyer" [ label = "getDirectOfferByBuyer", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.cancelDirectOffer" [ label = "cancelDirectOffer", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.acceptDirectOffer" [ label = "acceptDirectOffer", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.fulfillDirectOffer" [ label = "fulfillDirectOffer", color = "brown", fillcolor = "#ffbdb9" ];
+  "MarketPlace.claimFunds" [ label = "claimFunds", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.withdrawProfit" [ label = "withdrawProfit", color = "#FF9797", fillcolor = "#FF9797" ];
+  "MarketPlace.getProfitAmount" [ label = "getProfitAmount", color = "#FF9797", fillcolor = "#FF9797" ];
+  "MarketPlace.<Fallback>" [ label = "<Fallback>", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "MarketPlace.NFTCollection" [ label = "NFTCollection" ];
+  "MarketPlace.payable" [ label = "payable" ];
+}
+
+subgraph "clusterNFTCollection" {
+  graph [ label = "NFTCollection", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "NFTCollection.externalMint" [ label = "externalMint" ];
+  "NFTCollection.grantRole" [ label = "grantRole" ];
+  "NFTCollection.setApprovalForAll" [ label = "setApprovalForAll" ];
+  "NFTCollection.ownerOf" [ label = "ownerOf" ];
+  "NFTCollection.getApproved" [ label = "getApproved" ];
+  "NFTCollection.transferFrom" [ label = "transferFrom" ];
+}
+
+subgraph "clusterCounters.Counter" {
+  graph [ label = "Counters.Counter", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "Counters.Counter.increment" [ label = "increment" ];
+  "Counters.Counter.current" [ label = "current" ];
+}
+
+subgraph "clusterprofit" {
+  graph [ label = "profit", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "profit.add" [ label = "add" ];
+}
+
+subgraph "clusterto" {
+  graph [ label = "to", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "to.transfer" [ label = "transfer" ];
+}
+
+  "MarketPlace.mint";
+  "MarketPlace.NFTCollection";
+  "NFTCollection.externalMint";
+  "MarketPlace.createCollection";
+  "NFTCollection.grantRole";
+  "NFTCollection.setApprovalForAll";
+  "Counters.Counter.increment";
+  "Counters.Counter.current";
+  "MarketPlace.getCollectionCount";
+  "MarketPlace.createAuction";
+  "NFTCollection.ownerOf";
+  "NFTCollection.getApproved";
+  "MarketPlace.getAuctionBy";
+  "MarketPlace.getAuction";
+  "MarketPlace.buyNowAuction";
+  "MarketPlace._checkAuction";
+  "NFTCollection.transferFrom";
+  "profit.add";
+  "MarketPlace.cancelAuction";
+  "MarketPlace.checkAuction";
+  "MarketPlace.bidAuction";
+  "MarketPlace.createDirectOffer";
+  "MarketPlace.getDirectOffersByOwner";
+  "MarketPlace.acceptDirectOffer";
+  "MarketPlace.fulfillDirectOffer";
+  "MarketPlace.claimFunds";
+  "MarketPlace.payable";
+  "MarketPlace.withdrawProfit";
+  "to.transfer";
+  "MarketPlace.mint" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace.mint" -> "NFTCollection.externalMint" [ color = "white" ];
+  "MarketPlace.createCollection" -> "NFTCollection.grantRole" [ color = "white" ];
+  "MarketPlace.createCollection" -> "NFTCollection.setApprovalForAll" [ color = "white" ];
+  "MarketPlace.createCollection" -> "Counters.Counter.increment" [ color = "white" ];
+  "MarketPlace.createCollection" -> "Counters.Counter.current" [ color = "white" ];
+  "MarketPlace.getCollectionCount" -> "Counters.Counter.current" [ color = "white" ];
+  "MarketPlace.createAuction" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace.createAuction" -> "NFTCollection.ownerOf" [ color = "white" ];
+  "MarketPlace.createAuction" -> "NFTCollection.getApproved" [ color = "white" ];
+  "MarketPlace.createAuction" -> "Counters.Counter.increment" [ color = "white" ];
+  "MarketPlace.createAuction" -> "Counters.Counter.current" [ color = "white" ];
+  "MarketPlace.getAuctionBy" -> "MarketPlace.getAuction" [ color = "#1bc6a6" ];
+  "MarketPlace.buyNowAuction" -> "MarketPlace._checkAuction" [ color = "#1bc6a6" ];
+  "MarketPlace.buyNowAuction" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace.buyNowAuction" -> "NFTCollection.transferFrom" [ color = "white" ];
+  "MarketPlace.buyNowAuction" -> "profit.add" [ color = "white" ];
+  "MarketPlace.cancelAuction" -> "MarketPlace._checkAuction" [ color = "#1bc6a6" ];
+  "MarketPlace.checkAuction" -> "MarketPlace._checkAuction" [ color = "#1bc6a6" ];
+  "MarketPlace.bidAuction" -> "MarketPlace._checkAuction" [ color = "#1bc6a6" ];
+  "MarketPlace._checkAuction" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace._checkAuction" -> "profit.add" [ color = "white" ];
+  "MarketPlace._checkAuction" -> "NFTCollection.transferFrom" [ color = "white" ];
+  "MarketPlace.createDirectOffer" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace.createDirectOffer" -> "NFTCollection.ownerOf" [ color = "white" ];
+  "MarketPlace.createDirectOffer" -> "Counters.Counter.increment" [ color = "white" ];
+  "MarketPlace.createDirectOffer" -> "Counters.Counter.current" [ color = "white" ];
+  "MarketPlace.getDirectOffersByOwner" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace.getDirectOffersByOwner" -> "NFTCollection.ownerOf" [ color = "white" ];
+  "MarketPlace.acceptDirectOffer" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace.acceptDirectOffer" -> "NFTCollection.ownerOf" [ color = "white" ];
+  "MarketPlace.acceptDirectOffer" -> "NFTCollection.getApproved" [ color = "white" ];
+  "MarketPlace.fulfillDirectOffer" -> "MarketPlace.NFTCollection" [ color = "#1bc6a6" ];
+  "MarketPlace.fulfillDirectOffer" -> "NFTCollection.transferFrom" [ color = "white" ];
+  "MarketPlace.claimFunds" -> "MarketPlace.payable" [ color = "#1bc6a6" ];
+  "MarketPlace.withdrawProfit" -> "MarketPlace.payable" [ color = "#1bc6a6" ];
+  "MarketPlace.withdrawProfit" -> "to.transfer" [ color = "white" ];
+
+
+rankdir=LR
+node [shape=plaintext]
+subgraph cluster_01 { 
+label = "Legend";
+key [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td align="right" port="i1">Internal Call</td></tr>
+  <tr><td align="right" port="i2">External Call</td></tr>
+  <tr><td align="right" port="i3">Defined Contract</td></tr>
+  <tr><td align="right" port="i4">Undefined Contract</td></tr>
+  </table>>]
+key2 [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td port="i1">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i2">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i3" bgcolor="#445773">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i4">
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="7" color="#e8726d">
+      <tr>
+       <td></td>
+      </tr>
+     </table>
+  </td></tr>
+  </table>>]
+key:i1:e -> key2:i1:w [color="#1bc6a6"]
+key:i2:e -> key2:i2:w [color="white"]
+}
+}
