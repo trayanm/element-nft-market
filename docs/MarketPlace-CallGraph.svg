@@ -1,0 +1,506 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="704pt" height="1627pt" viewBox="0.00 0.00 703.82 1627.00">
+<g id="graph0" class="graph" transform="translate(4,1623) scale(1)" data-name="G">
+
+<polygon fill="#2e3e56" stroke="transparent" points="-4,4 -4,-1623 699.82,-1623 699.82,4 -4,4" style=""/>
+<g id="clust1" class="cluster" data-name="clusterMarketPlace">
+
+<path fill="#445773" stroke="#445773" d="M20,-587C20,-587 661.33,-587 661.33,-587 667.33,-587 673.33,-593 673.33,-599 673.33,-599 673.33,-1462 673.33,-1462 673.33,-1468 667.33,-1474 661.33,-1474 661.33,-1474 20,-1474 20,-1474 14,-1474 8,-1468 8,-1462 8,-1462 8,-599 8,-599 8,-593 14,-587 20,-587" style=""/>
+<text text-anchor="middle" x="340.67" y="-1457.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">MarketPlace</text>
+</g>
+<g id="clust2" class="cluster" data-name="clusterNFTCollection">
+
+<path fill="#3b4b63" stroke="#e8726d" stroke-dasharray="5,2" d="M515.83,-232C515.83,-232 675.82,-232 675.82,-232 681.82,-232 687.82,-238 687.82,-244 687.82,-244 687.82,-567 687.82,-567 687.82,-573 681.82,-579 675.82,-579 675.82,-579 515.83,-579 515.83,-579 509.83,-579 503.83,-573 503.83,-567 503.83,-567 503.83,-244 503.83,-244 503.83,-238 509.83,-232 515.83,-232" style=""/>
+<text text-anchor="middle" x="595.82" y="-562.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">NFTCollection</text>
+</g>
+<g id="clust3" class="cluster" data-name="clusterCounters.Counter">
+
+<path fill="#3b4b63" stroke="#e8726d" stroke-dasharray="5,2" d="M550.18,-93C550.18,-93 641.47,-93 641.47,-93 647.47,-93 653.47,-99 653.47,-105 653.47,-105 653.47,-212 653.47,-212 653.47,-218 647.47,-224 641.47,-224 641.47,-224 550.18,-224 550.18,-224 544.18,-224 538.18,-218 538.18,-212 538.18,-212 538.18,-105 538.18,-105 538.18,-99 544.18,-93 550.18,-93" style=""/>
+<text text-anchor="middle" x="595.82" y="-207.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">Counters.Counter</text>
+</g>
+<g id="clust4" class="cluster" data-name="clusterprofit">
+
+<path fill="#3b4b63" stroke="#e8726d" stroke-dasharray="5,2" d="M572.82,-8C572.82,-8 618.82,-8 618.82,-8 624.82,-8 630.82,-14 630.82,-20 630.82,-20 630.82,-73 630.82,-73 630.82,-79 624.82,-85 618.82,-85 618.82,-85 572.82,-85 572.82,-85 566.82,-85 560.82,-79 560.82,-73 560.82,-73 560.82,-20 560.82,-20 560.82,-14 566.82,-8 572.82,-8" style=""/>
+<text text-anchor="middle" x="595.82" y="-68.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">profit</text>
+</g>
+<g id="clust5" class="cluster" data-name="clusterto">
+
+<path fill="#3b4b63" stroke="#e8726d" stroke-dasharray="5,2" d="M330.13,-244C330.13,-244 403.18,-244 403.18,-244 409.18,-244 415.18,-250 415.18,-256 415.18,-256 415.18,-309 415.18,-309 415.18,-315 409.18,-321 403.18,-321 403.18,-321 330.13,-321 330.13,-321 324.13,-321 318.13,-315 318.13,-309 318.13,-309 318.13,-256 318.13,-256 318.13,-250 324.13,-244 330.13,-244" style=""/>
+<text text-anchor="middle" x="366.66" y="-304.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">to</text>
+</g>
+<g id="clust6" class="cluster" data-name="cluster_01">
+
+<polygon fill="#2e3e56" stroke="black" points="45.74,-1482 45.74,-1611 401.66,-1611 401.66,-1482 45.74,-1482" style=""/>
+<text text-anchor="middle" x="223.7" y="-1594.4" font-family="Times,serif" font-size="14.00" style="">Legend</text>
+</g>
+<!-- MarketPlace.&lt;Constructor&gt; -->
+<g id="node1" class="node" pointer-events="visible" data-name="MarketPlace.&lt;Constructor&gt;">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="118.74" cy="-1423" rx="67.55" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1418.8" font-family="Times,serif" font-size="14.00" style="">&lt;Constructor&gt;</text>
+</g>
+<!-- MarketPlace.mint -->
+<g id="node2" class="node" pointer-events="visible" data-name="MarketPlace.mint">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="366.66" cy="-991" rx="28.99" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-986.8" font-family="Times,serif" font-size="14.00" style="">mint</text>
+</g>
+<!-- MarketPlace.NFTCollection -->
+<g id="node25" class="node" pointer-events="visible" data-name="MarketPlace.NFTCollection">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-856" rx="69.52" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-851.8" font-family="Times,serif" font-size="14.00" style="">NFTCollection</text>
+</g>
+<!-- MarketPlace.mint&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge1" class="edge" data-name="MarketPlace.mint-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M395.22,-987.92C417.92,-984.51 450.39,-977.59 475.83,-964 515.13,-943 551.71,-906.16 573.66,-881.43" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="576.33,-883.7 580.26,-873.86 571.06,-879.1 576.33,-883.7" style=""/>
+</g>
+<!-- NFTCollection.externalMint -->
+<g id="node27" class="node" pointer-events="visible" data-name="NFTCollection.externalMint">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-528" rx="60.83" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-523.8" font-family="Times,serif" font-size="14.00" style="">externalMint</text>
+</g>
+<!-- MarketPlace.mint&#45;&gt;NFTCollection.externalMint -->
+<g id="edge2" class="edge" data-name="MarketPlace.mint-&gt;NFTCollection.externalMint">
+
+<path fill="none" stroke="white" stroke-width="2" d="M395.38,-992.43C420.47,-992.07 456.38,-987.1 475.83,-964 530.51,-899.06 459.44,-655.36 503.83,-583 513.77,-566.8 530.42,-554.74 546.79,-546.1" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="548.39,-549.22 555.81,-541.65 545.29,-542.94 548.39,-549.22" style=""/>
+</g>
+<!-- MarketPlace.createCollection -->
+<g id="node3" class="node" pointer-events="visible" data-name="MarketPlace.createCollection">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-937" rx="74.12" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-932.8" font-family="Times,serif" font-size="14.00" style="">createCollection</text>
+</g>
+<!-- NFTCollection.grantRole -->
+<g id="node28" class="node" pointer-events="visible" data-name="NFTCollection.grantRole">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-312" rx="49.23" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-307.8" font-family="Times,serif" font-size="14.00" style="">grantRole</text>
+</g>
+<!-- MarketPlace.createCollection&#45;&gt;NFTCollection.grantRole -->
+<g id="edge3" class="edge" data-name="MarketPlace.createCollection-&gt;NFTCollection.grantRole">
+
+<path fill="none" stroke="white" stroke-width="2" d="M188.63,-930.72C201.16,-926.53 212.94,-920.01 221.48,-910 324.94,-788.64 161.22,-680.14 257.48,-553 320.44,-469.84 408.2,-546.4 475.83,-467 513.59,-422.67 464.19,-381.65 503.83,-339 512.86,-329.29 525.21,-323.01 537.89,-318.97" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="538.89,-322.33 547.61,-316.3 537.04,-315.58 538.89,-322.33" style=""/>
+</g>
+<!-- NFTCollection.setApprovalForAll -->
+<g id="node29" class="node" pointer-events="visible" data-name="NFTCollection.setApprovalForAll">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-258" rx="83.98" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-253.8" font-family="Times,serif" font-size="14.00" style="">setApprovalForAll</text>
+</g>
+<!-- MarketPlace.createCollection&#45;&gt;NFTCollection.setApprovalForAll -->
+<g id="edge4" class="edge" data-name="MarketPlace.createCollection-&gt;NFTCollection.setApprovalForAll">
+
+<path fill="none" stroke="white" stroke-width="2" d="M188.79,-930.85C201.3,-926.65 213.04,-920.1 221.48,-910 284.82,-834.22 190.9,-539.95 257.48,-467 323.88,-394.24 405.49,-497.96 475.83,-429 522.39,-383.35 460,-333.27 503.83,-285 508.12,-280.28 513.19,-276.36 518.72,-273.13" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="520.37,-276.21 527.71,-268.57 517.21,-269.96 520.37,-276.21" style=""/>
+</g>
+<!-- Counters.Counter.increment -->
+<g id="node33" class="node" pointer-events="visible" data-name="Counters.Counter.increment">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-173" rx="49.79" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-168.8" font-family="Times,serif" font-size="14.00" style="">increment</text>
+</g>
+<!-- MarketPlace.createCollection&#45;&gt;Counters.Counter.increment -->
+<g id="edge5" class="edge" data-name="MarketPlace.createCollection-&gt;Counters.Counter.increment">
+
+<path fill="none" stroke="white" stroke-width="2" d="M188.84,-930.89C201.35,-926.69 213.07,-920.12 221.48,-910 289.96,-827.54 185.47,-508.4 257.48,-429 323.65,-356.03 406.26,-460.73 475.83,-391 527.75,-338.97 462.41,-288.72 503.83,-228 515.15,-211.4 533.3,-198.98 550.41,-190.17" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="552.29,-193.16 559.77,-185.65 549.24,-186.85 552.29,-193.16" style=""/>
+</g>
+<!-- Counters.Counter.current -->
+<g id="node34" class="node" pointer-events="visible" data-name="Counters.Counter.current">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-119" rx="38.26" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-114.8" font-family="Times,serif" font-size="14.00" style="">current</text>
+</g>
+<!-- MarketPlace.createCollection&#45;&gt;Counters.Counter.current -->
+<g id="edge6" class="edge" data-name="MarketPlace.createCollection-&gt;Counters.Counter.current">
+
+<path fill="none" stroke="white" stroke-width="2" d="M188.88,-930.93C201.39,-926.72 213.1,-920.15 221.48,-910 295.1,-820.86 179.1,-475.98 257.48,-391 324.02,-318.85 407.08,-428.05 475.83,-358 542.4,-290.17 442.11,-218.27 503.83,-146 514.73,-133.24 531.36,-126.36 547.44,-122.7" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="548.15,-126.12 557.32,-120.81 546.84,-119.25 548.15,-126.12" style=""/>
+</g>
+<!-- MarketPlace.getCollection -->
+<g id="node4" class="node" pointer-events="visible" data-name="MarketPlace.getCollection">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-1315" rx="63.13" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1310.8" font-family="Times,serif" font-size="14.00" style="">getCollection</text>
+</g>
+<!-- MarketPlace.getCollectionCount -->
+<g id="node5" class="node" pointer-events="visible" data-name="MarketPlace.getCollectionCount">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-721" rx="86.85" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-716.8" font-family="Times,serif" font-size="14.00" style="">getCollectionCount</text>
+</g>
+<!-- MarketPlace.getCollectionCount&#45;&gt;Counters.Counter.current -->
+<g id="edge7" class="edge" data-name="MarketPlace.getCollectionCount-&gt;Counters.Counter.current">
+
+<path fill="none" stroke="white" stroke-width="2" d="M195.02,-712.27C205.1,-708.12 214.39,-702.25 221.48,-694 317.92,-581.77 156.24,-470.93 257.48,-363 324.87,-291.16 406.78,-395.25 475.83,-325 532.28,-267.58 450.81,-206.6 503.83,-146 514.88,-133.37 531.55,-126.51 547.6,-122.84" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="548.31,-126.27 557.47,-120.94 546.99,-119.39 548.31,-126.27" style=""/>
+</g>
+<!-- MarketPlace.createAuction -->
+<g id="node6" class="node" pointer-events="visible" data-name="MarketPlace.createAuction">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="366.66" cy="-775" rx="65.38" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-770.8" font-family="Times,serif" font-size="14.00" style="">createAuction</text>
+</g>
+<!-- MarketPlace.createAuction&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge8" class="edge" data-name="MarketPlace.createAuction-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M419.12,-785.83C437.25,-790.17 457.64,-795.66 475.83,-802 502.76,-811.38 531.92,-824.57 554.64,-835.56" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="553.12,-838.71 563.64,-839.96 556.2,-832.43 553.12,-838.71" style=""/>
+</g>
+<!-- NFTCollection.ownerOf -->
+<g id="node30" class="node" pointer-events="visible" data-name="NFTCollection.ownerOf">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-474" rx="45.22" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-469.8" font-family="Times,serif" font-size="14.00" style="">ownerOf</text>
+</g>
+<!-- MarketPlace.createAuction&#45;&gt;NFTCollection.ownerOf -->
+<g id="edge9" class="edge" data-name="MarketPlace.createAuction-&gt;NFTCollection.ownerOf">
+
+<path fill="none" stroke="white" stroke-width="2" d="M431.2,-772.06C447.94,-768.17 464.48,-760.96 475.83,-748 548.64,-664.91 432.86,-585.67 503.83,-501 513.12,-489.92 526.72,-483.27 540.59,-479.3" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="541.79,-482.62 550.69,-476.87 540.14,-475.81 541.79,-482.62" style=""/>
+</g>
+<!-- NFTCollection.getApproved -->
+<g id="node31" class="node" pointer-events="visible" data-name="NFTCollection.getApproved">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-420" rx="61.41" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-415.8" font-family="Times,serif" font-size="14.00" style="">getApproved</text>
+</g>
+<!-- MarketPlace.createAuction&#45;&gt;NFTCollection.getApproved -->
+<g id="edge10" class="edge" data-name="MarketPlace.createAuction-&gt;NFTCollection.getApproved">
+
+<path fill="none" stroke="white" stroke-width="2" d="M431.37,-772.21C448.12,-768.32 464.61,-761.07 475.83,-748 519.59,-697.03 461.2,-498.92 503.83,-447 510.26,-439.17 518.86,-433.54 528.2,-429.51" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="529.57,-432.74 537.74,-425.99 527.15,-426.17 529.57,-432.74" style=""/>
+</g>
+<!-- MarketPlace.createAuction&#45;&gt;Counters.Counter.increment -->
+<g id="edge11" class="edge" data-name="MarketPlace.createAuction-&gt;Counters.Counter.increment">
+
+<path fill="none" stroke="white" stroke-width="2" d="M431.42,-772.55C448.27,-768.68 464.8,-761.36 475.83,-748 549.49,-658.75 444.29,-327.23 503.83,-228 514.17,-210.77 532.16,-198.25 549.44,-189.55" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="551.34,-192.52 558.91,-185.1 548.37,-186.19 551.34,-192.52" style=""/>
+</g>
+<!-- MarketPlace.createAuction&#45;&gt;Counters.Counter.current -->
+<g id="edge12" class="edge" data-name="MarketPlace.createAuction-&gt;Counters.Counter.current">
+
+<path fill="none" stroke="white" stroke-width="2" d="M431.48,-772.6C448.33,-768.73 464.85,-761.4 475.83,-748 518.27,-696.2 462.54,-198.72 503.83,-146 514.27,-132.68 530.97,-125.7 547.23,-122.12" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="548.03,-125.53 557.24,-120.3 546.78,-118.64 548.03,-125.53" style=""/>
+</g>
+<!-- MarketPlace.getCollectionAuctions -->
+<g id="node7" class="node" pointer-events="visible" data-name="MarketPlace.getCollectionAuctions">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-1207" rx="97.87" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1202.8" font-family="Times,serif" font-size="14.00" style="">getCollectionAuctions</text>
+</g>
+<!-- MarketPlace.getAuction -->
+<g id="node8" class="node" pointer-events="visible" data-name="MarketPlace.getAuction">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="366.66" cy="-1369" rx="53.89" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-1364.8" font-family="Times,serif" font-size="14.00" style="">getAuction</text>
+</g>
+<!-- MarketPlace.getAuctionBy -->
+<g id="node9" class="node" pointer-events="visible" data-name="MarketPlace.getAuctionBy">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-1369" rx="65.43" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1364.8" font-family="Times,serif" font-size="14.00" style="">getAuctionBy</text>
+</g>
+<!-- MarketPlace.getAuctionBy&#45;&gt;MarketPlace.getAuction -->
+<g id="edge13" class="edge" data-name="MarketPlace.getAuctionBy-&gt;MarketPlace.getAuction">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M184.03,-1369C220.43,-1369 265.78,-1369 302.06,-1369" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="302.52,-1372.5 312.52,-1369 302.52,-1365.5 302.52,-1372.5" style=""/>
+</g>
+<!-- MarketPlace.buyNowAuction -->
+<g id="node10" class="node" pointer-events="visible" data-name="MarketPlace.buyNowAuction">
+
+<ellipse fill="#ffbdb9" stroke="brown" stroke-width="3" cx="118.74" cy="-1045" rx="75.32" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1040.8" font-family="Times,serif" font-size="14.00" style="">buyNowAuction</text>
+</g>
+<!-- MarketPlace._checkAuction -->
+<g id="node14" class="node" pointer-events="visible" data-name="MarketPlace._checkAuction">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="366.66" cy="-667" rx="69.48" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-662.8" font-family="Times,serif" font-size="14.00" style="">_checkAuction</text>
+</g>
+<!-- MarketPlace.buyNowAuction&#45;&gt;MarketPlace._checkAuction -->
+<g id="edge14" class="edge" data-name="MarketPlace.buyNowAuction-&gt;MarketPlace._checkAuction">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M189.08,-1038.48C201.42,-1034.29 213.01,-1027.83 221.48,-1018 316.03,-908.22 162.12,-803.08 257.48,-694 265.77,-684.51 276.84,-678.11 288.74,-673.82" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="289.91,-677.13 298.43,-670.83 287.84,-670.44 289.91,-677.13" style=""/>
+</g>
+<!-- MarketPlace.buyNowAuction&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge15" class="edge" data-name="MarketPlace.buyNowAuction-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M181.44,-1055.14C256.13,-1064.23 383.39,-1069.28 475.83,-1018 530.18,-987.85 566.49,-921.25 583.57,-883.51" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="586.87,-884.69 587.68,-874.12 580.46,-881.88 586.87,-884.69" style=""/>
+</g>
+<!-- NFTCollection.transferFrom -->
+<g id="node32" class="node" pointer-events="visible" data-name="NFTCollection.transferFrom">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-366" rx="61.41" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-361.8" font-family="Times,serif" font-size="14.00" style="">transferFrom</text>
+</g>
+<!-- MarketPlace.buyNowAuction&#45;&gt;NFTCollection.transferFrom -->
+<g id="edge16" class="edge" data-name="MarketPlace.buyNowAuction-&gt;NFTCollection.transferFrom">
+
+<path fill="none" stroke="white" stroke-width="2" d="M189.55,-1038.57C201.77,-1034.36 213.21,-1027.88 221.48,-1018 283.34,-944.15 193.26,-657.8 257.48,-586 323.42,-512.28 406.24,-613.28 475.83,-543 523.55,-494.81 458.43,-443.38 503.83,-393 510.62,-385.47 519.39,-380 528.81,-376.04" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="530.19,-379.26 538.39,-372.55 527.8,-372.68 530.19,-379.26" style=""/>
+</g>
+<!-- profit.add -->
+<g id="node35" class="node" pointer-events="visible" data-name="profit.add">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="595.82" cy="-34" rx="27" ry="18" style=""/>
+<text text-anchor="middle" x="595.82" y="-29.8" font-family="Times,serif" font-size="14.00" style="">add</text>
+</g>
+<!-- MarketPlace.buyNowAuction&#45;&gt;profit.add -->
+<g id="edge17" class="edge" data-name="MarketPlace.buyNowAuction-&gt;profit.add">
+
+<path fill="none" stroke="white" stroke-width="2" d="M189.61,-1038.62C201.83,-1034.41 213.24,-1027.91 221.48,-1018 289.15,-936.59 213.26,-639.18 257.48,-543 314.76,-418.4 415.92,-448.35 475.83,-325 521.98,-229.99 446.6,-177.78 503.83,-89 517.24,-68.2 541.56,-54.1 561.68,-45.39" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="563.21,-48.55 571.16,-41.54 560.58,-42.06 563.21,-48.55" style=""/>
+</g>
+<!-- MarketPlace.cancelAuction -->
+<g id="node11" class="node" pointer-events="visible" data-name="MarketPlace.cancelAuction">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-1261" rx="66.61" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1256.8" font-family="Times,serif" font-size="14.00" style="">cancelAuction</text>
+</g>
+<!-- MarketPlace.cancelAuction&#45;&gt;MarketPlace._checkAuction -->
+<g id="edge18" class="edge" data-name="MarketPlace.cancelAuction-&gt;MarketPlace._checkAuction">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M183.65,-1256.57C198.09,-1252.49 211.95,-1245.57 221.48,-1234 297.94,-1141.17 180.33,-786.26 257.48,-694 265.61,-684.27 276.66,-677.76 288.61,-673.45" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="289.82,-676.73 298.34,-670.44 287.75,-670.05 289.82,-676.73" style=""/>
+</g>
+<!-- MarketPlace.checkAuction -->
+<g id="node12" class="node" pointer-events="visible" data-name="MarketPlace.checkAuction">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-1153" rx="64.83" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1148.8" font-family="Times,serif" font-size="14.00" style="">checkAuction</text>
+</g>
+<!-- MarketPlace.checkAuction&#45;&gt;MarketPlace._checkAuction -->
+<g id="edge19" class="edge" data-name="MarketPlace.checkAuction-&gt;MarketPlace._checkAuction">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M181.93,-1148.89C196.94,-1144.88 211.51,-1137.91 221.48,-1126 283.34,-1052.15 195.08,-767.39 257.48,-694 265.69,-684.34 276.78,-677.86 288.74,-673.56" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="289.95,-676.85 298.48,-670.56 287.89,-670.16 289.95,-676.85" style=""/>
+</g>
+<!-- MarketPlace.bidAuction -->
+<g id="node13" class="node" pointer-events="visible" data-name="MarketPlace.bidAuction">
+
+<ellipse fill="#ffbdb9" stroke="brown" stroke-width="3" cx="118.74" cy="-1099" rx="54.48" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-1094.8" font-family="Times,serif" font-size="14.00" style="">bidAuction</text>
+</g>
+<!-- MarketPlace.bidAuction&#45;&gt;MarketPlace._checkAuction -->
+<g id="edge20" class="edge" data-name="MarketPlace.bidAuction-&gt;MarketPlace._checkAuction">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M173.08,-1096.83C191.01,-1093.32 209.49,-1086.15 221.48,-1072 276.04,-1007.64 202.44,-757.96 257.48,-694 265.75,-684.39 276.87,-677.93 288.83,-673.64" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="290.05,-676.93 298.58,-670.64 287.99,-670.24 290.05,-676.93" style=""/>
+</g>
+<!-- MarketPlace._checkAuction&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge21" class="edge" data-name="MarketPlace._checkAuction-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M429.69,-674.78C445.65,-678.78 462.17,-684.83 475.83,-694 527.04,-728.36 564.25,-792.47 582.39,-828.89" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="579.27,-830.49 586.79,-837.95 585.57,-827.43 579.27,-830.49" style=""/>
+</g>
+<!-- MarketPlace._checkAuction&#45;&gt;NFTCollection.transferFrom -->
+<g id="edge23" class="edge" data-name="MarketPlace._checkAuction-&gt;NFTCollection.transferFrom">
+
+<path fill="none" stroke="white" stroke-width="2" d="M434.87,-663.16C450.33,-659.08 465.31,-652.01 475.83,-640 548.64,-556.91 432.86,-477.67 503.83,-393 510.34,-385.23 518.98,-379.64 528.34,-375.62" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="529.71,-378.85 537.89,-372.11 527.29,-372.28 529.71,-378.85" style=""/>
+</g>
+<!-- MarketPlace._checkAuction&#45;&gt;profit.add -->
+<g id="edge22" class="edge" data-name="MarketPlace._checkAuction-&gt;profit.add">
+
+<path fill="none" stroke="white" stroke-width="2" d="M435.11,-663.67C450.66,-659.61 465.62,-652.41 475.83,-640 514.78,-592.66 472.37,-141.61 503.83,-89 516.59,-67.66 541.11,-53.56 561.48,-44.98" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="562.76,-48.23 570.78,-41.31 560.2,-41.72 562.76,-48.23" style=""/>
+</g>
+<!-- MarketPlace.createDirectOffer -->
+<g id="node15" class="node" pointer-events="visible" data-name="MarketPlace.createDirectOffer">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="366.66" cy="-721" rx="79.23" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-716.8" font-family="Times,serif" font-size="14.00" style="">createDirectOffer</text>
+</g>
+<!-- MarketPlace.createDirectOffer&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge24" class="edge" data-name="MarketPlace.createDirectOffer-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M431.38,-731.39C446.49,-735.33 462.17,-740.7 475.83,-748 515.13,-769 551.71,-805.84 573.66,-830.57" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="571.06,-832.9 580.26,-838.14 576.33,-828.3 571.06,-832.9" style=""/>
+</g>
+<!-- MarketPlace.createDirectOffer&#45;&gt;NFTCollection.ownerOf -->
+<g id="edge25" class="edge" data-name="MarketPlace.createDirectOffer-&gt;NFTCollection.ownerOf">
+
+<path fill="none" stroke="white" stroke-width="2" d="M441.32,-714.96C454.36,-710.72 466.68,-704.12 475.83,-694 533.96,-629.71 447.12,-566.55 503.83,-501 513.29,-490.07 526.95,-483.46 540.82,-479.49" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="542,-482.81 550.9,-477.05 540.35,-476 542,-482.81" style=""/>
+</g>
+<!-- MarketPlace.createDirectOffer&#45;&gt;Counters.Counter.increment -->
+<g id="edge26" class="edge" data-name="MarketPlace.createDirectOffer-&gt;Counters.Counter.increment">
+
+<path fill="none" stroke="white" stroke-width="2" d="M442.28,-715.46C455.16,-711.17 467.17,-704.42 475.83,-694 542.12,-614.19 450.18,-316.79 503.83,-228 514.22,-210.8 532.23,-198.29 549.49,-189.58" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="551.39,-192.55 558.95,-185.13 548.41,-186.22 551.39,-192.55" style=""/>
+</g>
+<!-- MarketPlace.createDirectOffer&#45;&gt;Counters.Counter.current -->
+<g id="edge27" class="edge" data-name="MarketPlace.createDirectOffer-&gt;Counters.Counter.current">
+
+<path fill="none" stroke="white" stroke-width="2" d="M442.35,-715.52C455.23,-711.22 467.22,-704.46 475.83,-694 553.32,-599.85 428.43,-241.83 503.83,-146 514.3,-132.7 531.01,-125.73 547.27,-122.14" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="548.06,-125.56 557.27,-120.33 546.81,-118.67 548.06,-125.56" style=""/>
+</g>
+<!-- MarketPlace.getDirectOffersByOwner -->
+<g id="node16" class="node" pointer-events="visible" data-name="MarketPlace.getDirectOffersByOwner">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="366.66" cy="-937" rx="109.35" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-932.8" font-family="Times,serif" font-size="14.00" style="">getDirectOffersByOwner</text>
+</g>
+<!-- MarketPlace.getDirectOffersByOwner&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge28" class="edge" data-name="MarketPlace.getDirectOffersByOwner-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M433.14,-922.68C447.36,-919.02 462.21,-914.75 475.83,-910 502.76,-900.62 531.92,-887.43 554.64,-876.44" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="556.2,-879.57 563.64,-872.04 553.12,-873.29 556.2,-879.57" style=""/>
+</g>
+<!-- MarketPlace.getDirectOffersByOwner&#45;&gt;NFTCollection.ownerOf -->
+<g id="edge29" class="edge" data-name="MarketPlace.getDirectOffersByOwner-&gt;NFTCollection.ownerOf">
+
+<path fill="none" stroke="white" stroke-width="2" d="M454.81,-926.21C462.8,-922.18 470.05,-916.9 475.83,-910 534.33,-840.16 446.88,-572.1 503.83,-501 513.04,-489.51 526.91,-482.75 541.06,-478.82" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="541.91,-482.21 550.85,-476.52 540.32,-475.4 541.91,-482.21" style=""/>
+</g>
+<!-- MarketPlace.getDirectOfferByBuyer -->
+<g id="node17" class="node" pointer-events="visible" data-name="MarketPlace.getDirectOfferByBuyer">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-883" rx="102.98" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-878.8" font-family="Times,serif" font-size="14.00" style="">getDirectOfferByBuyer</text>
+</g>
+<!-- MarketPlace.cancelDirectOffer -->
+<g id="node18" class="node" pointer-events="visible" data-name="MarketPlace.cancelDirectOffer">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-829" rx="80.96" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-824.8" font-family="Times,serif" font-size="14.00" style="">cancelDirectOffer</text>
+</g>
+<!-- MarketPlace.acceptDirectOffer -->
+<g id="node19" class="node" pointer-events="visible" data-name="MarketPlace.acceptDirectOffer">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="366.66" cy="-883" rx="80.96" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-878.8" font-family="Times,serif" font-size="14.00" style="">acceptDirectOffer</text>
+</g>
+<!-- MarketPlace.acceptDirectOffer&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge30" class="edge" data-name="MarketPlace.acceptDirectOffer-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M438.29,-874.61C464.97,-871.43 495.35,-867.82 522.21,-864.63" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="522.8,-868.09 532.31,-863.43 521.97,-861.13 522.8,-868.09" style=""/>
+</g>
+<!-- MarketPlace.acceptDirectOffer&#45;&gt;NFTCollection.ownerOf -->
+<g id="edge31" class="edge" data-name="MarketPlace.acceptDirectOffer-&gt;NFTCollection.ownerOf">
+
+<path fill="none" stroke="white" stroke-width="2" d="M442.95,-877.05C455.54,-872.76 467.27,-866.12 475.83,-856 526.96,-795.6 454.04,-562.51 503.83,-501 513.1,-489.55 526.98,-482.81 541.14,-478.88" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="541.99,-482.27 550.92,-476.58 540.39,-475.46 541.99,-482.27" style=""/>
+</g>
+<!-- MarketPlace.acceptDirectOffer&#45;&gt;NFTCollection.getApproved -->
+<g id="edge32" class="edge" data-name="MarketPlace.acceptDirectOffer-&gt;NFTCollection.getApproved">
+
+<path fill="none" stroke="white" stroke-width="2" d="M443.04,-877.12C455.61,-872.82 467.32,-866.16 475.83,-856 534.33,-786.16 446.88,-518.1 503.83,-447 510.17,-439.09 518.71,-433.42 528.03,-429.38" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="529.4,-432.6 537.57,-425.85 526.97,-426.04 529.4,-432.6" style=""/>
+</g>
+<!-- MarketPlace.fulfillDirectOffer -->
+<g id="node20" class="node" pointer-events="visible" data-name="MarketPlace.fulfillDirectOffer">
+
+<ellipse fill="#ffbdb9" stroke="brown" stroke-width="3" cx="366.66" cy="-829" rx="78.13" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-824.8" font-family="Times,serif" font-size="14.00" style="">fulfillDirectOffer</text>
+</g>
+<!-- MarketPlace.fulfillDirectOffer&#45;&gt;MarketPlace.NFTCollection -->
+<g id="edge33" class="edge" data-name="MarketPlace.fulfillDirectOffer-&gt;MarketPlace.NFTCollection">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M436.43,-837.17C463.65,-840.41 494.95,-844.13 522.5,-847.4" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="522.13,-850.88 532.47,-848.59 522.95,-843.93 522.13,-850.88" style=""/>
+</g>
+<!-- MarketPlace.fulfillDirectOffer&#45;&gt;NFTCollection.transferFrom -->
+<g id="edge34" class="edge" data-name="MarketPlace.fulfillDirectOffer-&gt;NFTCollection.transferFrom">
+
+<path fill="none" stroke="white" stroke-width="2" d="M441.38,-823.67C454.58,-819.4 466.94,-812.61 475.83,-802 534.33,-732.16 446.88,-464.1 503.83,-393 510.17,-385.09 518.71,-379.42 528.03,-375.38" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="529.4,-378.6 537.57,-371.85 526.97,-372.04 529.4,-378.6" style=""/>
+</g>
+<!-- MarketPlace.claimFunds -->
+<g id="node21" class="node" pointer-events="visible" data-name="MarketPlace.claimFunds">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-991" rx="56.2" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-986.8" font-family="Times,serif" font-size="14.00" style="">claimFunds</text>
+</g>
+<!-- MarketPlace.payable -->
+<g id="node26" class="node" pointer-events="visible" data-name="MarketPlace.payable">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="366.66" cy="-613" rx="41.13" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-608.8" font-family="Times,serif" font-size="14.00" style="">payable</text>
+</g>
+<!-- MarketPlace.claimFunds&#45;&gt;MarketPlace.payable -->
+<g id="edge35" class="edge" data-name="MarketPlace.claimFunds-&gt;MarketPlace.payable">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M174.28,-988.46C191.78,-984.85 209.67,-977.71 221.48,-964 316.03,-854.22 162.12,-749.08 257.48,-640 271.82,-623.59 294.47,-616.4 315.35,-613.48" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="315.85,-616.95 325.41,-612.37 315.08,-609.99 315.85,-616.95" style=""/>
+</g>
+<!-- MarketPlace.withdrawProfit -->
+<g id="node22" class="node" pointer-events="visible" data-name="MarketPlace.withdrawProfit">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="118.74" cy="-775" rx="69.51" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-770.8" font-family="Times,serif" font-size="14.00" style="">withdrawProfit</text>
+</g>
+<!-- MarketPlace.withdrawProfit&#45;&gt;MarketPlace.payable -->
+<g id="edge36" class="edge" data-name="MarketPlace.withdrawProfit-&gt;MarketPlace.payable">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M183.3,-768.3C197.24,-764.24 210.96,-757.89 221.48,-748 258.35,-713.36 220.35,-674.37 257.48,-640 273.09,-625.55 295.25,-618.53 315.44,-615.22" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="316.04,-618.67 325.47,-613.85 315.09,-611.74 316.04,-618.67" style=""/>
+</g>
+<!-- to.transfer -->
+<g id="node36" class="node" pointer-events="visible" data-name="to.transfer">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="366.66" cy="-270" rx="40.55" ry="18" style=""/>
+<text text-anchor="middle" x="366.66" y="-265.8" font-family="Times,serif" font-size="14.00" style="">transfer</text>
+</g>
+<!-- MarketPlace.withdrawProfit&#45;&gt;to.transfer -->
+<g id="edge37" class="edge" data-name="MarketPlace.withdrawProfit-&gt;to.transfer">
+
+<path fill="none" stroke="white" stroke-width="2" d="M185.55,-769.77C199.23,-765.64 212.27,-758.88 221.48,-748 276.99,-682.41 218.03,-439.34 257.48,-363 273.96,-331.11 306.44,-305.53 331.53,-289.33" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="333.44,-292.26 340.06,-283.99 329.73,-286.33 333.44,-292.26" style=""/>
+</g>
+<!-- MarketPlace.getProfitAmount -->
+<g id="node23" class="node" pointer-events="visible" data-name="MarketPlace.getProfitAmount">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="118.74" cy="-667" rx="76.47" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-662.8" font-family="Times,serif" font-size="14.00" style="">getProfitAmount</text>
+</g>
+<!-- MarketPlace.&lt;Fallback&gt; -->
+<g id="node24" class="node" pointer-events="visible" data-name="MarketPlace.&lt;Fallback&gt;">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="118.74" cy="-613" rx="55.36" ry="18" style=""/>
+<text text-anchor="middle" x="118.74" y="-608.8" font-family="Times,serif" font-size="14.00" style="">&lt;Fallback&gt;</text>
+</g>
+<!-- key -->
+<g id="node37" class="node" pointer-events="visible" data-name="key">
+
+<polygon fill="#edad56" stroke="transparent" stroke-width="3" points="183.74,-1578 53.74,-1578 53.74,-1490 183.74,-1490 183.74,-1578" style=""/>
+<text text-anchor="start" x="103.38" y="-1559.4" font-family="Times,serif" font-size="14.00" style="">Internal Call</text>
+<text text-anchor="start" x="99.49" y="-1539.4" font-family="Times,serif" font-size="14.00" style="">External Call</text>
+<text text-anchor="start" x="76.94" y="-1519.4" font-family="Times,serif" font-size="14.00" style="">Defined Contract</text>
+<text text-anchor="start" x="63.34" y="-1499.4" font-family="Times,serif" font-size="14.00" style="">Undefined Contract</text>
+</g>
+<!-- key2 -->
+<g id="node38" class="node" pointer-events="visible" data-name="key2">
+
+<polygon fill="#edad56" stroke="transparent" stroke-width="3" points="393.66,-1578 339.66,-1578 339.66,-1490 393.66,-1490 393.66,-1578" style=""/>
+<text text-anchor="start" x="356.66" y="-1559.4" font-family="Times,serif" font-size="14.00" style="">   </text>
+<text text-anchor="start" x="356.66" y="-1539.4" font-family="Times,serif" font-size="14.00" style="">   </text>
+<polygon fill="#445773" stroke="transparent" points="354.66,-1514 354.66,-1534 379.66,-1534 379.66,-1514 354.66,-1514" style=""/>
+<text text-anchor="start" x="356.66" y="-1519.4" font-family="Times,serif" font-size="14.00" style="">   </text>
+<polygon fill="none" stroke="#e8726d" points="356.66,-1496 356.66,-1512 377.66,-1512 377.66,-1496 356.66,-1496" style=""/>
+</g>
+<!-- key&#45;&gt;key2 -->
+<g id="edge38" class="edge" data-name="key-&gt;key2">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M176.74,-1564C251.84,-1564 273.14,-1564 343.41,-1564" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="343.66,-1567.5 353.66,-1564 343.66,-1560.5 343.66,-1567.5" style=""/>
+</g>
+<!-- key&#45;&gt;key2 -->
+<g id="edge39" class="edge" data-name="key-&gt;key2">
+
+<path fill="none" stroke="white" stroke-width="2" d="M176.74,-1544C251.84,-1544 273.14,-1544 343.41,-1544" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="343.66,-1547.5 353.66,-1544 343.66,-1540.5 343.66,-1547.5" style=""/>
+</g>
+</g>
+</svg>
