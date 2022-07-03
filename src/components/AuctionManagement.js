@@ -142,9 +142,6 @@ class AuctionManagement extends Component {
         try {
             this.NFTCollectionInstance = this.context.getNftCollectionInstance(this.state.collectionAddress)
 
-            console.log(this.state.approvedAddress);
-            console.log(this.context.marketPlaceInstance._address);
-
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(

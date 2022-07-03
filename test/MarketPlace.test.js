@@ -11,6 +11,19 @@ const NFTCollection = artifacts.require('NFTCollection');
 // var MarketPlace = artifacts.require("../src/contracts/MarketPlace.sol");
 // var NFTCollection = artifacts.require("../src/contracts/NFTCollection.sol");
 
+const formatPrice = (buyItNowPrice) => {
+    const DECIMALS = (10 ** 18);
+
+    const ether = wei => wei / DECIMALS;
+
+    const precision = 100; // Use 2 decimal places
+
+    buyItNowPrice = ether(buyItNowPrice);
+    buyItNowPrice = Math.round(buyItNowPrice * precision) / precision;
+
+    return buyItNowPrice;
+};
+
 contract('MarketPlace', function (accounts) {
     let theMarketPlace;
 
@@ -18,7 +31,12 @@ contract('MarketPlace', function (accounts) {
     const account_1 = accounts[1];
     const account_2 = accounts[2];
     const account_3 = accounts[3];
-    const account_4 = accounts[3];
+    const account_4 = accounts[4];
+    const account_5 = accounts[5];
+    const account_6 = accounts[6];
+    const account_7 = accounts[7];
+    const account_8 = accounts[8];
+    const account_9 = accounts[9];
 
     beforeEach(async function () {
         theMarketPlace = await MarketPlace.new();
@@ -114,6 +132,62 @@ contract('MarketPlace', function (accounts) {
 
         const approved_1 = await collectionContract_1.getApproved(1);
         assert.equal(approved_1, theMarketPlace.address, 'MarketPlace is approved');
+    });
+
+    it('Test: Auction - Bidding and funds', async function () {
+        await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
+        const collectionitem_1 = await theMarketPlace.getCollection(1);
+        const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
+        await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
+        await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_1 });
+
+        // acount_1 create auction
+        await theMarketPlace.createAuction(
+            /* address _collectionAddress */ collectionitem_1.collectionAddress,
+            /* uint256 _tokenId */ 1,
+            /* uint256 _initialPrice */ web3.utils.toWei('1', "ether"),
+            /* uint256 _buyItNowPrice */ web3.utils.toWei('5', "ether"),
+            /* uint256 _durationDays */ 2,
+            { from: account_1 }
+        );
+
+        let balance_account_owner = await web3.eth.getBalance(account_owner);
+        balance_account_owner = web3.utils.fromWei(balance_account_owner, 'ether');
+        assert.isBelow(parseInt(balance_account_owner), 1000, 'MaprketPlace profit -> check');
+
+        let balance_account_2 = await web3.eth.getBalance(account_2);
+        balance_account_2 = web3.utils.fromWei(balance_account_2, 'ether');
+        assert.isBelow(parseInt(balance_account_2), 1001, 'balance of account_2 should be 1000');
+
+        // auction_2 bid -> check account_2
+        await theMarketPlace.bidAuction(1, { from: account_2, value: web3.utils.toWei('2', "ether") });
+        balance_account_2 = await web3.eth.getBalance(account_2);
+        balance_account_2 = web3.utils.fromWei(balance_account_2, 'ether');
+        assert.isBelow(parseInt(balance_account_2), 998, 'auction_2 bid -> check account_2');
+
+        // acount_3 buy now -> check account_3
+        await theMarketPlace.buyNowAuction(1, { from: account_3, value: web3.utils.toWei('5', "ether") });
+        let balance_account_3 = await web3.eth.getBalance(account_3);
+        balance_account_3 = web3.utils.fromWei(balance_account_3, 'ether');
+        assert.isBelow(parseInt(balance_account_3), 995, 'acount_3 buy now -> check account_3');
+
+        // account_1 claims on successful sale -> check_account_1
+        await theMarketPlace.claimFunds({ from: account_1 });
+        let balance_account_1 = await web3.eth.getBalance(account_1);
+        balance_account_1 = web3.utils.fromWei(balance_account_1, 'ether');
+        assert.isAbove(parseInt(balance_account_1), 1001, 'account_1 claims on successful sale -> check_account_1');
+
+        // account_2 claims on bid returns-> check_account_2
+        await theMarketPlace.claimFunds({ from: account_2 });
+        balance_account_2 = await web3.eth.getBalance(account_2);
+        balance_account_2 = web3.utils.fromWei(balance_account_2, 'ether');
+        assert.isAbove(parseInt(balance_account_2), 998, 'account_2 claims on bid returns-> check_account_2');
+
+        // MaprketPlace profit -> check
+        await theMarketPlace.withdrawProfit({ from: account_owner });
+        balance_account_owner = await web3.eth.getBalance(account_owner);
+        balance_account_owner = web3.utils.fromWei(balance_account_owner, 'ether');
+        assert.isAbove(parseInt(balance_account_owner), 999, 'MaprketPlace profit -> check');
     });
 
     it('Test: Auction - Create', async function () {
@@ -544,45 +618,6 @@ contract('MarketPlace', function (accounts) {
             assert.isAbove(error.message.search(errorMessage), -1, errorMessage);
         }
     });
-
-    // it('Test: Auction - Bidding and funds', async function () {
-    //     await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });
-    //     const collectionitem_1 = await theMarketPlace.getCollection(1);
-    //     const collectionContract_1 = await NFTCollection.at(collectionitem_1.collectionAddress);
-    //     await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_1', { from: account_1 });
-    //     await theMarketPlace.mint(collectionitem_1.collectionAddress, '_tokenURI_2', { from: account_1 });
-
-    //     await theMarketPlace.createAuction(
-    //         /* address _collectionAddress */ collectionitem_1.collectionAddress,
-    //         /* uint256 _tokenId */ 1,
-    //         /* uint256 _initialPrice */ 1,
-    //         /* uint256 _buyItNowPrice */ 5,
-    //         /* uint256 _durationDays */ 2,
-    //         { from: account_1 }
-    //     );
-
-    //     let balance_account_2 = await web3.eth.getBalance(account_2);
-    //     balance_account_2 = web3.utils.fromWei(balance_account_2, 'ether');
-
-    //     let balance_account_3 = await web3.eth.getBalance(account_3);
-    //     balance_account_3 = web3.utils.fromWei(balance_account_3, 'ether');
-
-    //     assert.equal(balance_account_2, 1000, 'balance of account_2 should be 1000000000000000000000');
-    //     assert.equal(balance_account_3, 1000, 'balance of account_3 should be 1000000000000000000000');
-
-    //     await theMarketPlace.bidAuction(1, { from: account_2, value: 5 });
-    //     balance_account_2 = await web3.eth.getBalance(account_2);
-    //     // assert.equal(balance_account_2, 1, 'balance of account_2 should be 1000000000000000000000');
-
-    //     await theMarketPlace.bidAuction(1, { from: account_3, value: 7 });
-    //     balance_account_3 = await web3.eth.getBalance(account_3);
-    //     // assert.equal(balance_account_3, 1, 'balance of account_3 should be 1000000000000000000000');
-
-    //     await theMarketPlace.claimFunds({ from: account_2 });
-
-    //     balance_account_2 = await web3.eth.getBalance(account_2);
-    //     assert.equal(balance_account_2, 1, 'balance of account_2 should be 1000000000000000000000');
-    // });
 
     it('Test: DirectOffer - Empty', async function () {
         await theMarketPlace.createCollection('Symbol', 'SYM', 'collectionURI_1', { from: account_1 });

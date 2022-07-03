@@ -9,8 +9,7 @@ import { dateUtility } from "../helpers/dateUtility";
 import Countdown from "react-countdown";
 import { formatPrice } from "../helpers/utils";
 
-class
-    CollectionDetail extends Component {
+class CollectionDetail extends Component {
     static contextType = AppContext;
 
     state = {
