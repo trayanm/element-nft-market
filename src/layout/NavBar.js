@@ -83,8 +83,8 @@ class NavBar extends Component {
                                                 </li>
                                             </ul>
                                         </div>
-                                        <div className="button header-button">
-                                            {!this.context.account &&
+                                        {!this.context.account &&
+                                            <div className="button header-button">
                                                 <button
                                                     type="button"
                                                     className="btn"
@@ -92,8 +92,10 @@ class NavBar extends Component {
                                                 >
                                                     Connect
                                                 </button>
-                                            }
-                                            {this.context.userFunds > 0 &&
+                                            </div>
+                                        }
+                                        {this.context.userFunds > 0 &&
+                                            <div className="button header-button">
                                                 <button
                                                     type="button"
                                                     className="btn btn-info btn-block navbar-btn text-white"
@@ -101,18 +103,20 @@ class NavBar extends Component {
                                                 >
                                                     {`Claim ${formatPrice(this.context.userFunds)} ETH`}
                                                 </button>
-                                            }
-
-                                            {this.context.marketOwner == this.context.account && this.context.profitAmount > 0 &&
-                                                <button
-                                                type="button"
-                                                className="btn btn-block navbar-btn text-white"
-                                                onClick={this.claimProfitAmount}
-                                            >
-                                                {`Profit ${formatPrice(this.context.profitAmount)} ETH`} 
-                                            </button>
+                                            </div>
                                         }
-                                        </div>
+
+                                        {this.context.marketOwner == this.context.account && this.context.profitAmount > 0 &&
+                                            <div className="button header-button">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-block navbar-btn text-white"
+                                                    onClick={this.claimProfitAmount}
+                                                >
+                                                    {`Profit ${formatPrice(this.context.profitAmount)} ETH`}
+                                                </button>
+                                            </div>
+                                        }
                                     </nav>
                                 </div>
                             </div>
