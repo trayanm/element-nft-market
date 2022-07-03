@@ -38,3 +38,9 @@ MNEMONIC=<YOUR MNEMONIC HERE>
 ```
 truffle migrate --network rinkeby_infura
 ```
+
+## Run the application
+- Run command 
+```
+npm start
+```
