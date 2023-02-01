@@ -33,19 +33,14 @@ npx hardhat test
 ```
 
 ## Publish to Rinkeby using Infura
-- Create .env file with the following content
-```
-MNEMONIC=<YOUR MNEMONIC HERE>
-```
 
-- Set the HDWalletProvider in truffle-config.js for network rinkeby_infura
 - Run command 
 ```bash
 npx hardhat deploy-diamond \
-    --network <network> \
-    --owner <address owner> \
-    --fee-percentage <fee percentage, default 3000> \
-    --precision <fee precision, default 100000>
+    --network local \
+    --owner 0x34a9B91eA4dbDB374160eF611F18A4BE055a4e42 \
+    --fee-percentage 3000 \
+    --precision 100000
 ```
 
 ## Run the application

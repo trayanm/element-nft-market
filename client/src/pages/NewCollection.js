@@ -4,7 +4,32 @@ import ipfsClient from 'ipfs-http-client';
 import { withRouter } from "../hooksHandler";
 import AppContext from "../store/app-context";
 
-const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+// const projectId = '1qmt...XXX';   // <---------- your Infura Project ID
+
+// const projectSecret = 'c920...XXX';  // <---------- your Infura Secret
+// const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+
+// const ipfs = ipfsClient.create({
+//     host: 'ipfs.infura.io', 
+//     port: 5001, 
+//     protocol: 'https',
+//     headers: {
+//         authorization: auth,
+//     },
+// });
+
+const web3_storage_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQ0MmRhNjdmZTQzYTU1OWJkRTIzZjYwYjYyMzE0OTkyZEY4YzI2M0YiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzQ5MjQ4OTI5NTIsIm5hbWUiOiJFbGVtZW50In0.4Ovyjgf1PbdPCBRjgycV8onshpiOR3y2meK2LHU84VY';
+
+const auth = 'Authorization: Bearer ' + web3_storage_token;
+
+const ipfs = ipfsClient.create({
+    host: 'api.web3.storage',
+    port: 80,
+    protocol: 'https',
+    headers: {
+        auth
+    },
+});
 
 class NewCollection extends Component {
     static contextType = AppContext;
@@ -24,7 +49,7 @@ class NewCollection extends Component {
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
-                `Failed to load web3, accounts, or contract. Check console for details.`,
+                `NewCollection : Failed to load web3, accounts, or contract. Check console for details.`,
             );
             console.error(error);
         }
