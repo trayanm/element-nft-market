@@ -16,15 +16,20 @@ NFT Market place. The app supports the following functionalities:
 - _Direct Offer_ - intend for purchase of other's token
 
 ## Setup and test
-```
-# Install Dependencies
+
+### Install Dependencies
+```bash
 npm install
+```
 
-# Build contracts
-truffle build
+### Build contracts
+```bash
+npx hardhat compile
+```
 
-# Run tests
-truffle test
+### Run tests
+```bash
+npx hardhat test
 ```
 
 ## Publish to Rinkeby using Infura
@@ -35,12 +40,16 @@ MNEMONIC=<YOUR MNEMONIC HERE>
 
 - Set the HDWalletProvider in truffle-config.js for network rinkeby_infura
 - Run command 
-```
-truffle migrate --network rinkeby_infura
+```bash
+npx hardhat deploy-diamond \
+    --network <network> \
+    --owner <address owner> \
+    --fee-percentage <fee percentage, default 3000> \
+    --precision <fee precision, default 100000>
 ```
 
 ## Run the application
 - Run command 
-```
+```bash
 npm start
 ```
