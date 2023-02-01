@@ -1,0 +1,1075 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "bid",
+        "type": "uint256"
+      }
+    ],
+    "name": "onAuctionBid",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "onAuctionCancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "onAuctionClosed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "onAuctionCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "onAuctionFinished",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "collectionAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "ownerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "onCollectionCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "facetAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "enum IDiamondCutFacet.FacetCutAction",
+            "name": "action",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes4[]",
+            "name": "functionSelectors",
+            "type": "bytes4[]"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IDiamondCutFacet.FacetCut[]",
+        "name": "_diamondCut",
+        "type": "tuple[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_init",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "_calldata",
+        "type": "bytes"
+      }
+    ],
+    "name": "onDiamondCut",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "onOwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "onPaused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "onUnpaused",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_buyerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "acceptDirectOffer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "bidAuction",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyNowAuction",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancelAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancelDirectOffer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "checkAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimFunds",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_buyItNowPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_durationDays",
+        "type": "uint256"
+      }
+    ],
+    "name": "createAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_metaURI",
+        "type": "string"
+      }
+    ],
+    "name": "createCollection",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_offeredPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "createDirectOffer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "facetAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "enum IDiamondCutFacet.FacetCutAction",
+            "name": "action",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes4[]",
+            "name": "functionSelectors",
+            "type": "bytes4[]"
+          }
+        ],
+        "internalType": "struct IDiamondCutFacet.FacetCut[]",
+        "name": "_diamondCut",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "address",
+        "name": "_init",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_calldata",
+        "type": "bytes"
+      }
+    ],
+    "name": "diamondCut",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "_functionSelector",
+        "type": "bytes4"
+      }
+    ],
+    "name": "facetAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "facetAddress_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "facetAddresses",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "facetAddresses_",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_facet",
+        "type": "address"
+      }
+    ],
+    "name": "facetFunctionSelectors",
+    "outputs": [
+      {
+        "internalType": "bytes4[]",
+        "name": "facetFunctionSelectors_",
+        "type": "bytes4[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "facets",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "facetAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes4[]",
+            "name": "functionSelectors",
+            "type": "bytes4[]"
+          }
+        ],
+        "internalType": "struct IDiamondLoupeFacet.Facet[]",
+        "name": "facets_",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "fulfillDirectOffer",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAuction",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "ownerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "collectionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "highestBidderAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "highestBid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "auctionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "buyItNowPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "initialPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum AuctionStatus",
+            "name": "auctionStatus",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct AuctionItem",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAuctionBy",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "ownerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "collectionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "highestBidderAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "highestBid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "auctionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "buyItNowPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "initialPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum AuctionStatus",
+            "name": "auctionStatus",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct AuctionItem",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollection",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "collectionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "collectionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "ownerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "metaURI",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct CollectionItem",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "collectionAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getCollectionAuctions",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCollectionCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDirectOfferByBuyer",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "ownerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "collectionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "buyerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "directOfferId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "offeredPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum DirectOfferStatus",
+            "name": "directOfferStatus",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct DirectOfferItem",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDirectOffersByOwner",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "ownerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "collectionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "buyerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "directOfferId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "offeredPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum DirectOfferStatus",
+            "name": "directOfferStatus",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct DirectOfferItem[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFeePercentage",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPrecision",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProfitAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_userAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getUserFunds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_feePercentage",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_precision",
+        "type": "uint256"
+      }
+    ],
+    "name": "initFeeCalculator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_tokenURI",
+        "type": "string"
+      }
+    ],
+    "name": "mint",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "owner_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "paused",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_feePercentage",
+        "type": "uint256"
+      }
+    ],
+    "name": "setFeePercentage",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_precision",
+        "type": "uint256"
+      }
+    ],
+    "name": "setPrecision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "interfaceId",
+        "type": "bytes4"
+      }
+    ],
+    "name": "supportsInterface",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "unpause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawProfit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

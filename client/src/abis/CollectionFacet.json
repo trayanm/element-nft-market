@@ -1,0 +1,134 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "collectionAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "ownerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "onCollectionCreated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_metaURI",
+        "type": "string"
+      }
+    ],
+    "name": "createCollection",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollection",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "collectionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "collectionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "ownerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "metaURI",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct CollectionItem",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCollectionCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_tokenURI",
+        "type": "string"
+      }
+    ],
+    "name": "mint",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
